@@ -1,0 +1,31 @@
+{
+  "name": "zenzawatch",
+  "version": "0.0.0",
+  "description": "niconico HTML5 Player",
+  "main": "",
+  "scripts": {
+    "lint": "eslint --ext .ts,.js src",
+    "lint:fix": "eslint --fix --ext .ts,.js src",
+    "test": "NODE_ENV=test mocha test/**/*.ts",
+    "test:watch": "NODE_ENV=test mocha --watch test/**/*.ts"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kPherox/ZenzaWatch.git"
+  },
+  "author": "kphrx",
+  "license": "WTFPL",
+  "bugs": {
+    "url": "https://github.com/kPherox/ZenzaWatch/issues"
+  },
+  "homepage": "https://github.com/kPherox/ZenzaWatch#readme",
+  "devDependencies": {
+    "@types/mocha": "^8.2.2",
+    "@typescript-eslint/eslint-plugin": "^4.22.0",
+    "@typescript-eslint/parser": "^4.22.0",
+    "eslint": "^7.25.0",
+    "eslint-config-google": "^0.14.0",
+    "mocha": "^8.3.2",
+    "ts-node": "^9.1.1"
+  }
+}
