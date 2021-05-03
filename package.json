@@ -4,8 +4,8 @@
   "description": "niconico HTML5 Player",
   "main": "",
   "scripts": {
-    "lint": "eslint --ext .ts,.js src",
-    "lint:fix": "eslint --fix --ext .ts,.js src",
+    "lint": "eslint --ext .ts,.js .",
+    "lint:fix": "eslint --fix --ext .ts,.js .",
     "build:dev": "webpack --env development",
     "build:prod": "webpack --env production",
     "test": "NODE_ENV=test mocha test/**/*.ts",
