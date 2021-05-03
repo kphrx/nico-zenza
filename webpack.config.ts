@@ -2,7 +2,7 @@
 import {resolve} from 'path';
 import {merge} from 'webpack-merge';
 import {Configuration} from 'webpack';
-import metadataPlugin from './config/metadata';
+import MetadataPlugin from './config/metadata';
 
 import devConfig from './config/webpack.dev.config';
 import prodConfig from './config/webpack.prod.config';
@@ -89,11 +89,14 @@ const config: Configuration = {
     ],
   },
   plugins: [
-    metadataPlugin(metadata),
+    new MetadataPlugin(metadata),
   ],
 };
 
-export default (env: {development?: boolean, production?: boolean}) => {
+export default (env: {
+  development?: boolean
+  production?: boolean
+}): Configuration => {
   if (env.development) {
     return merge<Configuration>(config, devConfig);
   }
