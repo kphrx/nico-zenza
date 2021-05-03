@@ -9,8 +9,39 @@ on:
   pull_request:
     branches: [ rewrite ]
 
+env:
+  lts: 14
+  latest: 16
+
 jobs:
+  lint:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Use Node.js ${{ env.lts }}
+      uses: actions/setup-node@v2
+      with:
+        node-version: ${{ env.lts }}
+
+    - name: Get npm cache directory
+      id: npm-cache-dir
+      run: echo "::set-output name=dir::$(npm config get cache)"
+    - name: Cache node modules
+      uses: actions/cache@v2
+      with:
+        path: ${{ steps.npm-cache-dir.outputs.dir }}
+        key: ${{ runner.os }}-node-${{ env.lts }}-${{ hashFiles('**/package-lock.json') }}
+        restore-keys: |
+          ${{ runner.os }}-node-${{ env.lts }}-
+          ${{ runner.os }}-node-
+          ${{ runner.os }}-
+
+    - run: npm ci
+    - run: npm run lint
+
   build:
+    needs: lint
 
     runs-on: ${{ matrix.os }}
 
@@ -18,7 +49,6 @@ jobs:
       matrix:
         os: [ubuntu-latest, macos-latest, windows-latest]
         node: [12, 14, 16]
-        # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
 
     steps:
     - uses: actions/checkout@v2
@@ -26,11 +56,80 @@ jobs:
       uses: actions/setup-node@v2
       with:
         node-version: ${{ matrix.node }}
-    - run: npm ci
-    - run: npm run build
-    - run: npm test
-    - uses: actions/upload-artifact@v2
-      if: ${{ matrix.os == 'ubuntu-latest' && matrix.node == 14 }}
+
+    - name: Get npm cache directory
+      id: npm-cache-dir
+      run: echo "::set-output name=dir::$(npm config get cache)"
+    - name: Cache node modules
+      uses: actions/cache@v2
       with:
-        name: user-script
-        path: dist/
+        path: ${{ steps.npm-cache-dir.outputs.dir }}
+        key: ${{ runner.os }}-node-${{ matrix.node }}-${{ hashFiles('**/package-lock.json') }}
+        restore-keys: |
+          ${{ runner.os }}-node-${{ matrix.node }}-
+          ${{ runner.os }}-node-
+          ${{ runner.os }}-
+
+    - run: npm ci
+    - run: npm run build:dev
+
+  test:
+    needs: [build, lint]
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Use Node.js ${{ env.lts }}
+      uses: actions/setup-node@v2
+      with:
+        node-version: ${{ env.lts }}
+
+    - name: Get npm cache directory
+      id: npm-cache-dir
+      run: echo "::set-output name=dir::$(npm config get cache)"
+    - name: Cache node modules
+      uses: actions/cache@v2
+      with:
+        path: ${{ steps.npm-cache-dir.outputs.dir }}
+        key: ${{ runner.os }}-node-${{ env.lts }}-${{ hashFiles('**/package-lock.json') }}
+        restore-keys: |
+          ${{ runner.os }}-node-${{ env.lts }}-
+          ${{ runner.os }}-node-
+          ${{ runner.os }}-
+
+    - run: npm ci
+    - run: npm test
+
+  # deploy:
+  #   if: ${{  }}
+  #   needs: [test, build, lint]
+
+  #   runs-on: ubuntu-latest
+
+  #   steps:
+  #   - uses: actions/checkout@v2
+  #   - name: Use Node.js ${{ env.lts }}
+  #     uses: actions/setup-node@v2
+  #     with:
+  #       node-version: ${{ env.lts }}
+
+  #   - name: Get npm cache directory
+  #     id: npm-cache-dir
+  #     run: echo "::set-output name=dir::$(npm config get cache)"
+  #   - name: Cache node modules
+  #     uses: actions/cache@v2
+  #     with:
+  #       path: ${{ steps.npm-cache-dir.outputs.dir }}
+  #       key: ${{ runner.os }}-node-${{ env.lts }}-${{ hashFiles('**/package-lock.json') }}
+  #       restore-keys: |
+  #         ${{ runner.os }}-node-${{ env.lts }}-
+  #         ${{ runner.os }}-node-
+  #         ${{ runner.os }}-
+
+  #   - run: npm ci
+  #   - run: npm run build:prod
+  #   - uses: actions/upload-artifact@v2
+  #     with:
+  #       name: scripts
+  #       path: dist/
