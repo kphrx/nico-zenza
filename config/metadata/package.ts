@@ -43,7 +43,6 @@ export const baseMetadata: UserScriptMetadata = {
   // source: repository.url,
   homepageURL: homepage,
   grant: 'none',
-  runAt: 'document-body',
 };
 
 export default packageMetadata as Partial<Package>;

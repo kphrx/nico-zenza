@@ -3,17 +3,17 @@ import {Entrypoint} from '../types';
 
 const metadata: Entrypoint = {
   entry: {
-    import: './src/watch.ts',
-    filename: 'ZenzaWatch.user.js',
+    import: './src/hls.ts',
+    filename: 'ZenzaHLS.user.js',
   },
   metadata: {
-    contributor: 'segabito',
-    description: 'ニコニコ動画の速くて軽い動画プレイヤー',
+    contributor: 'segabito macmoto',
+    version: '0.0.20',
+    name: 'ZenzaWatch HLS Support',
+    description: 'ZenzaWatchをHLSに対応させる',
     match: [
       '*://*.nicovideo.jp/*', // instead
       // '*://www.nicovideo.jp/*',
-      // '*://ext.nicovideo.jp/',
-      // '*://ext.nicovideo.jp/#*',
       // '*://blog.nicovideo.jp/*',
       // '*://ch.nicovideo.jp/*',
       // '*://com.nicovideo.jp/*',
@@ -21,28 +21,22 @@ const metadata: Entrypoint = {
       // '*://dic.nicovideo.jp/*',
       // '*://ex.nicovideo.jp/*',
       // '*://info.nicovideo.jp/*',
-      // '*://search.nicovideo.jp/*',
       // '*://uad.nicovideo.jp/*',
       // '*://api.search.nicovideo.jp/*',
       // '*://*.nicovideo.jp/smile*',
       // '*://site.nicovideo.jp/*',
       // '*://anime.nicovideo.jp/*',
-      'https://www.upload.nicovideo.jp/garage/*',
-      'https://www.google.co.jp/search*',
-      'https://www.google.com/search*',
-      'https://*.bing.com/search*',
-      'https://feedly.com/*',
     ],
     exclude: [
       '*://ads.nicovideo.jp/*',
+      '*://www.upload.nicovideo.jp/*',
       '*://www.nicovideo.jp/watch/*?edit=*',
       '*://ch.nicovideo.jp/tool/*',
       '*://flapi.nicovideo.jp/*',
       '*://dic.nicovideo.jp/p/*',
-      '*://ext.nicovideo.jp/thumb/*',
-      '*://ext.nicovideo.jp/thumb_channel/*',
     ],
-    runAt: 'document-body',
+    runAt: 'document-start',
+    noframes: null,
   },
 };
 
