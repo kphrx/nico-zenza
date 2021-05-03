@@ -1,64 +1,72 @@
 
+import {URL} from 'url';
 import {EntryObject} from 'webpack';
 
-type OneOrMany<T> = T[] | T;
-export type Copyright = {
+type ValueOf<T> = T[keyof T];
+
+type AuthorName = {
   name: string;
+  email?: string;
+  url?: string;
+}
+type Copyright = {
   year: string | number;
-  email?: string;
-  url?: string;
-} | string
-export type PeopleField = {
-  name: string;
-  email?: string;
-  url?: string;
-} | string
+} & AuthorName;
+
+type ObjectOrString<T> = T | string;
+
+type LocalizableField = ObjectOrString<{[key: string]: string}>
+type URLField = ObjectOrString<URL>
+type PeopleField = ObjectOrString<AuthorName>
+type CopyrightField = ObjectOrString<Copyright>
+
+type OneOrMany<T> = T[] | T;
 
 interface GreasemonkeyMetadata {
-  name: string | {[key: string]:string},
+  name: LocalizableField,
   namespace: OneOrMany<string>,
-  description: string | {[key: string]:string},
-  icon: string,
+  description: LocalizableField,
+  icon: URLField,
   author: PeopleField,
-  homepageURL: OneOrMany<string>,
-  'run-at': string,
+  homepageURL: OneOrMany<URLField>,
+  runAt: string,
   include: OneOrMany<string>,
   exclude: OneOrMany<string>,
   match: OneOrMany<string>,
-  noframes: null | undefined,
+  noframes: null,
   require: OneOrMany<string>,
   resource: OneOrMany<string>,
   grant: OneOrMany<string>,
-  unwrap: null | undefined,
+  unwrap: null,
   version: string | number,
-  updateURL: string,
-  installURL: string,
-  downloadURL: string,
+  updateURL: URLField,
+  installURL: URLField,
+  downloadURL: URLField,
 }
 interface OpenUserJSOrgMetadata {
-  copyright: Copyright,
+  copyright: CopyrightField,
   license: OneOrMany<string>,
-  homepageURL: OneOrMany<string>,
-  supportURL: OneOrMany<string>,
+  homepageURL: OneOrMany<URLField>,
+  supportURL: OneOrMany<URLField>,
   author: PeopleField,
-  collaborator: PeopleField[] | string,
+  collaborator: OneOrMany<PeopleField>,
   unstableMinify: string,
 }
 interface UserscriptsOrgMetadata {
-  copyright: Copyright,
+  copyright: CopyrightField,
   license: OneOrMany<string>,
-  'uso:script': string | number,
-  'uso:version': string | number,
-  'uso:timestamp': string,
-  'uso:hash': string,
-  'uso:rating': string | number,
-  'uso:installs': string | number,
-  'uso:reviews': string | number,
-  'uso:discussions': string | number,
-  'uso:fans': string | number,
+  usoScript: string | number,
+  usoVersion: string | number,
+  usoTimestamp: string,
+  usoHash: string,
+  usoRating: string | number,
+  usoInstalls: string | number,
+  usoReviews: string | number,
+  usoDiscussions: string | number,
+  usoFans: string | number,
 }
 interface UserContributedMetadata {
-  'uso:unlisted': string,
+  usoUnlisted: string,
   attribution: OneOrMany<PeopleField>,
   contributor: OneOrMany<PeopleField>,
   author: PeopleField,
@@ -67,12 +75,23 @@ interface UserContributedMetadata {
   build: string | number,
 }
 
-export type UserScriptMetadata = Partial<GreasemonkeyMetadata
-  | OpenUserJSOrgMetadata
-  | UserscriptsOrgMetadata
-  | UserContributedMetadata>
+type UserScriptMetadata = Partial<GreasemonkeyMetadata
+  & OpenUserJSOrgMetadata
+  & UserscriptsOrgMetadata
+  & UserContributedMetadata>
 
-export interface Entrypoint {
+interface Entrypoint {
   entry: EntryObject['Description']
   metadata: UserScriptMetadata
 }
+
+export {
+  OneOrMany,
+  ValueOf,
+
+  AuthorName,
+  Copyright,
+
+  UserScriptMetadata,
+  Entrypoint,
+};

@@ -1,5 +1,5 @@
 
-import {dependencies} from './package';
+import packageMetadata from './package';
 
 export interface RequireExternals {
   [key: string]: string[] | string
@@ -13,7 +13,7 @@ export function requireURLs(externals: RequireExternals): string[] {
   return Object.keys(externals)
       .reduce((res: string[], name: string[] | string) => {
         const fn = (name: string) => {
-          const version = dependencies?.[name];
+          const version = packageMetadata.dependencies?.[name];
           if (version) {
             res.push(`https://cdn.jsdelivr.net/npm/${name}@${version}${externals[name]}`);
           }

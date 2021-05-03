@@ -1,6 +1,6 @@
 
 import {
-  PeopleField,
+  AuthorName,
   UserScriptMetadata,
 } from './types';
 import packageMetadata from '../../package.json';
@@ -12,8 +12,8 @@ interface Package {
   homepage: string;
   // old {type:string;url:string}, licenses: {type:string;url:string}[];
   license: string;
-  author: PeopleField;
-  contributors: PeopleField[];
+  author: AuthorName | string;
+  contributors: (AuthorName | string)[];
   repository: {
     type: string;
     url: string;
@@ -26,35 +26,24 @@ const {
   name,
   version,
   description,
-  homepage,
   license,
   author,
   contributors,
-  repository,
-  dependencies,
+  homepage,
 } = packageMetadata as Partial<Package>;
 
-const baseMetadata: UserScriptMetadata = {
-  'namespace': 'https://kpherox.dev/',
-  version,
-  author,
-  description,
-  license,
-  // 'source': repository.url,
-  'homepageURL': homepage,
-  'grant': 'none',
-  'run-at': 'document-body',
-};
-
-export {
-  baseMetadata,
+export const baseMetadata: UserScriptMetadata = {
+  namespace: 'https://kpherox.dev/',
   name,
   version,
   description,
-  homepage,
   license,
   author,
-  contributors,
-  repository,
-  dependencies,
+  contributor: contributors,
+  // source: repository.url,
+  homepageURL: homepage,
+  grant: 'none',
+  runAt: 'document-body',
 };
+
+export default packageMetadata as Partial<Package>;
