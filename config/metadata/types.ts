@@ -1,4 +1,6 @@
 
+import {EntryObject} from 'webpack';
+
 type OneOrMany<T> = T[] | T;
 export type Copyright = {
   name: string;
@@ -69,3 +71,8 @@ export type UserScriptMetadata = Partial<GreasemonkeyMetadata
   | OpenUserJSOrgMetadata
   | UserscriptsOrgMetadata
   | UserContributedMetadata>
+
+export interface Entrypoint {
+  entry: EntryObject['Description']
+  metadata: UserScriptMetadata
+}

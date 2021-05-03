@@ -29,4 +29,5 @@ class UserScriptMetadataPlugin extends BaseWebpackPlugin {
   }
 }
 
+export * from './entrypoints';
 export default UserScriptMetadataPlugin;
