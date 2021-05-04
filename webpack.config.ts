@@ -44,8 +44,8 @@ const config: Configuration = {
 };
 
 export default (env: {
-  development?: boolean
-  production?: boolean
+  development?: boolean;
+  production?: boolean;
 }): Configuration => {
   if (env.development) {
     return merge<Configuration>(config, devConfig);

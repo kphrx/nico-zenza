@@ -12,7 +12,7 @@ class UserScriptMetadataPlugin extends BaseWebpackPlugin {
  * @param {Object.<string, UserScriptMetadata>} options metadata.
  */
   constructor(options: {
-  [key: string]: UserScriptMetadata
+  [key: string]: UserScriptMetadata;
 }) {
     const entryPoints = Object.keys(options);
     super(entryPoints.reduce((
@@ -20,8 +20,8 @@ class UserScriptMetadataPlugin extends BaseWebpackPlugin {
         name: string,
     ): {[key: string]: UserScriptMetadata} => {
       res[name] = {
-        name,
         ...baseMetadata,
+        name,
         ...options[name],
       };
       return res;

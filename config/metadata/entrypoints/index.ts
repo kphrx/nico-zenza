@@ -13,10 +13,6 @@ import {UserScriptMetadata, Entrypoint} from '../types';
 // import ZenzaWatch from './ZenzaWatch';
 // import uQuery from './uQuery';
 
-// import Navi from './Navi';
-// import Yomi from './Yomi';
-// import VoiceControl from './VoiceControl';
-
 //   Navi: './src/navi.ts',
 //   Yomi: './src/yomi.ts',
 //   VoiceControl: './src/vc.ts',
@@ -27,7 +23,7 @@ const entry: EntryObject = Object.fromEntries(
 );
 
 const metadata: {
-  [key: string]: UserScriptMetadata
+  [key: string]: UserScriptMetadata;
 } = Object.fromEntries(
     Object.entries(entrypoints).map(([k, v]) => [k, v.metadata]),
 );

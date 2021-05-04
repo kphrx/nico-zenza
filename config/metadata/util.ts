@@ -2,7 +2,7 @@
 import packageMetadata from './package';
 
 export interface RequireExternals {
-  [key: string]: string[] | string
+  [key: string]: string[] | string;
 }
 /**
  * Transform dependensies key-value to jsdelivr urls array
@@ -10,18 +10,18 @@ export interface RequireExternals {
  * @return {string[]} the metadata block as a string.
  */
 export function requireURLs(externals: RequireExternals): string[] {
-  return Object.keys(externals)
-      .reduce((res: string[], name: string[] | string) => {
-        const fn = (name: string) => {
+  return Object.entries(externals)
+      .reduce((res: string[], [name, path]) => {
+        const fn = (name: string, path: string) => {
           const version = packageMetadata.dependencies?.[name];
           if (version) {
-            res.push(`https://cdn.jsdelivr.net/npm/${name}@${version}${externals[name]}`);
+            res.push(`https://cdn.jsdelivr.net/npm/${name}@${version}${path}`);
           }
         };
-        if (Array.isArray(name)) {
-          name.forEach(fn);
+        if (Array.isArray(path)) {
+          path.forEach(fn.bind(undefined, name));
         } else {
-          fn(name);
+          fn(name, path);
         }
         return res;
       }, []);

@@ -15,7 +15,7 @@ const LOCALE_VALUE_SEPARATOR = '_____';
  * Prepend UserScript Metadata to `*.user.js` files
  */
 class UserScriptMetadataPlugin implements WebpackPluginInstance {
-  metadataList: {[key: string]: UserScriptMetadata}
+  metadataList: {[key: string]: UserScriptMetadata};
 
   /**
    * Initialize UserScript metadata plugin

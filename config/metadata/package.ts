@@ -17,7 +17,7 @@ interface Package {
   repository: {
     type: string;
     url: string;
-    directory?: string
+    directory?: string;
   } | string;
   dependencies: {[key: string]: string};
 }
