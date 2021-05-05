@@ -9,6 +9,8 @@ import {
 } from 'webpack';
 import {UserScriptMetadata, ValueOf} from './types';
 
+const LOCALE_VALUE_SEPARATOR = '_____';
+
 /**
  * Prepend UserScript Metadata to `*.user.js` files
  */
@@ -60,7 +62,7 @@ class UserScriptMetadataPlugin implements WebpackPluginInstance {
         return [name];
       }
       return Object.entries(value).map(([key, value]) => {
-        return `${key} ${value}`;
+        return key + LOCALE_VALUE_SEPARATOR + value;
       });
     }
     let result: string[] | undefined = undefined;
@@ -157,8 +159,9 @@ class UserScriptMetadataPlugin implements WebpackPluginInstance {
           continue;
         }
         for (const v of values) {
-          if (key === 'name') {
-            const separate = v.indexOf(' ');
+          if (['name', 'description'].includes(key) &&
+              v.indexOf(LOCALE_VALUE_SEPARATOR) > 0) {
+            const separate = v.indexOf(LOCALE_VALUE_SEPARATOR);
             keyValues.push([
               `${key}:${v.slice(0, separate)}`,
               v.slice(separate+1),
