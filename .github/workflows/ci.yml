@@ -39,6 +39,7 @@ jobs:
 
     - run: npm ci
     - run: npm run lint
+    - run: npm run check-type
 
   build:
     needs: lint
