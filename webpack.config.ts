@@ -1,7 +1,8 @@
 /* global __dirname */
 import {resolve} from 'path';
-import {merge} from 'webpack-merge';
 import {Configuration} from 'webpack';
+import {merge} from 'webpack-merge';
+import {TsconfigPathsPlugin} from 'tsconfig-paths-webpack-plugin';
 import MetadataPlugin, {
   entry,
   metadata,
@@ -13,6 +14,9 @@ import prodConfig from './config/webpack.prod.config';
 const config: Configuration = {
   resolve: {
     extensions: ['.js', '.ts'],
+    plugins: [
+      new TsconfigPathsPlugin(),
+    ],
   },
   optimization: {
     minimize: false,
