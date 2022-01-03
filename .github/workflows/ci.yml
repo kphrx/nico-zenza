@@ -14,7 +14,7 @@ env:
   latest: 16
 
 jobs:
-  lint:
+  test:
     runs-on: ubuntu-latest
 
     steps:
@@ -40,9 +40,10 @@ jobs:
     - run: npm ci
     - run: npm run lint
     - run: npm run check-type
+    - run: npm test
 
   build:
-    needs: lint
+    needs: test
 
     runs-on: ${{ matrix.os }}
 
@@ -74,37 +75,9 @@ jobs:
     - run: npm ci
     - run: npm run build:dev
 
-  test:
-    needs: [build, lint]
-
-    runs-on: ubuntu-latest
-
-    steps:
-    - uses: actions/checkout@v2
-    - name: Use Node.js ${{ env.lts }}
-      uses: actions/setup-node@v2
-      with:
-        node-version: ${{ env.lts }}
-
-    - name: Get npm cache directory
-      id: npm-cache-dir
-      run: echo "::set-output name=dir::$(npm config get cache)"
-    - name: Cache node modules
-      uses: actions/cache@v2
-      with:
-        path: ${{ steps.npm-cache-dir.outputs.dir }}
-        key: ${{ runner.os }}-node-${{ env.lts }}-${{ hashFiles('**/package-lock.json') }}
-        restore-keys: |
-          ${{ runner.os }}-node-${{ env.lts }}-
-          ${{ runner.os }}-node-
-          ${{ runner.os }}-
-
-    - run: npm ci
-    - run: npm test
-
   # deploy:
   #   if: ${{  }}
-  #   needs: [test, build, lint]
+  #   needs: build
 
   #   runs-on: ubuntu-latest
 
