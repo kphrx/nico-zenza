@@ -1,4 +1,4 @@
 {
   "*.{ts,js}": "eslint --fix",
-  "*.ts": "tsc -p"
+  "*.ts": "tsc --noEmit"
 }

@@ -4,7 +4,7 @@
   "description": "niconico HTML5 Player",
   "main": "",
   "scripts": {
-    "check-type": "tsc -p .",
+    "check-type": "tsc --noEmit -p .",
     "lint": "eslint --ext .ts,.js .",
     "lint:fix": "eslint --fix --ext .ts,.js .",
     "build:dev": "webpack --env development",
