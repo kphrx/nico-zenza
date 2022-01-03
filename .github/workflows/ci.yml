@@ -38,6 +38,10 @@ jobs:
         cache: npm
     - run: npm ci
     - run: npm run build:dev
+    - uses: actions/upload-artifact@v2
+      with:
+        name: dist
+        path: dist/
 
   # deploy:
   #   if: ${{  }}
