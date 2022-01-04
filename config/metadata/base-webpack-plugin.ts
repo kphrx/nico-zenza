@@ -1,12 +1,15 @@
 
 import {URL} from 'url';
-import {
-  ModuleFilenameHelpers,
-  Compilation,
+import webpack, {
+  Compilation as CompilationType,
   Compiler,
   WebpackPluginInstance,
-  sources,
 } from 'webpack';
+const {
+  Compilation,
+  ModuleFilenameHelpers,
+  sources: {ConcatSource},
+} = webpack;
 import {UserScriptMetadata, ValueOf} from './types';
 
 const LOCALE_VALUE_SEPARATOR = '_____';
@@ -189,7 +192,7 @@ class UserScriptMetadataPlugin implements WebpackPluginInstance {
         {test: /\.user\.js$/},
     );
     compiler.hooks.compilation.tap(this.constructor.name,
-        (compilation: Compilation) => {
+        (compilation: CompilationType) => {
           compilation.hooks.processAssets.tap(
               {
                 name: this.constructor.name,
@@ -210,7 +213,7 @@ class UserScriptMetadataPlugin implements WebpackPluginInstance {
                     }
                     compilation.updateAsset(
                         file,
-                        (old) => new sources.ConcatSource(
+                        (old) => new ConcatSource(
                             String(header),
                             '\n',
                             old),
