@@ -1,4 +1,3 @@
-/* global __dirname */
 import {resolve} from 'path';
 import {Configuration} from 'webpack';
 import {merge} from 'webpack-merge';
@@ -7,6 +6,9 @@ import MetadataPlugin, {
   entry,
   metadata,
 } from './config/metadata';
+import {fileURLToPath} from 'url';
+import {dirname} from 'path';
+const __dirname = dirname(fileURLToPath(import.meta.url));
 
 import devConfig from './config/webpack.dev.config';
 import prodConfig from './config/webpack.prod.config';

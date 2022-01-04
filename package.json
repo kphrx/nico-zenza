@@ -3,12 +3,13 @@
   "version": "0.0.0",
   "description": "niconico HTML5 Player",
   "main": "",
+  "type": "module",
   "scripts": {
     "check-type": "tsc --noEmit -p .",
     "lint": "eslint --ext .ts,.js .",
     "lint:fix": "eslint --fix --ext .ts,.js .",
-    "build:dev": "webpack --env development",
-    "build:prod": "webpack --env production",
+    "build:dev": "NODE_OPTIONS=\"--loader ts-node/esm --experimental-specifier-resolution=node\" webpack --env development",
+    "build:prod": "NODE_OPTIONS=\"--loader ts-node/esm --experimental-specifier-resolution=node\" webpack --env production",
     "test": "NODE_ENV=test mocha test/**/*.ts",
     "test:watch": "NODE_ENV=test mocha --watch test/**/*.ts",
     "postinstall": "husky install"
