@@ -6,10 +6,10 @@ name: Node.js CI
 on:
   push:
     branches:
-      - rewrite
+      - rewrite/master
   pull_request:
     branches:
-      - rewrite
+      - rewrite/master
 
 jobs:
   test:
