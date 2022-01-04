@@ -1,5 +1,6 @@
 {
-  "require": ["ts-node/register", "tsconfig-paths/register"],
+  "loader": "./config/ts-node-loader.js",
+  "experimental-specifier-resolution": "node",
   "watch-files": "**/*.ts",
   "watch-ignore": "config"
 }
