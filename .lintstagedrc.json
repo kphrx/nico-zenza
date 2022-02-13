@@ -1,5 +1,0 @@
-{
-  "*.ts": "sh -c 'npm run compile && npm run compile -- --clean'",
-  "*.{ts,js}": ["eslint --fix", "prettier --write --ignore-unknown"],
-  "!*.{ts,js}": "prettier --write --ignore-unknown"
-}
