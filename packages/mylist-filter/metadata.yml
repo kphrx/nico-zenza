@@ -1,6 +1,6 @@
 name: Mylist Filter
 namespace: https://kpherox.dev/
 description: 視聴不可能な動画だけ表示して一括削除とかできるやつ
-match: '*://www.nicovideo.jp/my/mylist*'
+match: "*://www.nicovideo.jp/my/mylist*"
 run-at: document-body
 noframes: true

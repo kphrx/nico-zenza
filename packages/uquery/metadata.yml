@@ -1,5 +1,5 @@
 name: uQuery
 namespace: https://kpherox.dev/
-match: '*://*/*'
+match: "*://*/*"
 run-at: document-start
 noframes: true

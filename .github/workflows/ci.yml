@@ -16,46 +16,46 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v2
-    - uses: actions/setup-node@v2
-      with:
-        node-version: lts/*
-        cache: npm
-    - run: npm ci
-    - run: |
-        npm run compile
-        npm run compile -- --clean
-    - run: npm run build:dev
-    - uses: actions/upload-artifact@v2
-      with:
-        name: dist
-        path: packages/*/dist/*.user.js
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v2
+        with:
+          node-version: lts/*
+          cache: npm
+      - run: npm ci
+      - run: |
+          npm run compile
+          npm run compile -- --clean
+      - run: npm run build:dev
+      - uses: actions/upload-artifact@v2
+        with:
+          name: dist
+          path: packages/*/dist/*.user.js
 
   lint:
     needs: build
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v2
-    - uses: actions/setup-node@v2
-      with:
-        node-version: lts/*
-        cache: npm
-    - run: npm ci
-    - run: npm run lint
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v2
+        with:
+          node-version: lts/*
+          cache: npm
+      - run: npm ci
+      - run: npm run lint
 
   test:
     needs: build
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v2
-    - uses: actions/setup-node@v2
-      with:
-        node-version: lts/*
-        cache: npm
-    - run: npm ci
-    - run: npm test
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v2
+        with:
+          node-version: lts/*
+          cache: npm
+      - run: npm ci
+      - run: npm test
 
   # deploy:
   #   if: ${{  }}

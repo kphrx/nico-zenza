@@ -1,7 +1,7 @@
 name: ZenzaWatch
 namespace: https://kpherox.dev/
 match:
-  - '*://*.nicovideo.jp/*' # instead
+  - "*://*.nicovideo.jp/*" # instead
   # - '*://www.nicovideo.jp/*'
   # - '*://ext.nicovideo.jp/'
   # - '*://ext.nicovideo.jp/#*'
@@ -24,11 +24,11 @@ match:
   - https://*.bing.com/search*
   - https://feedly.com/*
 exclude:
-  - '*://ads.nicovideo.jp/*'
-  - '*://www.nicovideo.jp/watch/*?edit=*'
-  - '*://ch.nicovideo.jp/tool/*'
-  - '*://flapi.nicovideo.jp/*'
-  - '*://dic.nicovideo.jp/p/*'
-  - '*://ext.nicovideo.jp/thumb/*'
-  - '*://ext.nicovideo.jp/thumb_channel/*'
+  - "*://ads.nicovideo.jp/*"
+  - "*://www.nicovideo.jp/watch/*?edit=*"
+  - "*://ch.nicovideo.jp/tool/*"
+  - "*://flapi.nicovideo.jp/*"
+  - "*://dic.nicovideo.jp/p/*"
+  - "*://ext.nicovideo.jp/thumb/*"
+  - "*://ext.nicovideo.jp/thumb_channel/*"
 run-at: document-body
