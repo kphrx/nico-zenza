@@ -22,7 +22,7 @@ npm test
 npm run test:watch
 
 # TypeScript の型チェック
-npm run check-type
+npm run compile && npm run compile -- --clean
 
 # コードフォーマットチェック
 npm run lint

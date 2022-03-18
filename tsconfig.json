@@ -5,13 +5,10 @@
     "module": "esnext",
     "lib": ["esnext"],
     "outDir": "./dist/",
+    "composite": true,
     "downlevelIteration": true,
     "strict": true,
     "moduleResolution": "node",
-    "baseUrl": "src",
-    "paths": {
-      "@zenza/*": ["./*"]
-    },
     "esModuleInterop": true,
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,

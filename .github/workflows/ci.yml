@@ -12,7 +12,27 @@ on:
       - rewrite/master
 
 jobs:
-  test:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    - uses: actions/setup-node@v2
+      with:
+        node-version: lts/*
+        cache: npm
+    - run: npm ci
+    - run: |
+        npm run compile
+        npm run compile -- --clean
+    - run: npm run build:dev
+    - uses: actions/upload-artifact@v2
+      with:
+        name: dist
+        path: packages/*/dist/*.user.js
+
+  lint:
+    needs: build
     runs-on: ubuntu-latest
 
     steps:
@@ -23,11 +43,9 @@ jobs:
         cache: npm
     - run: npm ci
     - run: npm run lint
-    - run: npm run check-type
-    - run: npm test
 
-  build:
-    needs: test
+  test:
+    needs: build
     runs-on: ubuntu-latest
 
     steps:
@@ -37,11 +55,7 @@ jobs:
         node-version: lts/*
         cache: npm
     - run: npm ci
-    - run: npm run build:dev
-    - uses: actions/upload-artifact@v2
-      with:
-        name: dist
-        path: dist/
+    - run: npm test
 
   # deploy:
   #   if: ${{  }}

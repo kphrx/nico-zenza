@@ -5,7 +5,7 @@
   "main": "",
   "type": "module",
   "scripts": {
-    "check-type": "tsc --noEmit -p .",
+    "compile": "tsc -b tsconfig.build.json",
     "lint": "eslint --ext .ts,.js .",
     "lint:fix": "eslint --fix --ext .ts,.js .",
     "build:dev": "NODE_OPTIONS=\"--loader ts-node/esm --experimental-specifier-resolution=node\" webpack --env development",
