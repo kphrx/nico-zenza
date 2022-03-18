@@ -7,6 +7,7 @@
     {"path": "packages/hls-support"},
     {"path": "packages/blog-parts-button"},
     {"path": "packages/heat-sync"},
-    {"path": "packages/cap-tube"}
+    {"path": "packages/cap-tube"},
+    {"path": "packages/masked-watch"}
   ]
 }

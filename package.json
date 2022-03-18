@@ -52,6 +52,7 @@
     "packages/hls-support",
     "packages/blog-parts-button",
     "packages/heat-sync",
-    "packages/cap-tube"
+    "packages/cap-tube",
+    "packages/masked-watch"
   ]
 }
