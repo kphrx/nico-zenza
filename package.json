@@ -53,6 +53,7 @@
     "packages/blog-parts-button",
     "packages/heat-sync",
     "packages/cap-tube",
-    "packages/masked-watch"
+    "packages/masked-watch",
+    "packages/game-pad"
   ]
 }
