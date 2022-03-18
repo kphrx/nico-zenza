@@ -10,6 +10,7 @@
     {"path": "packages/cap-tube"},
     {"path": "packages/masked-watch"},
     {"path": "packages/game-pad"},
-    {"path": "packages/uquery"}
+    {"path": "packages/uquery"},
+    {"path": "packages/mylist-filter"}
   ]
 }

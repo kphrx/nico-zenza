@@ -55,6 +55,7 @@
     "packages/cap-tube",
     "packages/masked-watch",
     "packages/game-pad",
-    "packages/uquery"
+    "packages/uquery",
+    "packages/mylist-filter"
   ]
 }
