@@ -1,6 +1,6 @@
 {
   "name": "@nico-zenza/mylist-pocket",
-  "version": "0.5.14",
+  "version": "0.6.0-alpha.0",
   "description": "動画をあとで見る ＋ 簡易NG機能。 ZenzaWatchとの連携も可能。",
   "main": "dist/main.js",
   "scripts": {

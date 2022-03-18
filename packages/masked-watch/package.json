@@ -1,6 +1,6 @@
 {
   "name": "@nico-zenza/masked-watch",
-  "version": "0.3.2",
+  "version": "0.4.0-alpha.0",
   "description": "動画上のテキストや顔を検出してコメントを透過する",
   "main": "dist/main.js",
   "scripts": {

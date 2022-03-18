@@ -1,6 +1,6 @@
 {
   "name": "@nico-zenza/mylist-filter",
-  "version": "0.0.1",
+  "version": "0.1.0-alpha.0",
   "description": "視聴不可能な動画だけ表示して一括削除とかできるやつ",
   "main": "dist/main.js",
   "scripts": {

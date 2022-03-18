@@ -1,6 +1,6 @@
 {
   "name": "@nico-zenza/game-pad",
-  "version": "1.5.3",
+  "version": "2.0.0-alpha.0",
   "description": "ZenzaWatchをゲームパッドで操作",
   "main": "dist/main.js",
   "scripts": {

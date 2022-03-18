@@ -1,6 +1,6 @@
 {
   "name": "@nico-zenza/hls-support",
-  "version": "0.0.20",
+  "version": "0.1.0-alpha.0",
   "description": "ZenzaWatchをHLSに対応させる",
   "main": "dist/main.js",
   "scripts": {

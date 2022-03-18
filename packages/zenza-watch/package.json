@@ -1,6 +1,6 @@
 {
   "name": "@nico-zenza/zenza-watch",
-  "version": "2.6.2",
+  "version": "3.0.0-alpha.0",
   "description": "ニコニコ動画の速くて軽い動画プレイヤー",
   "main": "dist/main.js",
   "scripts": {
