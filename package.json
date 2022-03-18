@@ -54,6 +54,7 @@
     "packages/heat-sync",
     "packages/cap-tube",
     "packages/masked-watch",
-    "packages/game-pad"
+    "packages/game-pad",
+    "packages/uquery"
   ]
 }

@@ -9,6 +9,7 @@
     {"path": "packages/heat-sync"},
     {"path": "packages/cap-tube"},
     {"path": "packages/masked-watch"},
-    {"path": "packages/game-pad"}
+    {"path": "packages/game-pad"},
+    {"path": "packages/uquery"}
   ]
 }
