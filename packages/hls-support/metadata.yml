@@ -1,0 +1,26 @@
+name: ZenzaWatch HLS Support
+namespace: https://kpherox.dev/
+match:
+  - '*://*.nicovideo.jp/*' # instead
+  # - '*://www.nicovideo.jp/*'
+  # - '*://blog.nicovideo.jp/*'
+  # - '*://ch.nicovideo.jp/*'
+  # - '*://com.nicovideo.jp/*'
+  # - '*://commons.nicovideo.jp/*'
+  # - '*://dic.nicovideo.jp/*'
+  # - '*://ex.nicovideo.jp/*'
+  # - '*://info.nicovideo.jp/*'
+  # - '*://uad.nicovideo.jp/*'
+  # - '*://api.search.nicovideo.jp/*'
+  # - '*://*.nicovideo.jp/smile*'
+  # - '*://site.nicovideo.jp/*'
+  # - '*://anime.nicovideo.jp/*'
+exclude:
+  - '*://ads.nicovideo.jp/*'
+  - '*://www.upload.nicovideo.jp/*'
+  - '*://www.nicovideo.jp/watch/*?edit=*'
+  - '*://ch.nicovideo.jp/tool/*'
+  - '*://flapi.nicovideo.jp/*'
+  - '*://dic.nicovideo.jp/p/*'
+run-at: document-start
+noframes: true

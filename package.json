@@ -48,6 +48,7 @@
   "workspaces": [
     "packages/zenza-watch",
     "packages/mylist-pocket",
-    "packages/advanced-settings"
+    "packages/advanced-settings",
+    "packages/hls-support"
   ]
 }

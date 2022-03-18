@@ -3,6 +3,7 @@
   "references": [
     {"path": "packages/zenza-watch"},
     {"path": "packages/mylist-pocket"},
-    {"path": "packages/advanced-settings"}
+    {"path": "packages/advanced-settings"},
+    {"path": "packages/hls-support"}
   ]
 }
