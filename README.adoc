@@ -1,6 +1,6 @@
 = ZenzaWatch
 
-<https://github.com/segabito/ZenzaWatch> を TypeScript + WebPack で書き直すやつ
+<https://github.com/segabito/ZenzaWatch> を TypeScript で書き直すやつ
 
 == Installation
 将来的に greasyfork.org にアップロードするかも
