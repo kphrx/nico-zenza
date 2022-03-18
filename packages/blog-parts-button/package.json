@@ -1,0 +1,23 @@
+{
+  "name": "@nico-zenza/blog-parts-button",
+  "version": "0.0.3",
+  "description": "ニコニコ動画のブログパーツにZenzaWatch起動用ボタンを追加",
+  "main": "dist/main.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "rollup --config"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kphrx/ZenzaWatch.git"
+  },
+  "author": "kphrx",
+  "contributors": [
+    "segabito macmoto"
+  ],
+  "license": "WTFPL",
+  "bugs": {
+    "url": "https://github.com/kphrx/ZenzaWatch/issues"
+  },
+  "homepage": "https://github.com/kphrx/ZenzaWatch/tree/rewrite/master/packages/blog-parts-button#readme"
+}

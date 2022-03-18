@@ -49,6 +49,7 @@
     "packages/zenza-watch",
     "packages/mylist-pocket",
     "packages/advanced-settings",
-    "packages/hls-support"
+    "packages/hls-support",
+    "packages/blog-parts-button"
   ]
 }
