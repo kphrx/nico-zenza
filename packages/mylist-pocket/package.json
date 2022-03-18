@@ -1,7 +1,7 @@
 {
-  "name": "@nico-zenza/zenza-watch",
-  "version": "2.6.2",
-  "description": "ニコニコ動画の速くて軽い動画プレイヤー",
+  "name": "@nico-zenza/mylist-pocket",
+  "version": "0.5.14",
+  "description": "動画をあとで見る ＋ 簡易NG機能。 ZenzaWatchとの連携も可能。",
   "main": "dist/main.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
@@ -13,11 +13,11 @@
   },
   "author": "kphrx",
   "contributors": [
-    "segabito"
+    "segabito macmoto"
   ],
   "license": "WTFPL",
   "bugs": {
     "url": "https://github.com/kphrx/ZenzaWatch/issues"
   },
-  "homepage": "https://github.com/kPherox/ZenzaWatch/tree/rewrite/master/packages/zenza-watch#readme"
+  "homepage": "https://github.com/kphrx/ZenzaWatch/tree/rewrite/master/packages/mylist-pocket#readme"
 }

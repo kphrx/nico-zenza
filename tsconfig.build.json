@@ -1,6 +1,7 @@
 {
   "files": [],
   "references": [
-    {"path": "packages/zenza-watch"}
+    {"path": "packages/zenza-watch"},
+    {"path": "packages/mylist-pocket"}
   ]
 }
