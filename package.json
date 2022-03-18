@@ -8,8 +8,8 @@
     "compile": "tsc -b tsconfig.build.json",
     "lint": "eslint --ext .ts,.js .",
     "lint:fix": "eslint --fix --ext .ts,.js .",
-    "build:dev": "NODE_OPTIONS=\"--loader ts-node/esm --experimental-specifier-resolution=node\" webpack --env development",
-    "build:prod": "NODE_OPTIONS=\"--loader ts-node/esm --experimental-specifier-resolution=node\" webpack --env production",
+    "build:dev": "NODE_ENV=development npm run build --workspaces --if-present --",
+    "build:prod": "NODE_ENV=production npm run build --workspaces --if-present --",
     "test": "NODE_ENV=test mocha test/**/*.ts",
     "test:watch": "NODE_ENV=test mocha --watch test/**/*.ts",
     "postinstall": "husky install"
