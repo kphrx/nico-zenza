@@ -1,5 +1,5 @@
 {
-  "ts-node": { "files": true },
+  "ts-node": {"files": true},
   "compilerOptions": {
     "target": "es5",
     "module": "esnext",

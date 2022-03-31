@@ -1,12 +1,12 @@
 name: Masked Watch
 namespace: https://kpherox.dev/
 match:
-  - '*://www.nicovideo.jp/*'
-  - '*://live.nicovideo.jp/*'
-  - '*://anime.nicovideo.jp/*'
-  - '*://embed.nicovideo.jp/watch/*'
-  - '*://sp.nicovideo.jp/watch/*'
+  - "*://www.nicovideo.jp/*"
+  - "*://live.nicovideo.jp/*"
+  - "*://anime.nicovideo.jp/*"
+  - "*://embed.nicovideo.jp/watch/*"
+  - "*://sp.nicovideo.jp/watch/*"
 exclude:
-  - '*://ads*.nicovideo.jp/*'
-  - '*://www.nicovideo.jp/favicon.ico*'
-  - '*://www.nicovideo.jp/robots.txt*'
+  - "*://ads*.nicovideo.jp/*"
+  - "*://www.nicovideo.jp/favicon.ico*"
+  - "*://www.nicovideo.jp/robots.txt*"

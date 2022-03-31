@@ -1,7 +1,7 @@
 name: MylistPocket
 namespace: https://kpherox.dev/
 match:
-  - '*://*.nicovideo.jp/*' # instead
+  - "*://*.nicovideo.jp/*" # instead
   # - '*://www.nicovideo.jp/*'
   # - '*://ext.nicovideo.jp/'
   # - '*://ext.nicovideo.jp/#*'
@@ -19,11 +19,11 @@ match:
   - https://www.google.co.jp/search?*
   - https://*.bing.com/*
 exclude:
-  - '*://ads*.nicovideo.jp/*'
-  - '*://www.upload.nicovideo.jp/*'
-  - '*://www.nicovideo.jp/watch/*?edit=*'
-  - '*://ch.nicovideo.jp/tool/*'
-  - '*://flapi.nicovideo.jp/*'
-  - '*://dic.nicovideo.jp/p/*'
-  - '*://ext.nicovideo.jp/thumb/*'
-  - '*://ext.nicovideo.jp/thumb_channel/*'
+  - "*://ads*.nicovideo.jp/*"
+  - "*://www.upload.nicovideo.jp/*"
+  - "*://www.nicovideo.jp/watch/*?edit=*"
+  - "*://ch.nicovideo.jp/tool/*"
+  - "*://flapi.nicovideo.jp/*"
+  - "*://dic.nicovideo.jp/p/*"
+  - "*://ext.nicovideo.jp/thumb/*"
+  - "*://ext.nicovideo.jp/thumb_channel/*"
