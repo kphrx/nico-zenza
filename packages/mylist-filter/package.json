@@ -1,0 +1,23 @@
+{
+  "name": "@nico-zenza/mylist-filter",
+  "version": "0.1.0-alpha.0",
+  "description": "視聴不可能な動画だけ表示して一括削除とかできるやつ",
+  "main": "dist/main.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "rollup --config"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kphrx/ZenzaWatch.git"
+  },
+  "author": "kphrx",
+  "contributors": [
+    "名無しさん@匿名希望"
+  ],
+  "license": "WTFPL",
+  "bugs": {
+    "url": "https://github.com/kphrx/ZenzaWatch/issues"
+  },
+  "homepage": "https://github.com/kphrx/ZenzaWatch/tree/rewrite/master/packages/mylist-filter#readme"
+}

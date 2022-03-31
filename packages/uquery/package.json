@@ -1,0 +1,23 @@
+{
+  "name": "@nico-zenza/uquery",
+  "version": "0.1.0-alpha.0",
+  "description": "コンソールのデバッグ補助ツール(開発者用)",
+  "main": "dist/main.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "rollup --config"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kphrx/ZenzaWatch.git"
+  },
+  "author": "kphrx",
+  "contributors": [
+    "guest"
+  ],
+  "license": "WTFPL",
+  "bugs": {
+    "url": "https://github.com/kphrx/ZenzaWatch/issues"
+  },
+  "homepage": "https://github.com/kphrx/ZenzaWatch/tree/rewrite/master/packages/uquery#readme"
+}

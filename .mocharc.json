@@ -1,5 +1,5 @@
 {
-  "loader": "./config/ts-node-loader.js",
+  "loader": "ts-node/esm",
   "experimental-specifier-resolution": "node",
   "watch-files": "**/*.ts",
   "watch-ignore": "config"

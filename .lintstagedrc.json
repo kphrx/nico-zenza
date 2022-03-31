@@ -1,4 +1,4 @@
 {
   "*.{ts,js}": "eslint --fix",
-  "*.ts": "sh -c 'npm run check-type'"
+  "*.ts": "sh -c 'npm run compile && npm run compile -- --clean'"
 }

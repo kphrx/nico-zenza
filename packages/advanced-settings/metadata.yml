@@ -1,0 +1,4 @@
+name: ZenzaWatch 上級者用設定
+namespace: https://kpherox.dev/
+include: '*//www.nicovideo.jp/my*'
+noframes: true

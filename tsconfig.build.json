@@ -1,0 +1,16 @@
+{
+  "files": [],
+  "references": [
+    {"path": "packages/zenza-watch"},
+    {"path": "packages/mylist-pocket"},
+    {"path": "packages/advanced-settings"},
+    {"path": "packages/hls-support"},
+    {"path": "packages/blog-parts-button"},
+    {"path": "packages/heat-sync"},
+    {"path": "packages/cap-tube"},
+    {"path": "packages/masked-watch"},
+    {"path": "packages/game-pad"},
+    {"path": "packages/uquery"},
+    {"path": "packages/mylist-filter"}
+  ]
+}

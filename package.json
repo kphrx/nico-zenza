@@ -1,15 +1,15 @@
 {
-  "name": "zenzawatch",
+  "name": "nico-zenza",
   "version": "0.0.0",
   "description": "niconico HTML5 Player",
   "main": "",
   "type": "module",
   "scripts": {
-    "check-type": "tsc --noEmit -p .",
+    "compile": "tsc -b tsconfig.build.json",
     "lint": "eslint --ext .ts,.js .",
     "lint:fix": "eslint --fix --ext .ts,.js .",
-    "build:dev": "NODE_OPTIONS=\"--loader ts-node/esm --experimental-specifier-resolution=node\" webpack --env development",
-    "build:prod": "NODE_OPTIONS=\"--loader ts-node/esm --experimental-specifier-resolution=node\" webpack --env production",
+    "build:dev": "NODE_ENV=development npm run build --workspaces --if-present --",
+    "build:prod": "NODE_ENV=production npm run build --workspaces --if-present --",
     "test": "NODE_ENV=test mocha test/**/*.ts",
     "test:watch": "NODE_ENV=test mocha --watch test/**/*.ts",
     "postinstall": "husky install"
@@ -25,6 +25,7 @@
   },
   "homepage": "https://github.com/kPherox/ZenzaWatch#readme",
   "devDependencies": {
+    "@rollup/plugin-typescript": "^8.3.1",
     "@types/mocha": "^9.0.0",
     "@typescript-eslint/eslint-plugin": "^5.8.1",
     "@typescript-eslint/parser": "^5.8.1",
@@ -33,13 +34,22 @@
     "husky": "^7.0.4",
     "lint-staged": "^12.1.4",
     "mocha": "^9.1.3",
-    "ts-loader": "^9.1.1",
+    "rollup": "^2.70.1",
+    "rollup-plugin-userscript-metablock": "^0.3.1",
     "ts-node": "^10.4.0",
-    "tsconfig-paths": "^3.9.0",
-    "tsconfig-paths-webpack-plugin": "^3.5.1",
-    "typescript": "^4.2.4",
-    "webpack": "^5.36.2",
-    "webpack-cli": "^4.6.0",
-    "webpack-merge": "^5.7.3"
-  }
+    "typescript": "^4.2.4"
+  },
+  "workspaces": [
+    "packages/zenza-watch",
+    "packages/mylist-pocket",
+    "packages/advanced-settings",
+    "packages/hls-support",
+    "packages/blog-parts-button",
+    "packages/heat-sync",
+    "packages/cap-tube",
+    "packages/masked-watch",
+    "packages/game-pad",
+    "packages/uquery",
+    "packages/mylist-filter"
+  ]
 }

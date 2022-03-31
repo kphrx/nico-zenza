@@ -1,6 +1,6 @@
 = ZenzaWatch
 
-<https://github.com/segabito/ZenzaWatch> を TypeScript + WebPack で書き直すやつ
+<https://github.com/segabito/ZenzaWatch> を TypeScript で書き直すやつ
 
 == Installation
 将来的に greasyfork.org にアップロードするかも
@@ -22,7 +22,7 @@ npm test
 npm run test:watch
 
 # TypeScript の型チェック
-npm run check-type
+npm run compile && npm run compile -- --clean
 
 # コードフォーマットチェック
 npm run lint
