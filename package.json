@@ -41,6 +41,7 @@
     "typescript": "^4.2.4"
   },
   "workspaces": [
+    "packages/api-wrapper",
     "packages/zenza-watch",
     "packages/mylist-pocket",
     "packages/advanced-settings",
