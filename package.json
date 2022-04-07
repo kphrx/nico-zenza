@@ -6,8 +6,8 @@
   "type": "module",
   "scripts": {
     "compile": "tsc -b tsconfig.build.json",
-    "lint": "eslint --ext .ts,.js . && prettier -cu .",
-    "lint:fix": "eslint --fix --ext .ts,.js . && prettier -wu .",
+    "lint": "eslint --ignore-path .gitignore --ext .ts,.js . && prettier --ignore-path .gitignore -cu .",
+    "lint:fix": "eslint --ignore-path .gitignore --fix --ext .ts,.js . && prettier --ignore-path .gitignore -wu .",
     "build:dev": "NODE_ENV=development npm run build --workspaces --if-present --",
     "build:prod": "NODE_ENV=production npm run build --workspaces --if-present --",
     "test": "NODE_ENV=test mocha test/**/*.ts",
