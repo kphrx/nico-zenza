@@ -16,14 +16,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/kPherox/ZenzaWatch.git"
+    "url": "git+https://github.com/kphrx/nico-zenza.git"
   },
   "author": "kphrx",
   "license": "WTFPL",
   "bugs": {
-    "url": "https://github.com/kPherox/ZenzaWatch/issues"
+    "url": "https://github.com/kphrx/nico-zenza/issues"
   },
-  "homepage": "https://github.com/kPherox/ZenzaWatch#readme",
+  "homepage": "https://github.com/kphrx/nico-zenza#readme",
   "devDependencies": {
     "@rollup/plugin-typescript": "^8.3.1",
     "@types/mocha": "^9.0.0",
