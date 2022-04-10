@@ -9,7 +9,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/kphrx/ZenzaWatch.git"
+    "url": "git+https://github.com/kphrx/nico-zenza.git"
   },
   "author": "kphrx",
   "contributors": [
@@ -17,7 +17,7 @@
   ],
   "license": "WTFPL",
   "bugs": {
-    "url": "https://github.com/kphrx/ZenzaWatch/issues"
+    "url": "https://github.com/kphrx/nico-zenza/issues"
   },
-  "homepage": "https://github.com/kphrx/ZenzaWatch/tree/rewrite/master/packages/masked-watch#readme"
+  "homepage": "https://github.com/kphrx/nico-zenza/tree/master/packages/masked-watch#readme"
 }

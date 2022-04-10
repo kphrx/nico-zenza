@@ -9,12 +9,12 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/kphrx/ZenzaWatch.git"
+    "url": "git+https://github.com/kphrx/nico-zenza.git"
   },
   "author": "kphrx",
   "license": "WTFPL",
   "bugs": {
-    "url": "https://github.com/kphrx/ZenzaWatch/issues"
+    "url": "https://github.com/kphrx/nico-zenza/issues"
   },
-  "homepage": "https://github.com/kphrx/ZenzaWatch/tree/rewrite/master/packages/cap-tube#readme"
+  "homepage": "https://github.com/kphrx/nico-zenza/tree/master/packages/cap-tube#readme"
 }
