@@ -4,7 +4,7 @@
   "description": "nicovideo.jp の API ラッパー",
   "main": "dist/index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "NODE_ENV=test node --import tsx/esm --test src/**/*.spec.ts"
   },
   "repository": {
     "type": "git",
