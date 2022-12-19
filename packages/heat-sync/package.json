@@ -4,7 +4,6 @@
   "description": "コメントの少ないところだけ自動で早送りする、忙しい人のためのZenzaWatch拡張",
   "main": "dist/main.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
     "build": "rollup --config"
   },
   "repository": {
