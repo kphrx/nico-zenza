@@ -4,7 +4,6 @@
   "description": "動画上のテキストや顔を検出してコメントを透過する",
   "main": "dist/main.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
     "build": "rollup --config"
   },
   "repository": {

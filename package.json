@@ -10,8 +10,7 @@
     "lint:fix": "eslint --ignore-path .gitignore --fix --ext .ts,.js . && prettier --ignore-path .gitignore -wu .",
     "build:dev": "NODE_ENV=development npm run build --workspaces --if-present --",
     "build:prod": "NODE_ENV=production npm run build --workspaces --if-present --",
-    "test": "NODE_ENV=test mocha test/**/*.ts",
-    "test:watch": "NODE_ENV=test mocha --watch test/**/*.ts",
+    "test": "NODE_ENV=test npm run test --workspaces --if-present --",
     "postinstall": "husky install"
   },
   "repository": {
