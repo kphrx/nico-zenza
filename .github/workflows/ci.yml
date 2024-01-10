@@ -61,10 +61,14 @@ jobs:
           cache: npm
       - run: npm ci
       - run: npm run build:dev
+      - name: Copy UserSripts
+        run: |
+          mkdir ./dist
+          mv ./packages/*/dist/*.user.js ./dist
       - uses: actions/upload-artifact@v2
         with:
           name: scripts
-          path: packages/*/dist/*.user.js
+          path: dist/*.user.js
 
   pages:
     needs: pack
