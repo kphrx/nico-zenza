@@ -22,14 +22,7 @@ jobs:
           node-version: lts/*
           cache: npm
       - run: npm ci
-      - run: |
-          npm run compile
-          npm run compile -- --clean
-      - run: npm run build:dev
-      - uses: actions/upload-artifact@v2
-        with:
-          name: dist
-          path: packages/*/dist/*.user.js
+      - run: npm run compile
 
   lint:
     needs: build
@@ -57,21 +50,57 @@ jobs:
       - run: npm ci
       - run: npm test
 
-  # deploy:
-  #   if: ${{  }}
-  #   needs: build
+  pack:
+    runs-on: ubuntu-latest
 
-  #   runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v2
+        with:
+          node-version: lts/*
+          cache: npm
+      - run: npm ci
+      - run: npm run build:dev
+      - uses: actions/upload-artifact@v2
+        with:
+          name: scripts
+          path: packages/*/dist/*.user.js
 
-  #   steps:
-  #   - uses: actions/checkout@v2
-  #   - uses: actions/setup-node@v2
-  #     with:
-  #       node-version: lts/*
-  #       cache: npm
-  #   - run: npm ci
-  #   - run: npm run build:prod
-  #   - uses: actions/upload-artifact@v2
-  #     with:
-  #       name: scripts
-  #       path: dist/
+  pages:
+    needs: pack
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/download-artifact@v2
+        with:
+          name: scripts
+          path: ${{ runner.temp }}/scripts/
+      - working-directory: ${{ runner.temp }}
+        run: |
+          mkdir ./dist
+          mv ./scripts/ ./dist
+          chmod -c -R +rX ./dist/ | while read -r line; do
+              echo "::warning title=Invalid file permissions automatically fixed::$line"
+          done
+      - uses: actions/upload-pages-artifact@v2
+        with:
+          path: ${{ runner.temp }}/dist/
+
+  deploy:
+    needs: pages
+    runs-on: ubuntu-latest
+    if: github.event_name != 'pull_request'
+    concurrency:
+      group: pages
+      cancel-in-progress: true
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+
+    steps:
+      - uses: actions/deploy-pages@v3
+        id: deployment
