@@ -18,5 +18,6 @@
   "bugs": {
     "url": "https://github.com/kphrx/nico-zenza/issues"
   },
-  "homepage": "https://github.com/kphrx/nico-zenza/tree/master/packages/hls-support#readme"
+  "homepage": "https://github.com/kphrx/nico-zenza/tree/master/packages/hls-support#readme",
+  "type": "module"
 }

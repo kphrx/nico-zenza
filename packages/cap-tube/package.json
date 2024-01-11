@@ -15,5 +15,6 @@
   "bugs": {
     "url": "https://github.com/kphrx/nico-zenza/issues"
   },
-  "homepage": "https://github.com/kphrx/nico-zenza/tree/master/packages/cap-tube#readme"
+  "homepage": "https://github.com/kphrx/nico-zenza/tree/master/packages/cap-tube#readme",
+  "type": "module"
 }
