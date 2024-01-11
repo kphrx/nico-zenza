@@ -6,18 +6,14 @@ on:
       - ".github/dependabot.yml"
       - ".github/workflows/dependabot-validate.yml"
 
+permissions:
+  pull-requests: write
+
 jobs:
   validate:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Generate token
-        id: generate_token
-        uses: actions/create-github-app-token@v1
-        with:
-          app-id: ${{ secrets.ACTION_AUTOMATION_APP_ID }}
-          private-key: ${{ secrets.ACTION_AUTOMATION_PRIVATE_KEY }}
-
       - uses: actions/checkout@v3
       - uses: marocchino/validate-dependabot@v2
         id: validate
@@ -27,4 +23,3 @@ jobs:
         with:
           header: validate-dependabot
           message: ${{ steps.validate.outputs.markdown }}
-          GITHUB_TOKEN: ${{ steps.generate_token.outputs.token }}
