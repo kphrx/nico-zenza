@@ -52,6 +52,8 @@ jobs:
 
   pack:
     runs-on: ubuntu-latest
+    outputs:
+      artifacts: ${{ steps.build.outputs.artifacts }}
 
     steps:
       - uses: actions/checkout@v2
@@ -60,15 +62,30 @@ jobs:
           node-version: lts/*
           cache: npm
       - run: npm ci
-      - run: npm run build:dev
-      - name: Copy UserSripts
+      - name: Build
+        id: build
         run: |
-          mkdir ./dist
-          mv ./packages/*/dist/*.user.js ./dist
+          {
+            echo 'artifacts<<EOF'
+            npm --silent run build:dev
+            echo EOF
+          } >> "$GITHUB_OUTPUT"
+      - name: Copy UserSripts
+        uses: actions/github-script@v7
+        env:
+          ARTIFACTS: ${{ steps.build.outputs.artifacts }}
+        with:
+          script: |
+            const {cp, mkdir} = require("node:fs/promises");
+            const artifacts = JSON.parse(process.env.ARTIFACTS);
+            mkdir("dist");
+            for (const artifact of artifacts) {
+              cp(artifact.path, `dist/${artifact.filename}`);
+            }
       - uses: actions/upload-artifact@v2
         with:
           name: scripts
-          path: dist/*.user.js
+          path: dist/
 
   pages:
     needs: pack
@@ -79,7 +96,8 @@ jobs:
         with:
           name: scripts
           path: ${{ runner.temp }}/scripts/
-      - working-directory: ${{ runner.temp }}
+      - name: Move scripts directory
+        working-directory: ${{ runner.temp }}
         run: |
           mkdir ./dist
           mv ./scripts/ ./dist
