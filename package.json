@@ -25,7 +25,7 @@
   "devDependencies": {
     "@babel/eslint-parser": "^7.23.3",
     "@babel/plugin-syntax-import-assertions": "^7.23.3",
-    "@rollup/plugin-typescript": "^11.1.6",
+    "@gera2ld/plaid-rollup": "^2.7.0",
     "@types/mocha": "^10.0.6",
     "@typescript-eslint/eslint-plugin": "^6.18.1",
     "@typescript-eslint/parser": "^6.18.1",
@@ -36,7 +36,7 @@
     "mocha": "^10.2.0",
     "prettier": "^3.1.1",
     "rollup": "^4.9.4",
-    "rollup-plugin-userscript-metablock": "^0.3.3",
+    "rollup-plugin-userscript": "^0.3.0",
     "ts-node": "^10.9.2",
     "typescript": "^5.3.3"
   },
