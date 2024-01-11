@@ -1,6 +1,7 @@
 {
   "env": {
-    "browser": true
+    "browser": true,
+    "es6": true
   },
   "extends": ["eslint:recommended", "prettier"],
   "parserOptions": {
@@ -8,6 +9,13 @@
     "sourceType": "module"
   },
   "overrides": [
+    {
+      "files": ["build.js"],
+      "env": {
+        "browser": false,
+        "node": true
+      }
+    },
     {
       "files": ["**/*.js", "**/*.jsx"],
       "parser": "@babel/eslint-parser",
