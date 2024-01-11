@@ -10,13 +10,6 @@
   },
   "overrides": [
     {
-      "files": ["build.js"],
-      "env": {
-        "browser": false,
-        "node": true
-      }
-    },
-    {
       "files": ["**/*.js", "**/*.jsx"],
       "parser": "@babel/eslint-parser",
       "parserOptions": {

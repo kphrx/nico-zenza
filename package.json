@@ -2,7 +2,6 @@
   "name": "nico-zenza",
   "version": "0.0.0",
   "description": "niconico HTML5 Player",
-  "main": "",
   "type": "module",
   "scripts": {
     "compile": "tsc -b tsconfig.build.json",
@@ -52,6 +51,7 @@
     "packages/masked-watch",
     "packages/game-pad",
     "packages/uquery",
-    "packages/mylist-filter"
+    "packages/mylist-filter",
+    "packages/build-util"
   ]
 }
