@@ -3,9 +3,7 @@
   "version": "0.1.0",
   "description": "build utilities",
   "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
+  "scripts": {},
   "author": "kPherox <kphrx@kpherox.dev>",
   "license": "WTFPL",
   "type": "module"
