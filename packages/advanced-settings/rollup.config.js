@@ -1,7 +1,7 @@
 /* eslint-env node */
 import typescript from "@rollup/plugin-typescript";
 import metablock from "rollup-plugin-userscript-metablock";
-import pkg from "./package.json";
+import pkg from "./package.json" with {type: "json"};
 
 const production = process.env.NODE_ENV === "production";
 
