@@ -1,7 +1,8 @@
 /* eslint-env node */
 import {execFile, spawn} from "node:child_process";
 import {promisify} from "node:util";
-import {readdir} from "node:fs/promises";
+import {join} from "node:path";
+import {readdir, rename, rm, mkdir, writeFile} from "node:fs/promises";
 import {createInterface} from "node:readline/promises";
 
 const userScriptReg =
@@ -44,15 +45,33 @@ const builds = pkgs.map(async (pkg) => {
     };
   }
 
-  for (const filename of await readdir(`${pkg.location}/dist`)) {
+  const dest = join(import.meta.dirname, pkg.location, "dist");
+  for (const filename of await readdir(dest)) {
     if (userScriptReg.test(filename)) {
       return {
         ...result,
         filename,
-        path: `${pkg.location}/dist/${filename}`,
+        path: join(dest, filename),
       };
     }
   }
 });
 
-console.log(JSON.stringify(await Promise.all(builds)));
+const dest = join(import.meta.dirname, "dist");
+await rm(dest, {recursive: true}).catch(() => {});
+await mkdir(dest);
+
+const scripts = await Promise.all(
+  builds.map(async (build) => {
+    const {path, filename, ...result} = await build;
+
+    await rename(path, join(dest, filename));
+
+    return {
+      ...result,
+      filename,
+    };
+  }),
+);
+
+writeFile(join(dest, "scripts.json"), JSON.stringify(scripts, null, "\t"));

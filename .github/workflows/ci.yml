@@ -20,6 +20,7 @@ jobs:
       - uses: actions/setup-node@v2
         with:
           node-version: lts/*
+          check-latest: true
           cache: npm
       - run: npm ci
       - run: npm run compile
@@ -33,6 +34,7 @@ jobs:
       - uses: actions/setup-node@v2
         with:
           node-version: lts/*
+          check-latest: true
           cache: npm
       - run: npm ci
       - run: npm run lint
@@ -46,42 +48,24 @@ jobs:
       - uses: actions/setup-node@v2
         with:
           node-version: lts/*
+          check-latest: true
           cache: npm
       - run: npm ci
       - run: npm test
 
   pack:
     runs-on: ubuntu-latest
-    outputs:
-      artifacts: ${{ steps.build.outputs.artifacts }}
 
     steps:
       - uses: actions/checkout@v2
       - uses: actions/setup-node@v2
         with:
-          node-version: lts/*
+          node-version: ">=20.11.0 <21.0.0"
+          check-latest: true
           cache: npm
       - run: npm ci
       - name: Build
-        id: build
-        run: |
-          {
-            echo 'artifacts<<EOF'
-            npm --silent run build:dev
-            echo EOF
-          } >> "$GITHUB_OUTPUT"
-      - name: Copy UserSripts
-        uses: actions/github-script@v7
-        env:
-          ARTIFACTS: ${{ steps.build.outputs.artifacts }}
-        with:
-          script: |
-            const {cp, mkdir} = require("node:fs/promises");
-            const artifacts = JSON.parse(process.env.ARTIFACTS);
-            mkdir("dist");
-            for (const artifact of artifacts) {
-              cp(artifact.path, `dist/${artifact.filename}`);
-            }
+        run: npm run build:dev
       - uses: actions/upload-artifact@v2
         with:
           name: scripts

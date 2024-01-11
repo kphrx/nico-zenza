@@ -2,13 +2,23 @@
 import typescript from "@rollup/plugin-typescript";
 import metablock from "rollup-plugin-userscript-metablock";
 
-function addSuffix(name, version) {
+function addSuffix(filename, version) {
   if (process.env.NODE_ENV !== "production") {
-    (name += "+dev"), (version += version.indexOf("-") !== -1 ? "." : "-");
-    version += `dev.${new Date().getTime()}`;
+    const now = new Date().getTime();
+
+    return {
+      name: `${filename}+dev`,
+      version:
+        version.indexOf("-") !== -1
+          ? `${version}.dev.${now}`
+          : `${version}-dev.${now}`,
+    };
   }
 
-  return {name, version};
+  return {
+    name: filename,
+    version,
+  };
 }
 
 export function rollupConfig(
