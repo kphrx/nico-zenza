@@ -27,7 +27,7 @@ export function rollupConfig({
   description,
   license,
   author,
-  source,
+  tracker,
   homepage,
 } = {}) {
   const {name, ver} = addSuffix(filename, version);
@@ -44,6 +44,18 @@ export function rollupConfig({
     },
     plugins: [
       ...definePlugins({
+        babelConfig: {
+          presets: [
+            [
+              "@babel/preset-env",
+              {
+                modules: false,
+                loose: true,
+              },
+            ],
+            "@babel/preset-typescript",
+          ],
+        },
         esm: true,
         aliases: false,
         extensions: [".ts", ".tsx", ".mjs", ".js", ".jsx"],
@@ -56,7 +68,7 @@ export function rollupConfig({
           .replace("{{description}}", description)
           .replace("{{license}}", license)
           .replace("{{author}}", author)
-          .replace("{{source}}", source)
+          .replace("{{tracker}}", tracker)
           .replace("{{homepage}}", homepage);
       }),
     ],

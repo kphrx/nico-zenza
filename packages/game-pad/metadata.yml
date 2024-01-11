@@ -1,4 +1,0 @@
-name: ZenzaGamePad
-namespace: https://kpherox.dev/
-include: "*://*.nicovideo.jp/*"
-noframes: true
