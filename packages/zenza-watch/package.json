@@ -1,5 +1,5 @@
 {
-  "name": "@nico-zenza/zenza-watch",
+  "name": "@nico-zenza-script/zenza-watch",
   "version": "3.0.0-alpha.0",
   "description": "ニコニコ動画の速くて軽い動画プレイヤー",
   "main": "dist/main.js",

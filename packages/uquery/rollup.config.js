@@ -1,37 +1,24 @@
 /* eslint-env node */
-import typescript from "@rollup/plugin-typescript";
-import metablock from "rollup-plugin-userscript-metablock";
+import {rollupConfig} from "build-util";
 import pkg from "./package.json" with {type: "json"};
 
-const production = process.env.NODE_ENV === "production";
+const {
+  description,
+  license,
+  author,
+  repository: {url: source},
+  homepage,
+} = pkg;
 
-let filename = process.env.npm_package_name.split("/").pop();
-let version = process.env.npm_package_version;
-
-if (!production) {
-  filename += "+dev";
-  version += `-dev.${new Date().getTime()}`;
-}
-
-export default {
-  input: "src/main.ts",
-  output: {
-    file: `dist/${filename}.user.js`,
-    format: "esm",
-    sourcemap: !production && "inline",
+export default rollupConfig(
+  {
+    filename: process.env.npm_package_name.split("/").pop(),
+    version: process.env.npm_package_version,
+    description,
+    license,
+    author,
+    source,
+    homepage,
   },
-  plugins: [
-    typescript(),
-    metablock({
-      file: "./metadata.yml",
-      override: {
-        version,
-        description: pkg.description,
-        license: pkg.license,
-        author: pkg.author,
-        source: pkg.repository.url,
-        homepage: pkg.homepage,
-      },
-    }),
-  ],
-};
+  "./metadata.yml",
+);

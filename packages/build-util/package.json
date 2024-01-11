@@ -1,0 +1,10 @@
+{
+  "name": "build-util",
+  "version": "0.1.0",
+  "description": "build utilities",
+  "main": "index.js",
+  "scripts": {},
+  "author": "kPherox <kphrx@kpherox.dev>",
+  "license": "WTFPL",
+  "type": "module"
+}
