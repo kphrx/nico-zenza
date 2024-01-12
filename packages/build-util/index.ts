@@ -77,6 +77,7 @@ export function rollupConfig({
             "@babel/plugin-transform-runtime",
             {useESModules: true, version: "^7.5.0"},
           ],
+          ["@babel/plugin-proposal-decorators", {version: "2023-05"}],
         ],
         exclude: "node_modules/**",
         extensions,
