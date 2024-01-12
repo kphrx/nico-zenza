@@ -1,6 +1,0 @@
-name: CapTube
-namespace: https://kpherox.dev/
-include:
-  - https://www.youtube.com/*
-  - https://www.youtube.com/embed/*
-  - https://youtube.com/*
