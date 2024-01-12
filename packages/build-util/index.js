@@ -1,5 +1,6 @@
 /* eslint-env node */
 import {definePlugins} from "@gera2ld/plaid-rollup";
+import {defineConfig} from "rollup";
 import userscript from "rollup-plugin-userscript";
 
 function addSuffix(filename, version) {
@@ -29,19 +30,23 @@ export function rollupConfig({
   author,
   tracker,
   homepage,
+  externals = {},
 } = {}) {
   const {name, ver} = addSuffix(filename, version);
+  const external = Object.keys(externals);
 
-  return {
-    input: "src/main.ts",
+  return defineConfig({
+    input: "src/index.ts",
     output: {
       file: `dist/${name}.user.js`,
-      format: "esm",
+      format: "iife",
       banner: `(async () => {`,
       footer: `})();`,
       indent: false,
       sourcemap: false,
+      globals: externals,
     },
+    external,
     plugins: [
       ...definePlugins({
         babelConfig: {
@@ -72,5 +77,5 @@ export function rollupConfig({
           .replace("{{homepage}}", homepage);
       }),
     ],
-  };
+  });
 }

@@ -3,9 +3,11 @@
   "compilerOptions": {
     "target": "es2017",
     "module": "esnext",
-    "lib": ["esnext"],
+    "lib": ["esnext", "dom"],
     "outDir": "./dist/",
     "composite": true,
+    "types": ["types"],
+    "typeRoots": ["./node_modules/@violentmonkey"],
     "downlevelIteration": true,
     "strict": true,
     "moduleResolution": "node",
