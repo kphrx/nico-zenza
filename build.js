@@ -4,7 +4,12 @@ import {promisify} from "node:util";
 import {join} from "node:path";
 import {readdir, rename, rm, mkdir, writeFile} from "node:fs/promises";
 import {createInterface} from "node:readline/promises";
+import {createColors} from "colorette";
 import {env, stdout, stderr} from "node:process";
+
+const {bold, dim} = createColors({
+  useColor: env.FORCE_COLOR !== "0" && !env.NO_COLOR,
+});
 
 const userScriptReg =
   env.NODE_ENV != "production"
@@ -18,6 +23,7 @@ const {stdout: queryStdout} = await promisify(execFile)("npm", [
   '.workspace[name^="@nico-zenza-script/"]',
 ]);
 const pkgs = JSON.parse(queryStdout);
+const padding = Math.max(...pkgs.map((x) => x.name.length));
 
 const builds = pkgs.map(async ({name, version, location}) => {
   const build = spawn("npm", ["run", "build", "-w", name]);
@@ -28,10 +34,13 @@ const builds = pkgs.map(async ({name, version, location}) => {
     build.on("close", () => resolve());
   });
 
+  const [scope, pkgName] = name.padEnd(padding).split("/");
+  const prefixName = dim(`${scope}/`) + pkgName;
+
   const readline = createInterface({input: build.stderr});
   for await (const line of readline) {
-    stderr.write(name);
-    stderr.write(`: ${line}\n`);
+    stderr.write(bold(prefixName));
+    stderr.write(`\t${line}\n`);
   }
 
   await wait;
