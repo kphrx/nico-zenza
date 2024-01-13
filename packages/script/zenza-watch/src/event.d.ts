@@ -8,4 +8,6 @@ interface GlobalEventHandlersEventMap {
   }>;
   "zenza:linkmouseout": CustomEvent;
   "zenza:linkmouseleave": CustomEvent<HTMLElement>;
+
+  "zenzawatch:playeropen": CustomEvent<{videoId: string}>;
 }

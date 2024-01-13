@@ -16,7 +16,9 @@ document.body
         return;
       }
 
-      alert(videoId);
+      dispatchEvent(
+        new CustomEvent("zenzawatch:playeropen", {detail: {videoId}}),
+      );
     }),
   )
   .setAttribute("slot", "menu");
