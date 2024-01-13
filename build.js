@@ -4,28 +4,25 @@ import {promisify} from "node:util";
 import {join} from "node:path";
 import {readdir, rename, rm, mkdir, writeFile} from "node:fs/promises";
 import {createInterface} from "node:readline/promises";
+import {env, stdout, stderr} from "node:process";
 
 const userScriptReg =
-  process.env.NODE_ENV != "production"
+  env.NODE_ENV != "production"
     ? /^.*\+dev\.user\.js$/
     : /^(?!.*\+dev\.user.js$).*\.user.js$/;
 
-const {stdout} = await promisify(execFile)("npm", [
+const {stdout: queryStdout} = await promisify(execFile)("npm", [
   "--loglevel",
-  process.env.npm_config_loglevel,
+  env.npm_config_loglevel,
   "query",
   '.workspace[name^="@nico-zenza-script/"]',
 ]);
-const pkgs = JSON.parse(stdout);
+const pkgs = JSON.parse(queryStdout);
 
-const builds = pkgs.map(async (pkg) => {
-  const build = spawn("npm", ["run", "build", "-w", pkg.name]);
-  const result = {
-    name: pkg.name,
-    version: pkg.version,
-  };
+const builds = pkgs.map(async ({name, version, location}) => {
+  const build = spawn("npm", ["run", "build", "-w", name]);
 
-  build.stdout.on("data", (x) => console.log(`${x.toString().trim()}\n`));
+  build.stdout.on("data", (x) => stdout.write(x.toString().trimStart()));
 
   const wait = new Promise((resolve) => {
     build.on("close", () => resolve());
@@ -33,23 +30,26 @@ const builds = pkgs.map(async (pkg) => {
 
   const readline = createInterface({input: build.stderr});
   for await (const line of readline) {
-    process.stderr.write(`${pkg.name}: ${line}\n`);
+    stderr.write(name);
+    stderr.write(`: ${line}\n`);
   }
 
   await wait;
 
   if (build.exitCode !== 0) {
     throw {
-      ...result,
+      name,
+      version,
       code: build.exitCode,
     };
   }
 
-  const dest = join(import.meta.dirname, pkg.location, "dist");
+  const dest = join(import.meta.dirname, location, "dist");
   for (const filename of await readdir(dest)) {
     if (userScriptReg.test(filename)) {
       return {
-        ...result,
+        name,
+        version,
         filename,
         path: join(dest, filename),
       };

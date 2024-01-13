@@ -1,10 +1,11 @@
 /* eslint-env node */
+import {env} from "node:process";
 import {definePlugins} from "@gera2ld/plaid-rollup";
 import {defineConfig} from "rollup";
 import userscript from "rollup-plugin-userscript";
 
 function addSuffix(filename, version) {
-  if (process.env.NODE_ENV !== "production") {
+  if (env.NODE_ENV !== "production") {
     const now = new Date().getTime();
 
     return {
@@ -55,7 +56,7 @@ export function rollupConfig({
               "@babel/preset-env",
               {
                 modules: false,
-                loose: true,
+                targets: "> 0.5%, Firefox ESR, not dead",
               },
             ],
             "@babel/preset-typescript",
