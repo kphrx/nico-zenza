@@ -1,7 +1,8 @@
 /* eslint-env node */
 import {env} from "node:process";
-import {definePlugins} from "@gera2ld/plaid-rollup";
 import {defineConfig} from "rollup";
+import babel from "@rollup/plugin-babel";
+import nodeResolve from "@rollup/plugin-node-resolve";
 import userscript from "rollup-plugin-userscript";
 
 function addSuffix(filename, version) {
@@ -35,6 +36,7 @@ export function rollupConfig({
 } = {}) {
   const {name, ver} = addSuffix(filename, version);
   const external = Object.keys(externals);
+  const extensions = [".ts", ".tsx", ".mjs", ".js", ".jsx"];
 
   return defineConfig({
     input: "src/index.ts",
@@ -49,25 +51,26 @@ export function rollupConfig({
     },
     external,
     plugins: [
-      ...definePlugins({
-        babelConfig: {
-          presets: [
-            [
-              "@babel/preset-env",
-              {
-                modules: false,
-                targets: "> 0.5%, Firefox ESR, not dead",
-              },
-            ],
-            "@babel/preset-typescript",
+      babel({
+        babelrc: false,
+        babelHelpers: "runtime",
+        presets: [
+          [
+            "@babel/preset-env",
+            {modules: false, targets: "> 0.5%, Firefox ESR, not dead"},
           ],
-        },
-        esm: true,
-        aliases: false,
-        extensions: [".ts", ".tsx", ".mjs", ".js", ".jsx"],
-        postcss: false,
-        minimize: false,
+          "@babel/preset-typescript",
+        ],
+        plugins: [
+          [
+            "@babel/plugin-transform-runtime",
+            {useESModules: true, version: "^7.5.0"},
+          ],
+        ],
+        exclude: "node_modules/**",
+        extensions,
       }),
+      nodeResolve({browser: false, extensions}),
       userscript((meta) => {
         return meta
           .replace("{{version}}", ver)
