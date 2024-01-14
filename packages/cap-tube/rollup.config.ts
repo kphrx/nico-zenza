@@ -3,6 +3,8 @@ import {rollupConfig} from "build-util";
 import pkg from "./package.json" with {type: "json"};
 
 const {
+  name,
+  version,
   description,
   license,
   author,
@@ -10,9 +12,11 @@ const {
   homepage,
 } = pkg;
 
+const filename = name.split("/")[1];
+
 export default rollupConfig({
-  filename: process.env.npm_package_name.split("/").pop(),
-  version: process.env.npm_package_version,
+  filename,
+  version,
   description,
   license,
   author,

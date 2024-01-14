@@ -1,11 +1,11 @@
 {
-  "ts-node": {"files": true},
   "compilerOptions": {
     "target": "es2017",
     "module": "esnext",
-    "lib": ["esnext"],
-    "outDir": "./dist/",
+    "lib": ["esnext", "dom"],
     "composite": true,
+    "types": ["node", "types"],
+    "typeRoots": ["./node_modules/@types", "./node_modules/@violentmonkey"],
     "downlevelIteration": true,
     "strict": true,
     "moduleResolution": "node",

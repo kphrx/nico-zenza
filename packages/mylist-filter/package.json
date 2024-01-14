@@ -4,7 +4,7 @@
   "description": "視聴不可能な動画だけ表示して一括削除とかできるやつ",
   "main": "dist/main.js",
   "scripts": {
-    "build": "rollup --config"
+    "build": "rollup --config rollup.config.ts --configPlugin typescript"
   },
   "repository": {
     "type": "git",

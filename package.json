@@ -7,10 +7,12 @@
     "compile": "tsc -b tsconfig.build.json",
     "lint": "eslint --ignore-path .gitignore --ext .ts,.js . && prettier --ignore-path .gitignore -cu .",
     "lint:fix": "eslint --ignore-path .gitignore --fix --ext .ts,.js . && prettier --ignore-path .gitignore -wu .",
-    "build:dev": "NODE_ENV=development node build.js",
-    "build:prod": "NODE_ENV=production node build.js",
+    "build:dev": "NODE_ENV=development npm run build",
+    "build:prod": "NODE_ENV=production npm run build",
     "test": "NODE_ENV=test npm run test --workspaces --if-present --",
-    "postinstall": "husky install"
+    "postinstall": "husky install",
+    "prebuild": "npm run compile",
+    "build": "node build.js"
   },
   "repository": {
     "type": "git",
@@ -25,10 +27,17 @@
   "devDependencies": {
     "@babel/eslint-parser": "^7.23.3",
     "@babel/plugin-syntax-import-assertions": "^7.23.3",
-    "@gera2ld/plaid-rollup": "^2.7.0",
+    "@babel/plugin-transform-runtime": "^7.23.7",
+    "@babel/preset-env": "^7.23.8",
+    "@babel/preset-typescript": "^7.23.3",
+    "@rollup/plugin-babel": "^6.0.4",
+    "@rollup/plugin-node-resolve": "^15.2.3",
+    "@rollup/plugin-typescript": "^11.1.6",
     "@types/mocha": "^10.0.6",
+    "@types/node": "^20.11.0",
     "@typescript-eslint/eslint-plugin": "^6.18.1",
     "@typescript-eslint/parser": "^6.18.1",
+    "@violentmonkey/types": "^0.1.7",
     "eslint": "^8.56.0",
     "eslint-config-prettier": "^9.1.0",
     "husky": "^8.0.3",
@@ -37,7 +46,7 @@
     "prettier": "^3.1.1",
     "rollup": "^4.9.4",
     "rollup-plugin-userscript": "^0.3.0",
-    "ts-node": "^10.9.2",
+    "tslib": "^2.6.2",
     "typescript": "^5.3.3"
   },
   "workspaces": [

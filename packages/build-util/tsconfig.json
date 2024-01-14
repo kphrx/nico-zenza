@@ -1,8 +1,7 @@
 {
   "extends": "../../tsconfig.json",
-  "files": ["package.json"],
+  "include": ["index.ts"],
   "compilerOptions": {
-    "noEmit": true,
     "outDir": "dist"
   }
 }

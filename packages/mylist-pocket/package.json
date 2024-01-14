@@ -4,7 +4,7 @@
   "description": "動画をあとで見る ＋ 簡易NG機能。 ZenzaWatchとの連携も可能。",
   "main": "dist/main.js",
   "scripts": {
-    "build": "rollup --config"
+    "build": "rollup --config rollup.config.ts --configPlugin typescript"
   },
   "repository": {
     "type": "git",

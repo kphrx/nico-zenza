@@ -4,7 +4,7 @@
   "description": "コメントの少ないところだけ自動で早送りする、忙しい人のためのZenzaWatch拡張",
   "main": "dist/main.js",
   "scripts": {
-    "build": "rollup --config"
+    "build": "rollup --config rollup.config.ts --configPlugin typescript"
   },
   "repository": {
     "type": "git",
