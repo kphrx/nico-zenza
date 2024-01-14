@@ -1,5 +1,4 @@
 {
-  "ts-node": {"files": true},
   "compilerOptions": {
     "target": "es2017",
     "module": "esnext",
