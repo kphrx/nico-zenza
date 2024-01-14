@@ -4,7 +4,7 @@
   "description": "ZenzaWatchをHLSに対応させる",
   "main": "dist/main.js",
   "scripts": {
-    "build": "rollup --config"
+    "build": "rollup --config rollup.config.ts --configPlugin typescript"
   },
   "repository": {
     "type": "git",

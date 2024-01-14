@@ -1,6 +1,7 @@
 {
   "files": [],
   "references": [
+    {"path": "packages/build-util"},
     {"path": "packages/zenza-watch"},
     {"path": "packages/mylist-pocket"},
     {"path": "packages/advanced-settings"},

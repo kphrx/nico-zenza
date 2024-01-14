@@ -1,5 +1,6 @@
 {
   "extends": "../../tsconfig.json",
+  "files": ["package.json"],
   "compilerOptions": {
     "noEmit": true,
     "outDir": "dist"

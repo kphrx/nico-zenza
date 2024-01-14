@@ -5,14 +5,14 @@ import babel from "@rollup/plugin-babel";
 import nodeResolve from "@rollup/plugin-node-resolve";
 import userscript from "rollup-plugin-userscript";
 
-function addSuffix(filename, version) {
+function addSuffix(filename?: string, version?: string) {
   if (env.NODE_ENV !== "production") {
     const now = new Date().getTime();
 
     return {
       name: `${filename}+dev`,
       ver:
-        version.indexOf("-") !== -1
+        version?.indexOf("-") !== -1
           ? `${version}.dev.${now}`
           : `${version}-dev.${now}`,
     };
@@ -24,6 +24,17 @@ function addSuffix(filename, version) {
   };
 }
 
+interface Options {
+  filename: string;
+  version: string;
+  description: string;
+  license: string;
+  author: string;
+  tracker: string;
+  homepage: string;
+  externals: {[key: string]: string};
+}
+
 export function rollupConfig({
   filename,
   version,
@@ -33,7 +44,7 @@ export function rollupConfig({
   tracker,
   homepage,
   externals = {},
-} = {}) {
+}: Partial<Options> = {}) {
   const {name, ver} = addSuffix(filename, version);
   const external = Object.keys(externals);
   const extensions = [".ts", ".tsx", ".mjs", ".js", ".jsx"];
@@ -73,12 +84,12 @@ export function rollupConfig({
       nodeResolve({browser: false, extensions}),
       userscript((meta) => {
         return meta
-          .replace("{{version}}", ver)
-          .replace("{{description}}", description)
-          .replace("{{license}}", license)
-          .replace("{{author}}", author)
-          .replace("{{tracker}}", tracker)
-          .replace("{{homepage}}", homepage);
+          .replace("{{version}}", ver ?? "-")
+          .replace("{{description}}", description ?? "-")
+          .replace("{{license}}", license ?? "-")
+          .replace("{{author}}", author ?? "-")
+          .replace("{{tracker}}", tracker ?? "-")
+          .replace("{{homepage}}", homepage ?? "-");
       }),
     ],
   });
