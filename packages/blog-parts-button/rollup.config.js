@@ -1,18 +1,18 @@
 /* eslint-env node */
-import {env} from "node:process";
 import {rollupConfig} from "build-util";
 import pkg from "./package.json" with {type: "json"};
 
-const filename = env.npm_package_name.split("/").pop();
-const version = env.npm_package_version;
-
 const {
+  name,
+  version,
   description,
   license,
   author,
   bugs: {url: tracker},
   homepage,
 } = pkg;
+
+const filename = name.split("/")[1];
 
 export default rollupConfig({
   filename,
