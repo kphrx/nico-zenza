@@ -1,17 +1,17 @@
 {
   "files": [],
   "references": [
-    {"path": "packages/build-util"},
-    {"path": "packages/zenza-watch"},
-    {"path": "packages/mylist-pocket"},
-    {"path": "packages/advanced-settings"},
-    {"path": "packages/hls-support"},
-    {"path": "packages/blog-parts-button"},
-    {"path": "packages/heat-sync"},
-    {"path": "packages/cap-tube"},
-    {"path": "packages/masked-watch"},
-    {"path": "packages/game-pad"},
-    {"path": "packages/uquery"},
-    {"path": "packages/mylist-filter"}
+    {"path": "packages/script/zenza-watch"},
+    {"path": "packages/script/mylist-pocket"},
+    {"path": "packages/script/advanced-settings"},
+    {"path": "packages/script/hls-support"},
+    {"path": "packages/script/blog-parts-button"},
+    {"path": "packages/script/heat-sync"},
+    {"path": "packages/script/cap-tube"},
+    {"path": "packages/script/masked-watch"},
+    {"path": "packages/script/game-pad"},
+    {"path": "packages/script/uquery"},
+    {"path": "packages/script/mylist-filter"},
+    {"path": "packages/build-util"}
   ]
 }

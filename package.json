@@ -50,17 +50,17 @@
     "typescript": "^5.3.3"
   },
   "workspaces": [
-    "packages/zenza-watch",
-    "packages/mylist-pocket",
-    "packages/advanced-settings",
-    "packages/hls-support",
-    "packages/blog-parts-button",
-    "packages/heat-sync",
-    "packages/cap-tube",
-    "packages/masked-watch",
-    "packages/game-pad",
-    "packages/uquery",
-    "packages/mylist-filter",
+    "packages/script/zenza-watch",
+    "packages/script/mylist-pocket",
+    "packages/script/advanced-settings",
+    "packages/script/hls-support",
+    "packages/script/blog-parts-button",
+    "packages/script/heat-sync",
+    "packages/script/cap-tube",
+    "packages/script/masked-watch",
+    "packages/script/game-pad",
+    "packages/script/uquery",
+    "packages/script/mylist-filter",
     "packages/build-util"
   ]
 }
