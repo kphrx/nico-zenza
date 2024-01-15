@@ -38,6 +38,7 @@
     "@typescript-eslint/eslint-plugin": "^6.18.1",
     "@typescript-eslint/parser": "^6.18.1",
     "@violentmonkey/types": "^0.1.7",
+    "colorette": "^2.0.20",
     "eslint": "^8.56.0",
     "eslint-config-prettier": "^9.1.0",
     "husky": "^8.0.3",
@@ -62,5 +63,8 @@
     "packages/script/uquery",
     "packages/script/mylist-filter",
     "packages/build-util"
-  ]
+  ],
+  "engines": {
+    "node": ">=20.11"
+  }
 }
