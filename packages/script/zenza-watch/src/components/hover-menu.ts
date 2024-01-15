@@ -1,7 +1,6 @@
 import {LitElement, html, css} from "lit";
 import {customElement, property} from "lit/decorators.js";
-
-import {computeBaseZIndex} from "../util";
+import sheet from "./hover-menu.css" with {type: "css"};
 
 const TAG_NAME = {
   left: "zenza-left-hover-menu",
@@ -10,23 +9,15 @@ const TAG_NAME = {
 
 @customElement(TAG_NAME.left)
 export class LeftHoverMenu extends LitElement {
-  static styles = css`
-    :host {
-      display: none;
-    }
-    :host(.show) {
-      display: flex;
-      position: absolute;
-      top: var(--zenza-left-hover-link-top, 0);
-      left: var(--zenza-left-hover-link-left, 0);
-      z-index: ${parseInt(computeBaseZIndex()) + 100000};
-
-      pointer-events: auto;
-      flex-direction: column;
-      translate: -16px -12px;
-      height: max-content;
-    }
-  `;
+  static styles = [
+    sheet,
+    css`
+      :host {
+        left: var(--zenza-left-hover-link-left, 0);
+        translate: -16px -12px;
+      }
+    `,
+  ];
 
   @property()
   accessor videoId: string = "";
@@ -93,23 +84,15 @@ export class LeftHoverMenu extends LitElement {
 
 @customElement(TAG_NAME.right)
 export class RightHoverMenu extends LitElement {
-  static styles = css`
-    :host {
-      display: none;
-    }
-    :host(.show) {
-      display: flex;
-      position: absolute;
-      top: var(--zenza-right-hover-link-top, 0);
-      right: var(--zenza-right-hover-link-right, 0);
-      z-index: ${parseInt(computeBaseZIndex()) + 100000};
-
-      pointer-events: auto;
-      flex-direction: column;
-      translate: 16px -12px;
-      height: max-content;
-    }
-  `;
+  static styles = [
+    sheet,
+    css`
+      :host {
+        right: var(--zenza-left-hover-link-right, 0);
+        translate: 16px -12px;
+      }
+    `,
+  ];
 
   @property()
   accessor videoId: string = "";

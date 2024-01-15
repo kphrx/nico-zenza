@@ -1,5 +1,6 @@
 import {LeftHoverMenu} from "./components/hover-menu";
 import {HoverMenuButton} from "./components/hover-menu-button";
+import {computeBaseZIndex} from "./util";
 import {startLinkHoverObserver} from "./event-observer";
 
 console.log(
@@ -7,6 +8,8 @@ console.log(
   `${GM_info.scriptHandler}@${GM_info.version}`,
 );
 console.log("script:", `${GM_info.script.name}@${GM_info.script.version}`);
+
+document.body.style.setProperty("--zenza-base-z-index", computeBaseZIndex());
 
 document.body
   .appendChild(new LeftHoverMenu())

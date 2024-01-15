@@ -22,6 +22,7 @@ export default rollupConfig({
   author,
   tracker,
   homepage,
+  useDecorator: true,
   externals: {
     lit: 'await import("https://esm.run/lit@^3.1.1")',
     "lit/decorators.js":
