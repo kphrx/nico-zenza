@@ -1,5 +1,6 @@
 import {LitElement, html, css} from "lit";
 import {customElement, property} from "lit/decorators.js";
+import type {HoverMenuButton} from "./hover-menu-button";
 import sheet from "./hover-menu.css" with {type: "css"};
 
 const TAG_NAME = {
@@ -19,7 +20,7 @@ export class LeftHoverMenu extends LitElement {
     `,
   ];
 
-  @property()
+  @property({attribute: "data-video-id", reflect: true})
   accessor videoId: string = "";
 
   constructor() {
@@ -33,15 +34,16 @@ export class LeftHoverMenu extends LitElement {
 
   connectedCallback() {
     super.connectedCallback();
+
     document.body.addEventListener("zenza:linkmouseenter", (ev) => {
       const {top, left, href} = ev.detail;
       this.style.setProperty("--zenza-left-hover-link-top", `${top}px`);
       this.style.setProperty("--zenza-left-hover-link-left", `${left}px`);
 
       this.videoId = href;
-      this.#updateMenu();
       this.classList.add("show");
     });
+
     document.body.addEventListener("zenza:linkmouseout", () => {
       this.videoId = "";
       this.classList.remove("show");
@@ -50,7 +52,7 @@ export class LeftHoverMenu extends LitElement {
       const target = ev.detail;
       if (
         target === this ||
-        this.#buttons.filter((el) => el === target).length > 0
+        this.buttons(this.#buttons).filter((el) => el === target).length > 0
       ) {
         ev.preventDefault();
         return;
@@ -58,27 +60,44 @@ export class LeftHoverMenu extends LitElement {
     });
   }
 
+  attributeChangedCallback(
+    name: string,
+    _old: string | null,
+    value: string | null,
+  ) {
+    super.attributeChangedCallback(name, _old, value);
+
+    if (name !== "data-video-id") {
+      return;
+    }
+
+    for (const button of this.buttons(this.#buttons)) {
+      button.videoId = this.videoId;
+    }
+  }
+
   render() {
     return html`<slot
       name="menu"
-      @slotchange="${this.#updateMenu.bind(this)}"></slot>`;
+      @slotchange="${this.#onSlotchange.bind(this)}"></slot>`;
   }
 
-  get #buttons() {
-    const slot: HTMLSlotElement | null =
-      this.shadowRoot?.querySelector('slot[name="menu"]') ?? null;
+  #onSlotchange(ev: Event) {
+    for (const button of this.buttons(ev.target as HTMLSlotElement | null)) {
+      button.videoId = this.videoId;
+    }
+  }
 
+  buttons(slot: HTMLSlotElement | null): HoverMenuButton[] {
     if (slot === null) {
       return [];
     }
 
-    return slot.assignedElements({flatten: true});
+    return slot.assignedElements({flatten: true}) as HoverMenuButton[];
   }
 
-  #updateMenu() {
-    for (const el of this.#buttons) {
-      el.setAttribute("videoId", this.videoId);
-    }
+  get #buttons(): HTMLSlotElement | null {
+    return this.shadowRoot?.querySelector('slot[name="menu"]') ?? null;
   }
 }
 
@@ -94,7 +113,7 @@ export class RightHoverMenu extends LitElement {
     `,
   ];
 
-  @property()
+  @property({attribute: "data-video-id", reflect: true})
   accessor videoId: string = "";
 
   constructor() {
@@ -108,15 +127,16 @@ export class RightHoverMenu extends LitElement {
 
   connectedCallback() {
     super.connectedCallback();
+
     document.body.addEventListener("zenza:linkmouseenter", (ev) => {
       const {top, right, href} = ev.detail;
       this.style.setProperty("--zenza-right-hover-link-top", `${top}px`);
       this.style.setProperty("--zenza-right-hover-link-right", `${right}px`);
 
       this.videoId = href;
-      this.#updateMenu();
       this.classList.add("show");
     });
+
     document.body.addEventListener("zenza:linkmouseout", () => {
       this.videoId = "";
       this.classList.remove("show");
@@ -125,7 +145,7 @@ export class RightHoverMenu extends LitElement {
       const target = ev.detail;
       if (
         target === this ||
-        this.#buttons.filter((el) => el === target).length > 0
+        this.buttons(this.#buttons).filter((el) => el === target).length > 0
       ) {
         ev.preventDefault();
         return;
@@ -133,26 +153,43 @@ export class RightHoverMenu extends LitElement {
     });
   }
 
+  attributeChangedCallback(
+    name: string,
+    _old: string | null,
+    value: string | null,
+  ) {
+    super.attributeChangedCallback(name, _old, value);
+
+    if (name !== "data-video-id") {
+      return;
+    }
+
+    for (const button of this.buttons(this.#buttons)) {
+      button.videoId = this.videoId;
+    }
+  }
+
   render() {
     return html`<slot
       name="menu"
-      @slotchange="${this.#updateMenu.bind(this)}"></slot>`;
+      @slotchange="${this.#onSlotchange.bind(this)}"></slot>`;
   }
 
-  get #buttons() {
-    const slot: HTMLSlotElement | null =
-      this.shadowRoot?.querySelector('slot[name="menu"]') ?? null;
+  #onSlotchange(ev: Event) {
+    for (const button of this.buttons(ev.target as HTMLSlotElement | null)) {
+      button.videoId = this.videoId;
+    }
+  }
 
+  buttons(slot: HTMLSlotElement | null): HoverMenuButton[] {
     if (slot === null) {
       return [];
     }
 
-    return slot.assignedElements({flatten: true});
+    return slot.assignedElements({flatten: true}) as HoverMenuButton[];
   }
 
-  #updateMenu() {
-    for (const el of this.#buttons) {
-      el.setAttribute("videoId", this.videoId);
-    }
+  get #buttons(): HTMLSlotElement | null {
+    return this.shadowRoot?.querySelector('slot[name="menu"]') ?? null;
   }
 }

@@ -6,7 +6,7 @@ import sheet from "./hover-menu-button.css" with {type: "css"};
 export class HoverMenuButton extends LitElement {
   static styles = sheet;
 
-  @property()
+  @property({attribute: "data-video-id", reflect: true})
   accessor videoId: string;
 
   #label: string;
