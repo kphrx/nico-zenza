@@ -1,37 +1,34 @@
 import {LitElement, html} from "lit";
-import {customElement, property} from "lit/decorators.js";
+import {customElement, property} from "lit/decorators";
 import sheet from "./hover-menu-button.css" with {type: "css"};
+
+type ClickEvent = GlobalEventHandlersEventMap["click"];
+type OnClickButton = (event: ClickEvent, videoId: string) => void;
 
 @customElement("zenza-hover-menu-button")
 export class HoverMenuButton extends LitElement {
   static styles = sheet;
 
   @property({attribute: "data-video-id", reflect: true})
-  accessor videoId: string;
+  accessor videoId: string = "";
 
   #label: string;
-  #onclick: (event: PointerEvent, videoId: string) => void;
+  #onClickButton: OnClickButton;
 
-  constructor(
-    label: string,
-    onclick: (
-      ev: GlobalEventHandlersEventMap["click"],
-      videoId: string,
-    ) => void,
-  ) {
+  constructor(label: string, onclick: OnClickButton) {
     super();
-    this.videoId = "";
+
     this.#label = label;
-    this.#onclick = onclick;
+    this.#onClickButton = onclick;
   }
 
   render() {
-    return html`<button
-      @click=${(ev: PointerEvent) => {
-        console.log("test");
-        this.#onclick(ev, this.videoId);
-      }}>
+    return html`<button @click=${this.#onClick.bind(this)}>
       ${this.#label}
     </button>`;
+  }
+
+  #onClick(ev: ClickEvent) {
+    this.#onClickButton(ev, this.videoId);
   }
 }

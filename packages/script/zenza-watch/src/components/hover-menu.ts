@@ -1,5 +1,5 @@
 import {LitElement, html, css} from "lit";
-import {customElement, property} from "lit/decorators.js";
+import {customElement, property} from "lit/decorators";
 import type {HoverMenuButton} from "./hover-menu-button";
 import sheet from "./hover-menu.css" with {type: "css"};
 
@@ -23,6 +23,39 @@ export class LeftHoverMenu extends LitElement {
   @property({attribute: "data-video-id", reflect: true})
   accessor videoId: string = "";
 
+  get #menuSlot(): HTMLSlotElement | null {
+    return this.shadowRoot?.querySelector('slot[name="menu"]') ?? null;
+  }
+
+  #onLinkMouseEnter = (
+    ev: GlobalEventHandlersEventMap["zenza:linkmouseenter"],
+  ) => {
+    const {top, left, href} = ev.detail;
+    this.style.setProperty("--zenza-left-hover-link-top", `${top}px`);
+    this.style.setProperty("--zenza-left-hover-link-left", `${left}px`);
+
+    this.videoId = href;
+    this.classList.add("show");
+  };
+
+  #onLinkMouseOut = () => {
+    this.videoId = "";
+    this.classList.remove("show");
+  };
+
+  #onLinkMouseLeave = (
+    ev: GlobalEventHandlersEventMap["zenza:linkmouseleave"],
+  ) => {
+    const target = ev.detail;
+    if (
+      target === this ||
+      this.buttons().filter((el) => el === target).length > 0
+    ) {
+      ev.preventDefault();
+      return;
+    }
+  };
+
   constructor() {
     const already = document.querySelector<LeftHoverMenu>(TAG_NAME.left);
     if (already != null) {
@@ -32,35 +65,40 @@ export class LeftHoverMenu extends LitElement {
     super();
   }
 
-  connectedCallback() {
+  override connectedCallback() {
     super.connectedCallback();
 
-    document.body.addEventListener("zenza:linkmouseenter", (ev) => {
-      const {top, left, href} = ev.detail;
-      this.style.setProperty("--zenza-left-hover-link-top", `${top}px`);
-      this.style.setProperty("--zenza-left-hover-link-left", `${left}px`);
+    document.body.addEventListener(
+      "zenza:linkmouseenter",
+      this.#onLinkMouseEnter,
+    );
 
-      this.videoId = href;
-      this.classList.add("show");
-    });
-
-    document.body.addEventListener("zenza:linkmouseout", () => {
-      this.videoId = "";
-      this.classList.remove("show");
-    });
-    document.body.addEventListener("zenza:linkmouseleave", (ev) => {
-      const target = ev.detail;
-      if (
-        target === this ||
-        this.buttons(this.#buttons).filter((el) => el === target).length > 0
-      ) {
-        ev.preventDefault();
-        return;
-      }
-    });
+    document.body.addEventListener("zenza:linkmouseout", this.#onLinkMouseOut);
+    document.body.addEventListener(
+      "zenza:linkmouseleave",
+      this.#onLinkMouseLeave,
+    );
   }
 
-  attributeChangedCallback(
+  override disconnectedCallback() {
+    super.disconnectedCallback();
+
+    document.body.removeEventListener(
+      "zenza:linkmouseenter",
+      this.#onLinkMouseEnter,
+    );
+
+    document.body.removeEventListener(
+      "zenza:linkmouseout",
+      this.#onLinkMouseOut,
+    );
+    document.body.removeEventListener(
+      "zenza:linkmouseleave",
+      this.#onLinkMouseLeave,
+    );
+  }
+
+  override attributeChangedCallback(
     name: string,
     _old: string | null,
     value: string | null,
@@ -71,7 +109,7 @@ export class LeftHoverMenu extends LitElement {
       return;
     }
 
-    for (const button of this.buttons(this.#buttons)) {
+    for (const button of this.buttons()) {
       button.videoId = this.videoId;
     }
   }
@@ -88,16 +126,12 @@ export class LeftHoverMenu extends LitElement {
     }
   }
 
-  buttons(slot: HTMLSlotElement | null): HoverMenuButton[] {
+  buttons(slot: HTMLSlotElement | null = this.#menuSlot): HoverMenuButton[] {
     if (slot === null) {
       return [];
     }
 
     return slot.assignedElements({flatten: true}) as HoverMenuButton[];
-  }
-
-  get #buttons(): HTMLSlotElement | null {
-    return this.shadowRoot?.querySelector('slot[name="menu"]') ?? null;
   }
 }
 
@@ -116,6 +150,39 @@ export class RightHoverMenu extends LitElement {
   @property({attribute: "data-video-id", reflect: true})
   accessor videoId: string = "";
 
+  get #menuSlot(): HTMLSlotElement | null {
+    return this.shadowRoot?.querySelector('slot[name="menu"]') ?? null;
+  }
+
+  #onLinkMouseEnter = (
+    ev: GlobalEventHandlersEventMap["zenza:linkmouseenter"],
+  ) => {
+    const {top, right, href} = ev.detail;
+    this.style.setProperty("--zenza-left-hover-link-top", `${top}px`);
+    this.style.setProperty("--zenza-right-hover-link-right", `${right}px`);
+
+    this.videoId = href;
+    this.classList.add("show");
+  };
+
+  #onLinkMouseOut = () => {
+    this.videoId = "";
+    this.classList.remove("show");
+  };
+
+  #onLinkMouseLeave = (
+    ev: GlobalEventHandlersEventMap["zenza:linkmouseleave"],
+  ) => {
+    const target = ev.detail;
+    if (
+      target === this ||
+      this.buttons().filter((el) => el === target).length > 0
+    ) {
+      ev.preventDefault();
+      return;
+    }
+  };
+
   constructor() {
     const already = document.querySelector<RightHoverMenu>(TAG_NAME.right);
     if (already != null) {
@@ -125,35 +192,40 @@ export class RightHoverMenu extends LitElement {
     super();
   }
 
-  connectedCallback() {
+  override connectedCallback() {
     super.connectedCallback();
 
-    document.body.addEventListener("zenza:linkmouseenter", (ev) => {
-      const {top, right, href} = ev.detail;
-      this.style.setProperty("--zenza-right-hover-link-top", `${top}px`);
-      this.style.setProperty("--zenza-right-hover-link-right", `${right}px`);
+    document.body.addEventListener(
+      "zenza:linkmouseenter",
+      this.#onLinkMouseEnter,
+    );
 
-      this.videoId = href;
-      this.classList.add("show");
-    });
-
-    document.body.addEventListener("zenza:linkmouseout", () => {
-      this.videoId = "";
-      this.classList.remove("show");
-    });
-    document.body.addEventListener("zenza:linkmouseleave", (ev) => {
-      const target = ev.detail;
-      if (
-        target === this ||
-        this.buttons(this.#buttons).filter((el) => el === target).length > 0
-      ) {
-        ev.preventDefault();
-        return;
-      }
-    });
+    document.body.addEventListener("zenza:linkmouseout", this.#onLinkMouseOut);
+    document.body.addEventListener(
+      "zenza:linkmouseleave",
+      this.#onLinkMouseLeave,
+    );
   }
 
-  attributeChangedCallback(
+  override disconnectedCallback() {
+    super.disconnectedCallback();
+
+    document.body.removeEventListener(
+      "zenza:linkmouseenter",
+      this.#onLinkMouseEnter,
+    );
+
+    document.body.removeEventListener(
+      "zenza:linkmouseout",
+      this.#onLinkMouseOut,
+    );
+    document.body.removeEventListener(
+      "zenza:linkmouseleave",
+      this.#onLinkMouseLeave,
+    );
+  }
+
+  override attributeChangedCallback(
     name: string,
     _old: string | null,
     value: string | null,
@@ -164,7 +236,7 @@ export class RightHoverMenu extends LitElement {
       return;
     }
 
-    for (const button of this.buttons(this.#buttons)) {
+    for (const button of this.buttons()) {
       button.videoId = this.videoId;
     }
   }
@@ -181,15 +253,11 @@ export class RightHoverMenu extends LitElement {
     }
   }
 
-  buttons(slot: HTMLSlotElement | null): HoverMenuButton[] {
+  buttons(slot: HTMLSlotElement | null = this.#menuSlot): HoverMenuButton[] {
     if (slot === null) {
       return [];
     }
 
     return slot.assignedElements({flatten: true}) as HoverMenuButton[];
-  }
-
-  get #buttons(): HTMLSlotElement | null {
-    return this.shadowRoot?.querySelector('slot[name="menu"]') ?? null;
   }
 }

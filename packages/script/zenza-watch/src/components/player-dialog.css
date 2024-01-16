@@ -1,0 +1,9 @@
+:host {
+  display: none;
+  z-index: calc(var(--zenza-base-z-index, 0) + 100001);
+  position: fixed;
+  inset: 0;
+}
+:host(.show) {
+  display: block;
+}
