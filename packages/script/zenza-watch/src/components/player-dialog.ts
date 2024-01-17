@@ -41,7 +41,9 @@ export class PlayerDialog extends LitElement {
 
   render() {
     return html`<div>
-      <button @click="${() => this.classList.remove("show")}">Close</button>
+      <button class="close" @click="${() => this.classList.remove("show")}">
+        Close
+      </button>
     </div>`;
   }
 }

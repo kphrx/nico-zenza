@@ -3,7 +3,18 @@
   z-index: calc(var(--zenza-base-z-index, 0) + 100001);
   position: fixed;
   inset: 0;
+  background: rgb(0 0 0 / 0.8);
 }
 :host(.show) {
   display: block;
+}
+
+button.close {
+  font-size: 0;
+
+  &::before {
+    content: "✕";
+    font-size: 1rem;
+    line-height: 1;
+  }
 }
