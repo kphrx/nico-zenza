@@ -1,5 +1,7 @@
 import {LitElement, html, css} from "lit";
 import {customElement, property} from "lit/decorators";
+import {styleMap} from "lit/directives/style-map";
+import {MouseController} from "./mouse-controller";
 import type {HoverMenuButton} from "./button";
 import sheet from "./base.css" with {type: "css"};
 
@@ -16,48 +18,20 @@ export class RightHoverMenu extends LitElement {
   static styles = [
     sheet,
     css`
-      :host {
-        right: var(--zenza-left-hover-link-right, 0);
+      slot[name="menu"] {
         translate: 16px -12px;
       }
     `,
   ];
 
+  #mouse = new MouseController(this);
+
   @property({attribute: "data-video-id", reflect: true})
-  accessor videoId: string = "";
+  accessor videoId = "";
 
   get #menuSlot(): HTMLSlotElement | null {
     return this.shadowRoot?.querySelector('slot[name="menu"]') ?? null;
   }
-
-  #onLinkMouseEnter = (
-    ev: GlobalEventHandlersEventMap["zenza:linkmouseenter"],
-  ) => {
-    const {top, right, href} = ev.detail;
-    this.style.setProperty("--zenza-left-hover-link-top", `${top}px`);
-    this.style.setProperty("--zenza-right-hover-link-right", `${right}px`);
-
-    this.videoId = href;
-    this.classList.add("show");
-  };
-
-  #onLinkMouseOut = () => {
-    this.videoId = "";
-    this.classList.remove("show");
-  };
-
-  #onLinkMouseLeave = (
-    ev: GlobalEventHandlersEventMap["zenza:linkmouseleave"],
-  ) => {
-    const target = ev.detail;
-    if (
-      target === this ||
-      this.buttons().filter((el) => el === target).length > 0
-    ) {
-      ev.preventDefault();
-      return;
-    }
-  };
 
   constructor() {
     const already = document.querySelector(TAG_NAME_RIGHT);
@@ -66,39 +40,6 @@ export class RightHoverMenu extends LitElement {
     }
 
     super();
-  }
-
-  override connectedCallback() {
-    super.connectedCallback();
-
-    document.body.addEventListener(
-      "zenza:linkmouseenter",
-      this.#onLinkMouseEnter,
-    );
-
-    document.body.addEventListener("zenza:linkmouseout", this.#onLinkMouseOut);
-    document.body.addEventListener(
-      "zenza:linkmouseleave",
-      this.#onLinkMouseLeave,
-    );
-  }
-
-  override disconnectedCallback() {
-    super.disconnectedCallback();
-
-    document.body.removeEventListener(
-      "zenza:linkmouseenter",
-      this.#onLinkMouseEnter,
-    );
-
-    document.body.removeEventListener(
-      "zenza:linkmouseout",
-      this.#onLinkMouseOut,
-    );
-    document.body.removeEventListener(
-      "zenza:linkmouseleave",
-      this.#onLinkMouseLeave,
-    );
   }
 
   override attributeChangedCallback(
@@ -119,8 +60,12 @@ export class RightHoverMenu extends LitElement {
 
   render() {
     return html`<slot
+      style=${styleMap({
+        top: `${this.#mouse.position?.top ?? 0}px`,
+        right: `${this.#mouse.position?.right ?? 0}px`,
+      })}
       name="menu"
-      @slotchange="${this.#onSlotchange.bind(this)}"></slot>`;
+      @slotchange=${this.#onSlotchange.bind(this)}></slot>`;
   }
 
   #onSlotchange(ev: Event) {

@@ -1,7 +1,6 @@
 import {LeftHoverMenu, HoverMenuButton} from "./components/hover-menu";
 import {PlayerDialog} from "./components/player-dialog";
 import {computeBaseZIndex} from "./util";
-import {startLinkHoverObserver} from "./event-observer";
 
 console.log(
   "userscript manager:",
@@ -27,5 +26,3 @@ document.body
     }),
   )
   .setAttribute("slot", "menu");
-
-startLinkHoverObserver();

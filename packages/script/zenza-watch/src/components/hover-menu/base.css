@@ -1,13 +1,16 @@
 :host {
   display: none;
+}
+:host(:not([data-video-id=""])) {
+  display: block;
+}
+
+slot[name="menu"] {
   z-index: calc(var(--zenza-base-z-index, 0) + 100000);
   position: absolute;
-  top: var(--zenza-left-hover-link-top, 0);
 
-  pointer-events: auto;
+  display: flex;
   flex-direction: column;
   height: max-content;
-}
-:host(.show) {
-  display: flex;
+  pointer-events: auto;
 }
