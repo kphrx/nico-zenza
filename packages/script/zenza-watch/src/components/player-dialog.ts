@@ -1,5 +1,5 @@
 import {LitElement, html} from "lit";
-import {customElement} from "lit/decorators";
+import {customElement, property} from "lit/decorators";
 import sheet from "./player-dialog.css" with {type: "css"};
 
 const TAG_NAME = "zenza-watch-player-dialog";
@@ -8,14 +8,25 @@ const TAG_NAME = "zenza-watch-player-dialog";
 export class PlayerDialog extends LitElement {
   static styles = sheet;
 
+  #videoId = "";
+
+  set videoId(value) {
+    this.#videoId = value;
+    this.open = this.#videoId !== "";
+  }
+  get videoId() {
+    return this.#videoId;
+  }
+
+  @property({type: Boolean, reflect: true})
+  accessor open = false;
+
   #onPlayerOpen = (
     ev: GlobalEventHandlersEventMap["zenzawatch:playeropen"],
   ) => {
     const {videoId} = ev.detail;
 
-    console.log(videoId);
-
-    this.classList.add("show");
+    this.videoId = videoId;
   };
 
   constructor() {
@@ -41,9 +52,7 @@ export class PlayerDialog extends LitElement {
 
   render() {
     return html`<div>
-      <button class="close" @click="${() => this.classList.remove("show")}">
-        Close
-      </button>
+      <button class="close" @click="${() => (this.videoId = "")}">Close</button>
     </div>`;
   }
 }
