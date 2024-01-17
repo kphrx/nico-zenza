@@ -4,6 +4,12 @@ import sheet from "./player-dialog.css" with {type: "css"};
 
 const TAG_NAME = "zenza-watch-player-dialog";
 
+declare global {
+  interface HTMLElementTagNameMap {
+    [TAG_NAME]: PlayerDialog;
+  }
+}
+
 @customElement(TAG_NAME)
 export class PlayerDialog extends LitElement {
   static styles = sheet;
@@ -30,7 +36,7 @@ export class PlayerDialog extends LitElement {
   };
 
   constructor() {
-    const already = document.querySelector<PlayerDialog>(TAG_NAME);
+    const already = document.querySelector(TAG_NAME);
     if (already != null) {
       return already;
     }

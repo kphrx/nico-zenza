@@ -3,12 +3,17 @@ import {customElement, property} from "lit/decorators";
 import type {HoverMenuButton} from "./hover-menu-button";
 import sheet from "./hover-menu.css" with {type: "css"};
 
-const TAG_NAME = {
-  left: "zenza-left-hover-menu",
-  right: "zenza-right-hover-menu",
-};
+const TAG_NAME_LEFT = "zenza-left-hover-menu";
+const TAG_NAME_RIGHT = "zenza-right-hover-menu";
 
-@customElement(TAG_NAME.left)
+declare global {
+  interface HTMLElementTagNameMap {
+    [TAG_NAME_LEFT]: LeftHoverMenu;
+    [TAG_NAME_RIGHT]: RightHoverMenu;
+  }
+}
+
+@customElement(TAG_NAME_LEFT)
 export class LeftHoverMenu extends LitElement {
   static styles = [
     sheet,
@@ -57,7 +62,7 @@ export class LeftHoverMenu extends LitElement {
   };
 
   constructor() {
-    const already = document.querySelector<LeftHoverMenu>(TAG_NAME.left);
+    const already = document.querySelector(TAG_NAME_LEFT);
     if (already != null) {
       return already;
     }
@@ -135,7 +140,7 @@ export class LeftHoverMenu extends LitElement {
   }
 }
 
-@customElement(TAG_NAME.right)
+@customElement(TAG_NAME_RIGHT)
 export class RightHoverMenu extends LitElement {
   static styles = [
     sheet,
@@ -184,7 +189,7 @@ export class RightHoverMenu extends LitElement {
   };
 
   constructor() {
-    const already = document.querySelector<RightHoverMenu>(TAG_NAME.right);
+    const already = document.querySelector(TAG_NAME_RIGHT);
     if (already != null) {
       return already;
     }
