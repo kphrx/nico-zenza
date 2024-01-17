@@ -67,27 +67,20 @@ export function rollupConfig({
     plugins: [
       babel({
         babelrc: false,
-        babelHelpers: "runtime",
+        babelHelpers: "bundled",
         presets: [
           [
-            "@babel/preset-env",
+            "@babel/env",
             {
               modules: false,
               targets: "> 0.5%, Firefox ESR, not dead",
               shippedProposals: true,
             },
           ],
-          "@babel/preset-typescript",
+          "@babel/typescript",
         ],
         plugins: [
-          [
-            "@babel/plugin-transform-runtime",
-            {useESModules: true, version: "^7.5.0"},
-          ],
-          useDecorator && [
-            "@babel/plugin-proposal-decorators",
-            {version: "2023-05"},
-          ],
+          useDecorator && ["@babel/proposal-decorators", {version: "2023-05"}],
         ].filter((x) => x),
         exclude: "node_modules/**",
         extensions,
