@@ -1,5 +1,4 @@
-import {LeftHoverMenu} from "./components/hover-menu";
-import {HoverMenuButton} from "./components/hover-menu-button";
+import {LeftHoverMenu, HoverMenuButton} from "./components/hover-menu";
 import {PlayerDialog} from "./components/player-dialog";
 import {computeBaseZIndex} from "./util";
 import {startLinkHoverObserver} from "./event-observer";

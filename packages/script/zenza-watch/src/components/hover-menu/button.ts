@@ -1,6 +1,6 @@
 import {LitElement, html} from "lit";
 import {customElement, property} from "lit/decorators";
-import sheet from "./hover-menu-button.css" with {type: "css"};
+import sheet from "./button.css" with {type: "css"};
 
 type ClickEvent = GlobalEventHandlersEventMap["click"];
 type OnClickButton = (event: ClickEvent, videoId: string) => void;
