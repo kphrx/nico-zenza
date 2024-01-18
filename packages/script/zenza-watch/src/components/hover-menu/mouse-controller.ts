@@ -30,25 +30,34 @@ export class MouseController implements ReactiveController {
       return;
     }
 
+    if (el === this.#target) {
+      return;
+    }
+
+    if (this.#host.buttons().filter((button) => el === button).length > 0) {
+      return;
+    }
+
     const hoverLink: HTMLAnchorElement | null = el.closest(
-      'a[href*="nicovideo.jp/watch/"],a[href*="nico.ms/"]',
+      'a[href*="//sp.nicovideo.jp/watch/"],a[href*="//www.nicovideo.jp/watch/"],a[href*="//nico.ms/"]',
     );
 
     if (hoverLink === this.#target) {
       return;
     }
 
-    if (
-      hoverLink === null &&
-      (target === this.#host ||
-        this.#host.buttons().filter((el) => el === target).length > 0)
-    ) {
+    this.#target = hoverLink;
+
+    if (this.#target === null) {
+      this.#host.videoId = "";
       return;
     }
 
-    this.#target = hoverLink;
+    const link = new URL(this.#target.href);
+    const reg =
+      link.host === "nico.ms" ? /^\/([a-z0-9]+)/ : /^\/watch\/([a-z0-9]+)/;
 
-    this.#host.videoId = this.#target?.href ?? "";
+    this.#host.videoId = reg.exec(link.pathname)?.[1] ?? "";
   };
 
   constructor(host: ReactiveControllerHost) {
