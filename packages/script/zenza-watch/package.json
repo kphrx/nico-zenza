@@ -21,6 +21,7 @@
   "homepage": "https://github.com/kphrx/nico-zenza/tree/master/packages/zenza-watch#readme",
   "type": "module",
   "dependencies": {
+    "@lit/task": "^1.0.0",
     "lit": "^3.1.1"
   }
 }

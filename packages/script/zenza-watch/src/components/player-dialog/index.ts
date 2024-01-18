@@ -1,6 +1,8 @@
 import {LitElement, html} from "lit";
-import {customElement, property} from "lit/decorators";
-import sheet from "./player-dialog.css" with {type: "css"};
+import {customElement, property, state} from "lit/decorators";
+import {WatchDataController} from "./watch-data-controller";
+import type {WatchV3Response} from "./watch-data";
+import sheet from "./style.css" with {type: "css"};
 
 const TAG_NAME = "zenza-watch-player-dialog";
 
@@ -14,8 +16,17 @@ declare global {
 export class PlayerDialog extends LitElement {
   static styles = sheet;
 
+  #watchData = new WatchDataController(this);
+
   #videoId = "";
 
+  #closeButton = html`<button
+    class="close"
+    @click="${() => (this.videoId = "")}">
+    Close
+  </button>`;
+
+  @state()
   set videoId(value) {
     this.#videoId = value;
     this.open = this.#videoId !== "";
@@ -58,7 +69,14 @@ export class PlayerDialog extends LitElement {
 
   render() {
     return html`<div>
-      <button class="close" @click="${() => (this.videoId = "")}">Close</button>
+      ${this.#watchData.render({
+        complete: (result: WatchV3Response) =>
+          html`<p>Loaded ${this.videoId}: ${result}</p>`,
+        initial: () => html`<p>No Video</p>`,
+        pending: () => html`<p>Loading ${this.videoId}...</p>`,
+        error: (e: unknown) => html`<p>${e}</p>`,
+      })}
+      ${this.#closeButton}
     </div>`;
   }
 }

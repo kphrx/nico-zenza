@@ -28,5 +28,6 @@ export default rollupConfig({
     "lit/decorators": 'await import("https://esm.run/lit@^3.1.1/decorators")',
     "lit/directives/style-map":
       'await import("https://esm.run/lit@^3.1.1/directives/style-map")',
+    "@lit/task": 'await import("https://esm.run/@lit/task@^1.0.0")',
   },
 });
