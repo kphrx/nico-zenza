@@ -1,5 +1,5 @@
 import {LeftHoverMenu, HoverMenuButton} from "./components/hover-menu";
-import {PlayerDialog} from "./components/player-dialog";
+import {PlayerDialog} from "./components/player/dialog";
 import {computeBaseZIndex} from "./util";
 
 console.log(
