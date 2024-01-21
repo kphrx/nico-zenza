@@ -25,7 +25,7 @@ export class MouseController implements ReactiveController {
   }
 
   #onMouseMove = ({target}: MouseEvent) => {
-    const el = this.targetElement(target);
+    const el = this.#targetElement(target);
     if (el === null) {
       return;
     }
@@ -73,7 +73,7 @@ export class MouseController implements ReactiveController {
     window.removeEventListener("mousemove", this.#onMouseMove);
   }
 
-  targetElement(target: EventTarget | null) {
+  #targetElement(target: EventTarget | null) {
     if (target instanceof HTMLElement) {
       return target;
     }

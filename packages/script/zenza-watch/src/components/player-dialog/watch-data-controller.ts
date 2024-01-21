@@ -19,6 +19,8 @@ export class WatchDataController implements ReactiveController {
     return id + "_" + Date.now();
   }
 
+  videoId = "";
+
   #host: ReactiveControllerHost;
   #task: Task<[string], WatchV3Response>;
 
@@ -59,7 +61,7 @@ export class WatchDataController implements ReactiveController {
 
         return data;
       },
-      () => [this.#host.videoId],
+      () => [this.videoId],
     );
   }
 
