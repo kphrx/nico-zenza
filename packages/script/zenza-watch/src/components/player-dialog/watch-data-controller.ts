@@ -3,6 +3,7 @@ import type {StatusRenderer} from "@lit/task";
 import {initialState, Task} from "@lit/task";
 import type {PlayerDialog} from "./index";
 import type {NVAPIResponse, WatchV3Response} from "./watch-data";
+import {isErrorResponse} from "./watch-data";
 
 type ReactiveControllerHost = PlayerDialog;
 
@@ -51,15 +52,15 @@ export class WatchDataController implements ReactiveController {
           throw new Error(`Failed to fetch [${videoId}]`);
         }
 
-        const {meta, data} = json;
+        if (isErrorResponse(json)) {
+          const {meta, data} = json;
 
-        if (meta?.status !== 200 || data == null) {
           throw Error(
-            `Failed to fetch [${videoId}]: ${meta?.status.toString() ?? "4xx"}: ${meta?.errorCode ?? "UNKNOWN ERROR"}`,
+            `Failed to fetch [${videoId}]: ${meta.status.toString()}: ${meta.errorCode} ${data?.reasonCode ?? ""}`,
           );
         }
 
-        return data;
+        return json.data;
       },
       () => [this.videoId],
     );
