@@ -58,6 +58,46 @@ interface TagEdit {
   editKey: string;
 }
 
+export interface VideoInfo {
+  id: string;
+  title: string;
+  description: string;
+  count: {
+    view: number;
+    comment: number;
+    mylist: number;
+    like: number;
+  };
+  duration: number;
+  thumbnail: {
+    url: string;
+    middleUrl: string;
+    largeUrl: string;
+    player: string;
+    ogp: string;
+  };
+  rating: {
+    isAdult: boolean;
+  };
+  registeredAt: string;
+  isPrivate: boolean;
+  isDeleted: boolean;
+  isNoBanner: boolean;
+  isAuthenticationRequired: boolean;
+  isEmbedPlayerAllowed: boolean;
+  isGiftAllowed: boolean;
+  viewer: {
+    isOwner: boolean;
+    like: {
+      isLiked: boolean;
+      count: unknown;
+    };
+  };
+  watchableUserTypeForPayment: string;
+  commentableUserTypeForPayment: string;
+  "9d091f87": boolean;
+}
+
 export interface WatchV3Response {
   ads: null;
   category: null;
@@ -361,45 +401,7 @@ export interface WatchV3Response {
     edit: TagEdit;
     viewer: TagEdit;
   };
-  video: {
-    id: string;
-    title: string;
-    description: string;
-    count: {
-      view: number;
-      comment: number;
-      mylist: number;
-      like: number;
-    };
-    duration: number;
-    thumbnail: {
-      url: string;
-      middleUrl: string;
-      largeUrl: string;
-      player: string;
-      ogp: string;
-    };
-    rating: {
-      isAdult: boolean;
-    };
-    registeredAt: string;
-    isPrivate: boolean;
-    isDeleted: boolean;
-    isNoBanner: boolean;
-    isAuthenticationRequired: boolean;
-    isEmbedPlayerAllowed: boolean;
-    isGiftAllowed: boolean;
-    viewer: {
-      isOwner: boolean;
-      like: {
-        isLiked: boolean;
-        count: unknown;
-      };
-    };
-    watchableUserTypeForPayment: string;
-    commentableUserTypeForPayment: string;
-    "9d091f87": boolean;
-  };
+  video: VideoInfo;
   videoAds: {
     additionalParams: {
       videoId: string;

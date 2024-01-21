@@ -5,6 +5,7 @@ type ReactiveControllerHost = PlayerDialog;
 
 export class OpenController implements ReactiveController {
   #host: ReactiveControllerHost;
+  #onOpen: () => void;
 
   videoId = "";
 
@@ -13,12 +14,15 @@ export class OpenController implements ReactiveController {
   ) => {
     const {videoId} = ev.detail;
 
-    this.#host.setVideoId(videoId);
+    this.videoId = videoId;
+    this.#onOpen();
   };
 
-  constructor(host: ReactiveControllerHost) {
+  constructor(host: ReactiveControllerHost, onOpen: () => void) {
     this.#host = host;
-    host.addController(this);
+    this.#onOpen = onOpen;
+
+    this.#host.addController(this);
   }
 
   hostConnected() {

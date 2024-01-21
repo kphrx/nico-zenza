@@ -1,11 +1,19 @@
 import {LitElement, html} from "lit";
 import {customElement, property} from "lit/decorators";
+import {PlayerHeader} from "./header";
 import {OpenController} from "./open-controller";
 import {WatchDataController} from "./watch-data-controller";
 import type {WatchV3Response} from "./watch-data";
-import sheet from "./style.css" with {type: "css"};
+import sheet from "./dialog.css" with {type: "css"};
 
 const TAG_NAME = "zenza-watch-player-dialog";
+
+const STATUS = {
+  Initial: "No Video",
+  Loaded: (id: string) => `Loaded ${id}`,
+  Loading: (id: string) => `Loading ${id}...`,
+  Error: (e: unknown) => String(e),
+} as const;
 
 declare global {
   interface HTMLElementTagNameMap {
@@ -17,14 +25,19 @@ declare global {
 export class PlayerDialog extends LitElement {
   static styles = sheet;
 
-  #open = new OpenController(this);
   #watchData = new WatchDataController(this);
+  #open = new OpenController(this, () => {
+    this.#watchData.videoId = this.#open.videoId;
+    this.open = true;
+  });
 
-  #closeButton = html`<button
-    class="close"
-    @click="${() => this.setVideoId("")}">
-    Close
-  </button>`;
+  #header = new PlayerHeader(() => {
+    this.#watchData.videoId = "";
+    this.#header.videoInfo = undefined;
+    this.open = false;
+  });
+
+  #status!: HTMLParagraphElement;
 
   @property({type: Boolean, reflect: true})
   accessor open = false;
@@ -36,23 +49,41 @@ export class PlayerDialog extends LitElement {
     }
 
     super();
-  }
-
-  setVideoId(value: string) {
-    this.#watchData.videoId = value;
-    this.open = value !== "";
+    this.#status = document.createElement("p");
+    this.#status.className = "status";
   }
 
   render() {
     return html`<div>
       ${this.#watchData.render({
-        complete: (result: WatchV3Response) =>
-          html`<p>Loaded ${this.#watchData.videoId}: ${result}</p>`,
-        initial: () => html`<p>No Video</p>`,
-        pending: () => html`<p>Loading ${this.#watchData.videoId}...</p>`,
-        error: (e: unknown) => html`<p>${e}</p>`,
+        initial: () => {
+          this.#status.textContent = STATUS.Initial;
+
+          return [this.#status, this.#header];
+        },
+        pending: () => {
+          this.#header.videoInfo = undefined;
+          this.#status.textContent = STATUS.Loading(this.#watchData.videoId);
+
+          return [this.#status, this.#header];
+        },
+        complete: (result: WatchV3Response) => {
+          this.#header.videoInfo = result.video;
+          this.#status.textContent = STATUS.Loaded(this.#watchData.videoId);
+
+          return [this.#status, this.#header];
+        },
+        error: (e: unknown) => {
+          this.#header.videoInfo = undefined;
+          if (e instanceof Error) {
+            this.#status.textContent = STATUS.Error(e.message);
+          } else {
+            this.#status.textContent = STATUS.Error(e);
+          }
+
+          return [this.#status, this.#header];
+        },
       })}
-      ${this.#closeButton}
     </div>`;
   }
 }

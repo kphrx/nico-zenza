@@ -62,7 +62,8 @@ export class MouseController implements ReactiveController {
 
   constructor(host: ReactiveControllerHost) {
     this.#host = host;
-    host.addController(this);
+
+    this.#host.addController(this);
   }
 
   hostConnected() {

@@ -12,12 +12,14 @@
   background: rgb(0 0 0 / 0.8);
 }
 
-button.close {
-  font-size: 0;
+p.status {
+  font-size: 0.8rem;
+  color: #fff;
+  background: #000;
+  margin: 0;
+  line-height: 1.2;
 
-  &::before {
-    content: "✕";
-    font-size: 1rem;
-    line-height: 1;
-  }
+  position: absolute;
+  bottom: 0;
+  left: 0;
 }

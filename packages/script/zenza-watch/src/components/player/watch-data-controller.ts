@@ -27,8 +27,6 @@ export class WatchDataController implements ReactiveController {
 
   constructor(host: ReactiveControllerHost) {
     this.#host = host;
-    host.addController(this);
-
     this.#task = new Task<[string], WatchV3Response>(
       host,
       async ([videoId]: [string], {signal}) => {
@@ -64,6 +62,8 @@ export class WatchDataController implements ReactiveController {
       },
       () => [this.videoId],
     );
+
+    this.#host.addController(this);
   }
 
   hostUpdate() {}
