@@ -33,7 +33,7 @@ export class PlayerDialog extends LitElement {
 
   #header = new PlayerHeader(() => {
     this.#watchData.videoId = "";
-    this.#header.videoInfo = undefined;
+    this.#header.reset();
     this.open = false;
   });
 
@@ -62,19 +62,23 @@ export class PlayerDialog extends LitElement {
           return [this.#status, this.#header];
         },
         pending: () => {
-          this.#header.videoInfo = undefined;
+          this.#header.reset();
           this.#status.textContent = STATUS.Loading(this.#watchData.videoId);
 
           return [this.#status, this.#header];
         },
         complete: (result: WatchV3Response) => {
-          this.#header.videoInfo = result.video;
+          const {video, owner, channel, tag} = result;
+          this.#header.videoInfo = video;
+          this.#header.isUser = owner !== null;
+          this.#header.isChannel = channel !== null;
+          this.#header.tags = tag;
           this.#status.textContent = STATUS.Loaded(this.#watchData.videoId);
 
           return [this.#status, this.#header];
         },
         error: (e: unknown) => {
-          this.#header.videoInfo = undefined;
+          this.#header.reset();
           if (e instanceof Error) {
             this.#status.textContent = STATUS.Error(e.message);
           } else {

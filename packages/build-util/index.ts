@@ -86,7 +86,7 @@ export function rollupConfig({
         extensions,
       }),
       nodeResolve({browser: false, extensions}),
-      importCss({modules: true}),
+      importCss({modules: true, minify: true}),
       userscript((meta) => {
         return meta
           .replace("{{version}}", ver ?? "-")

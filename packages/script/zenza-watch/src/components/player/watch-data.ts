@@ -58,6 +58,20 @@ interface TagEdit {
   editKey: string;
 }
 
+export interface Tag {
+  items: {
+    name: string;
+    isCategory: boolean;
+    isCategoryCandidate: boolean;
+    isNicodicArticleExists: boolean;
+    isLocked: boolean;
+  }[];
+  hasR18Tag: boolean;
+  isPublishedNicoscript: boolean;
+  edit: TagEdit;
+  viewer: TagEdit;
+}
+
 export interface VideoInfo {
   id: string;
   title: string;
@@ -388,19 +402,7 @@ export interface WatchV3Response {
     isPeakTime: boolean;
     isStellaAlive: boolean;
   };
-  tag: {
-    items: {
-      name: string;
-      isCategory: boolean;
-      isCategoryCandidate: boolean;
-      isNicodicArticleExists: boolean;
-      isLocked: boolean;
-    }[];
-    hasR18Tag: boolean;
-    isPublishedNicoscript: boolean;
-    edit: TagEdit;
-    viewer: TagEdit;
-  };
+  tag: Tag;
   video: VideoInfo;
   videoAds: {
     additionalParams: {

@@ -1,15 +1,16 @@
 :host {
   display: none;
-}
-:host([open]) {
-  display: block;
-}
-
-:host > div {
   z-index: calc(var(--zenza-base-z-index, 0) + 100001);
   position: fixed;
   inset: 0;
   background: rgb(0 0 0 / 0.8);
+
+  > div {
+    margin: auto;
+  }
+}
+:host([open]) {
+  display: block;
 }
 
 p.status {
