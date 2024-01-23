@@ -14,13 +14,14 @@ export class MouseController implements ReactiveController {
     }
 
     const {scrollY, scrollX} = window;
+    const [offsetY, offsetX] = this.#fixedBodyOffset();
 
     const {top, left, right} = this.#target.getBoundingClientRect();
 
     return {
-      top: top + scrollY,
-      left: left + scrollX,
-      right: right + scrollX,
+      top: top + scrollY - offsetY,
+      left: left + scrollX - offsetX,
+      right: right + scrollX - offsetX,
     };
   }
 
@@ -72,6 +73,20 @@ export class MouseController implements ReactiveController {
 
   hostDisconnected() {
     window.removeEventListener("mousemove", this.#onMouseMove);
+  }
+
+  #fixedBodyOffset() {
+    const {position, top, left} = window.getComputedStyle(
+      this.#host.parentElement ?? document.body,
+    );
+
+    if (position === "fixed" || position === "absolute") {
+      const offsetTop = /(-?[0-9]+)px/.exec(top)?.[1] ?? "0";
+      const offsetLeft = /(-?[0-9]+)px/.exec(left)?.[1] ?? "0";
+      return [parseInt(offsetTop), parseInt(offsetLeft)];
+    }
+
+    return [0, 0];
   }
 
   #targetElement(target: EventTarget | null) {
