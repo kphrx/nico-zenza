@@ -49,10 +49,10 @@ ul {
 
     gap: 1ex;
     font-size: 0.8rem;
-    height: calc(0.8rem * 2.05);
+    min-height: calc(0.8rem * 2.05);
 
     li {
-      padding: 2px 6px 3px;
+      padding: 3px 6px;
       border-radius: 1rem;
 
       &:hover {
@@ -60,16 +60,16 @@ ul {
       }
 
       &::before {
-        font-size: 0.7rem;
+        font-size: 0.75rem;
+        font-weight: bold;
         line-height: 1.2;
-        width: calc(0.7rem * 1.2);
+        width: calc(0.75rem * 1.2);
         text-align: center;
-        vertical-align: middle;
 
         display: inline-block;
         margin: 1px;
         padding: 3px;
-        border-radius: calc(0.7rem * 1.2 / 2 + 3px);
+        border-radius: calc(0.75rem * 1.2 / 2 + 3px);
       }
 
       &.nicodic::before {
