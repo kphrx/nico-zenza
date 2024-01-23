@@ -43,6 +43,7 @@ export class WatchDataController implements ReactiveController {
         try {
           const res = await fetch(url, {
             headers: {"X-Frontend-Id": "6", "X-Frontend-Version": "0"},
+            credentials: "include",
             signal,
           });
           json = (await res.json()) as typeof json;
