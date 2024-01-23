@@ -1,6 +1,7 @@
 import {LitElement, html} from "lit";
 import {customElement, property} from "lit/decorators";
 import {PlayerHeader} from "./header";
+import {PlayerInfoPanel} from "./info-panel";
 import {OpenController} from "./open-controller";
 import {WatchDataController} from "./watch-data-controller";
 import type {WatchV3Response} from "./watch-data";
@@ -31,13 +32,16 @@ export class PlayerDialog extends LitElement {
     this.open = true;
   });
 
+  #status!: HTMLParagraphElement;
+
   #header = new PlayerHeader(() => {
     this.#watchData.videoId = "";
     this.#header.reset();
+    this.#infoPanel.reset();
     this.open = false;
   });
 
-  #status!: HTMLParagraphElement;
+  #infoPanel = new PlayerInfoPanel();
 
   @property({type: Boolean, reflect: true})
   accessor open = false;
@@ -59,26 +63,23 @@ export class PlayerDialog extends LitElement {
         initial: () => {
           this.#status.textContent = STATUS.Initial;
 
-          return [this.#status, this.#header];
+          return [this.#status];
         },
         pending: () => {
           this.#header.reset();
+          this.#infoPanel.reset();
           this.#status.textContent = STATUS.Loading(this.#watchData.videoId);
 
           return [this.#status, this.#header];
         },
         complete: (result: WatchV3Response) => {
-          const {video, owner, channel, tag} = result;
-          this.#header.videoInfo = video;
-          this.#header.isUser = owner !== null;
-          this.#header.isChannel = channel !== null;
-          this.#header.tags = tag;
+          this.#header.init(result);
+          this.#infoPanel.init(result);
           this.#status.textContent = STATUS.Loaded(this.#watchData.videoId);
 
-          return [this.#status, this.#header];
+          return [this.#status, this.#header, this.#infoPanel];
         },
         error: (e: unknown) => {
-          this.#header.reset();
           if (e instanceof Error) {
             this.#status.textContent = STATUS.Error(e.message);
           } else {

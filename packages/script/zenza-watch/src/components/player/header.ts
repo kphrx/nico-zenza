@@ -1,7 +1,7 @@
 import {LitElement, html, nothing} from "lit";
 import {customElement, state} from "lit/decorators";
 import {classMap} from "lit/directives/class-map";
-import type {VideoInfo, Tag} from "./watch-data";
+import type {WatchV3Response, VideoInfo, Tag} from "./watch-data";
 import sheet from "./header.css" with {type: "css"};
 
 const TAG_NAME = "zenza-watch-player-header";
@@ -34,6 +34,13 @@ export class PlayerHeader extends LitElement {
     super();
 
     this.#onClose = onClose;
+  }
+
+  init({video, tag, owner, channel}: WatchV3Response) {
+    this.videoInfo = video;
+    this.isChannel = channel !== null;
+    this.isUser = owner !== null;
+    this.tags = tag;
   }
 
   reset() {

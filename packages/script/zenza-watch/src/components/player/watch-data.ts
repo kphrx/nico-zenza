@@ -52,6 +52,18 @@ interface SeriesVideo {
   acf68865: boolean;
 }
 
+export interface SeriesInfo {
+  id: number;
+  title: string;
+  description: string;
+  thumbnailUrl: string;
+  video: {
+    prev: SeriesVideo | null;
+    next: SeriesVideo | null;
+    first: SeriesVideo;
+  };
+}
+
 interface TagEdit {
   isEditable: boolean;
   uneditableReason: unknown;
@@ -112,27 +124,43 @@ export interface VideoInfo {
   "9d091f87": boolean;
 }
 
+export interface OwnerInfo {
+  id: number;
+  nickname: string;
+  iconUrl: string;
+  channel: unknown;
+  live: unknown;
+  isVideosPublic: string;
+  isMylistsPublic: string;
+  videoLiveNotice: unknown;
+  viewer: {
+    isFollowing: string;
+  };
+}
+
+export interface ChannelInfo {
+  id: string;
+  name: string;
+  isOfficialAnime: boolean;
+  isDisplayAdBanner: boolean;
+  thumbnail: {
+    url: string;
+    smallUrl: string;
+  };
+  viewer: {
+    follow: {
+      isFollowed: boolean;
+      isBookmarked: boolean;
+      token: string;
+      tokenTimestamp: number;
+    };
+  };
+}
+
 export interface WatchV3Response {
   ads: null;
   category: null;
-  channel: {
-    id: string;
-    name: string;
-    isOfficialAnime: boolean;
-    isDisplayAdBanner: boolean;
-    thumbnail: {
-      url: string;
-      smallUrl: string;
-    };
-    viewer: {
-      follow: {
-        isFollowed: boolean;
-        isBookmarked: boolean;
-        token: string;
-        tokenTimestamp: number;
-      };
-    };
-  } | null;
+  channel: ChannelInfo | null;
   client: {
     nicosid: string;
     watchId: string;
@@ -324,19 +352,7 @@ export interface WatchV3Response {
     deliveryLegacy: unknown;
   };
   okReason: string;
-  owner: {
-    id: number;
-    nickname: string;
-    iconUrl: string;
-    channel: unknown;
-    live: unknown;
-    isVideosPublic: string;
-    isMylistsPublic: string;
-    videoLiveNotice: unknown;
-    viewer: {
-      isFollowing: string;
-    };
-  } | null;
+  owner: OwnerInfo | null;
   payments: {
     video: {
       isPpv: boolean;
@@ -385,17 +401,7 @@ export interface WatchV3Response {
       dateTime: string;
     }[];
   };
-  series: {
-    id: number;
-    title: string;
-    description: string;
-    thumbnailUrl: string;
-    video: {
-      prev: SeriesVideo | null;
-      next: SeriesVideo | null;
-      first: SeriesVideo;
-    };
-  } | null;
+  series: SeriesInfo | null;
   smartphone: null;
   system: {
     serverTime: string;
