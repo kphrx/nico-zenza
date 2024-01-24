@@ -1,9 +1,1 @@
-{
-  "extends": "../../../tsconfig.json",
-  "files": ["package.json"],
-  "include": ["src/**/*.ts"],
-  "compilerOptions": {
-    "noEmit": true,
-    "outDir": "dist"
-  }
-}
+../../../tsconfig.script.json
