@@ -70,7 +70,7 @@ export class PlayerDialog extends LitElement {
           this.#infoPanel.reset();
           this.#status.textContent = STATUS.Loading(this.#watchData.videoId);
 
-          return [this.#status, this.#header];
+          return [this.#status, this.#header, this.#infoPanel];
         },
         complete: (result: WatchV3Response) => {
           this.#header.init(result);
@@ -86,7 +86,7 @@ export class PlayerDialog extends LitElement {
             this.#status.textContent = STATUS.Error(e);
           }
 
-          return [this.#status, this.#header];
+          return [this.#status, this.#header, this.#infoPanel];
         },
       })}
     </div>`;

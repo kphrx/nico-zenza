@@ -3,9 +3,17 @@
 }
 
 :host {
-  color: #fff;
+  color: #eee;
   background: #252525;
   width: 100%;
   height: 100%;
+  overflow: scroll;
   box-sizing: border-box;
+}
+
+div.panel-header {
+  background: #252525;
+
+  position: sticky;
+  top: 0;
 }

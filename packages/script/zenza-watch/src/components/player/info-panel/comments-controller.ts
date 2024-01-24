@@ -1,11 +1,12 @@
 import type {ReactiveController} from "lit";
-import type {StatusRenderer} from "@lit/task";
 import {initialState, Task} from "@lit/task";
+import type {StatusRenderer} from "@lit/task";
 import type {PlayerInfoPanelCommentsTab} from "./comments";
-import type {NVAPIResponse, NVComment} from "../watch-data";
 import {isErrorResponse} from "../watch-data";
+import type {NVAPIResponse, NVComment} from "../watch-data";
 
 type ReactiveControllerHost = PlayerInfoPanelCommentsTab;
+type CommentCompare = (a: FlattedComment, b: FlattedComment) => number;
 
 interface ThreadComment {
   id: string;
@@ -33,32 +34,45 @@ interface Threads {
   }[];
 }
 
-interface FlattedComment extends ThreadComment {
+export interface FlattedComment extends ThreadComment {
   fork: string;
   threadId: string;
 }
 
 export class CommentsController implements ReactiveController {
-  static #trackId() {
-    const alnum =
-      "abcdefghijklmnopqrstuvwxyzABCDEFGHIJLKMNOPQRSTUVWXYZ0123456789".split(
-        "",
-      );
-    const id = Array.from(
-      {length: 10},
-      () => alnum[Math.floor(Math.random() * alnum.length)],
-    ).join("");
-    return id + "_" + Date.now();
+  static #sortComments(
+    key: "postedAt" | "vposMs" | "nicoruCount",
+    desc: boolean = false,
+  ): CommentCompare {
+    const compare: CommentCompare = (a, b) => {
+      if (a[key] > b[key]) {
+        return 1;
+      }
+      if (a[key] < b[key]) {
+        return -1;
+      }
+      return 0;
+    };
+    return desc ? (a, b) => compare(b, a) : compare;
   }
 
+  #posCompare = CommentsController.#sortComments("vposMs");
+  #dateCompare = CommentsController.#sortComments("postedAt", true);
+  #nicoruCompare = CommentsController.#sortComments("nicoruCount", true);
+
   params: NVComment | undefined;
+  order: "vpos" | "date" | "nicoru" = "vpos";
 
   #host: ReactiveControllerHost;
-  #task: Task<[NVComment | undefined], FlattedComment[]>;
+  #loadTask: Task<[NVComment | undefined], FlattedComment[]>;
+  #sortTask: Task<
+    [FlattedComment[] | undefined, "vpos" | "date" | "nicoru"],
+    FlattedComment[]
+  >;
 
   constructor(host: ReactiveControllerHost) {
     this.#host = host;
-    this.#task = new Task<[NVComment | undefined], FlattedComment[]>(
+    this.#loadTask = new Task<[NVComment | undefined], FlattedComment[]>(
       this.#host,
       async ([nvComment]: [NVComment | undefined], {signal}) => {
         if (nvComment == null) {
@@ -109,6 +123,35 @@ export class CommentsController implements ReactiveController {
       },
       () => [this.params],
     );
+    this.#sortTask = new Task<
+      [FlattedComment[] | undefined, "vpos" | "date" | "nicoru"],
+      FlattedComment[]
+    >(
+      this.#host,
+      (
+        [comments = [], order]: [
+          FlattedComment[] | undefined,
+          "vpos" | "date" | "nicoru",
+        ],
+        {signal},
+      ) => {
+        if (comments.length === 0) {
+          return initialState;
+        }
+
+        signal.throwIfAborted();
+
+        switch (order) {
+          case "vpos":
+            return comments.toSorted(this.#posCompare);
+          case "date":
+            return comments.toSorted(this.#dateCompare);
+          case "nicoru":
+            return comments.toSorted(this.#nicoruCompare);
+        }
+      },
+      () => [this.#loadTask.value, this.order],
+    );
 
     this.#host.addController(this);
   }
@@ -116,6 +159,6 @@ export class CommentsController implements ReactiveController {
   hostUpdate() {}
 
   render(renderFunctions: StatusRenderer<FlattedComment[]>) {
-    return this.#task.render(renderFunctions);
+    return this.#sortTask.render(renderFunctions);
   }
 }

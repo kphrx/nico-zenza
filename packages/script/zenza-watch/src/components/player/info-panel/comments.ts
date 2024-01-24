@@ -1,7 +1,8 @@
 import {LitElement, html} from "lit";
 import {customElement} from "lit/decorators";
-import type {NVComment} from "../watch-data";
+import {repeat} from "lit/directives/repeat";
 import {CommentsController} from "./comments-controller";
+import type {NVComment} from "../watch-data";
 import base from "./panel.css" with {type: "css"};
 import sheet from "./comments.css" with {type: "css"};
 
@@ -39,32 +40,55 @@ export class PlayerInfoPanelCommentsTab extends LitElement {
   }
 
   render() {
-    return this.#comments.render({
-      initial: () => {
-        return html`<p>No comments</p>`;
-      },
-      pending: () => {
-        return html`<p>Loading commetns...</p>`;
-      },
-      complete: (comments) => {
-        return html`<ul>
-          ${comments
-            .toSorted((a, b) => (a.vposMs > b.vposMs ? 1 : -1))
-            .map((comment) => {
-              return html`<li
-                data-id=${comment.id}
-                data-no=${comment.no}
-                data-thread-id=${comment.threadId}
-                data-fork=${comment.fork}
-                data-posted-at=${comment.postedAt}>
-                ${comment.body}
-              </li>`;
-            })}
-        </ul>`;
-      },
-      error: (e) => {
-        return html`<p>${e}</p>`;
-      },
-    });
+    return [
+      html`<div class="panel-header">
+        <select
+          @change=${(ev: Event) => {
+            this.#comments.order = (ev.target as HTMLSelectElement).value as
+              | "vpos"
+              | "date"
+              | "nicoru";
+            this.requestUpdate();
+          }}>
+          <option value="vpos" ?selected=${this.#comments.order === "vpos"}>
+            位置順に並べる
+          </option>
+          <option value="date" ?selected=${this.#comments.order === "date"}>
+            新しい順に並べる
+          </option>
+          <option value="nicoru" ?selected=${this.#comments.order === "nicoru"}>
+            ニコるが多い順に並べる
+          </option>
+        </select>
+      </div>`,
+      this.#comments.render({
+        initial: () => {
+          return html`<p>No comments</p>`;
+        },
+        pending: () => {
+          return html`<p>Loading commetns...</p>`;
+        },
+        complete: (comments) => {
+          return html`<ul>
+            ${repeat(
+              comments,
+              (comment) => comment.id,
+              (comment) =>
+                html`<li
+                  data-id=${comment.id}
+                  data-no=${comment.no}
+                  data-thread-id=${comment.threadId}
+                  data-fork=${comment.fork}
+                  data-posted-at=${comment.postedAt}>
+                  ${comment.body}
+                </li>`,
+            )}
+          </ul>`;
+        },
+        error: (e) => {
+          return html`<p>${e}</p>`;
+        },
+      }),
+    ];
   }
 }

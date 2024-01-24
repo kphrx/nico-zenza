@@ -1,4 +1,6 @@
 :host {
+  color: #ddd;
+
   display: flex;
   height: 32px;
   background: #000;
