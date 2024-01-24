@@ -1,7 +1,7 @@
 {
-  "extends": "../../tsconfig.json",
+  "extends": "../../tsconfig.shared.json",
   "include": ["index.ts"],
   "compilerOptions": {
-    "outDir": "dist"
-  }
+    "outDir": "dist",
+  },
 }

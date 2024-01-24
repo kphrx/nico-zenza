@@ -4,7 +4,7 @@
   "description": "niconico HTML5 Player",
   "type": "module",
   "scripts": {
-    "compile": "tsc -b tsconfig.build.json",
+    "compile": "tsc --build",
     "lint": "eslint --ignore-path .gitignore --ext .ts,.js . && prettier --ignore-path .gitignore -cu .",
     "lint:fix": "eslint --ignore-path .gitignore --fix --ext .ts,.js . && prettier --ignore-path .gitignore -wu .",
     "build:dev": "NODE_ENV=development npm run build",

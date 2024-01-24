@@ -1,0 +1,9 @@
+{
+  "extends": "../../../tsconfig.shared.json",
+  "files": ["package.json"],
+  "include": ["src/**/*.ts"],
+  "compilerOptions": {
+    "noEmit": true,
+    "outDir": "dist"
+  }
+}

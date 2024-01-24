@@ -1,17 +1,17 @@
 {
-  "compilerOptions": {
-    "target": "es2017",
-    "module": "esnext",
-    "lib": ["esnext", "dom"],
-    "composite": true,
-    "types": ["node", "types"],
-    "typeRoots": ["./node_modules/@types", "./node_modules/@violentmonkey"],
-    "downlevelIteration": true,
-    "strict": true,
-    "moduleResolution": "node",
-    "esModuleInterop": true,
-    "skipLibCheck": true,
-    "forceConsistentCasingInFileNames": true,
-    "resolveJsonModule": true
-  }
+  "files": [],
+  "references": [
+    {"path": "packages/script/zenza-watch"},
+    {"path": "packages/script/mylist-pocket"},
+    {"path": "packages/script/advanced-settings"},
+    {"path": "packages/script/hls-support"},
+    {"path": "packages/script/blog-parts-button"},
+    {"path": "packages/script/heat-sync"},
+    {"path": "packages/script/cap-tube"},
+    {"path": "packages/script/masked-watch"},
+    {"path": "packages/script/game-pad"},
+    {"path": "packages/script/uquery"},
+    {"path": "packages/script/mylist-filter"},
+    {"path": "packages/build-util"},
+  ],
 }
