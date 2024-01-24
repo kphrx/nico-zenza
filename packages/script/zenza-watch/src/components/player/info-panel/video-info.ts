@@ -8,6 +8,7 @@ import type {
   OwnerInfo,
 } from "../watch-data";
 import sheet from "./video-info.css" with {type: "css"};
+import {PlayerInfoPanelCommentsTab} from "./comments";
 
 const TAG_NAME = "zenza-watch-player-info-panel";
 
@@ -21,6 +22,8 @@ declare global {
 export class PlayerInfoPanel extends LitElement {
   static styles = sheet;
 
+  #commentsTab = new PlayerInfoPanelCommentsTab();
+
   @state()
   accessor videoInfo: VideoInfo | undefined;
 
@@ -33,7 +36,9 @@ export class PlayerInfoPanel extends LitElement {
   @state()
   accessor ownerInfo: OwnerInfo | null = null;
 
-  init({video, series, owner, channel}: WatchV3Response) {
+  init(watchData: WatchV3Response) {
+    this.#commentsTab.init(watchData);
+    const {video, series, owner, channel} = watchData;
     this.videoInfo = video;
     this.seriesInfo = series;
     this.channelInfo = channel;
@@ -41,6 +46,7 @@ export class PlayerInfoPanel extends LitElement {
   }
 
   reset() {
+    this.#commentsTab.reset();
     this.videoInfo = undefined;
     this.seriesInfo = null;
     this.channelInfo = null;
@@ -70,22 +76,25 @@ export class PlayerInfoPanel extends LitElement {
 
       return Array.from(desc.body.childNodes);
     })();
-    return html`<div class="video-info">
-      <div class="owner">
-        <a href=${ownerLink ?? "#"} rel="noopener" target="_blank">
-          <img
-            src=${this.channelInfo?.thumbnail.url ??
-            this.ownerInfo?.iconUrl ??
-            "https://secure-dcdn.cdn.nimg.jp/nicoaccount/usericon/defaults/blank.jpg"}
-            alt="owner-icon" />
-        </a>
-        <p class="name">
-          ${this.channelInfo?.name ??
-          this.ownerInfo?.nickname ??
-          "(非公開ユーザー)"}
-        </p>
-      </div>
-      <p class="description">${description ?? nothing}</p>
-    </div>`;
+    return [
+      html`<div class="video-info">
+        <div class="owner">
+          <a href=${ownerLink ?? "#"} rel="noopener" target="_blank">
+            <img
+              src=${this.channelInfo?.thumbnail.url ??
+              this.ownerInfo?.iconUrl ??
+              "https://secure-dcdn.cdn.nimg.jp/nicoaccount/usericon/defaults/blank.jpg"}
+              alt="owner-icon" />
+          </a>
+          <p class="name">
+            ${this.channelInfo?.name ??
+            this.ownerInfo?.nickname ??
+            "(非公開ユーザー)"}
+          </p>
+        </div>
+        <p class="description">${description ?? nothing}</p>
+      </div>`,
+      this.#commentsTab,
+    ];
   }
 }

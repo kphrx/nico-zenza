@@ -84,6 +84,18 @@ export interface Tag {
   viewer: TagEdit;
 }
 
+export interface NVComment {
+  threadKey: string;
+  server: string;
+  params: {
+    language: string;
+    targets: {
+      id: string;
+      fork: string;
+    }[];
+  };
+}
+
 export interface VideoInfo {
   id: string;
   title: string;
@@ -217,17 +229,7 @@ export interface WatchV3Response {
       };
     };
     isAttentionRequired: boolean;
-    nvComment: {
-      threadKey: string;
-      server: string;
-      params: {
-        language: string;
-        targets: {
-          id: string;
-          fork: string;
-        }[];
-      };
-    };
+    nvComment: NVComment;
   };
   community: {
     main: {
