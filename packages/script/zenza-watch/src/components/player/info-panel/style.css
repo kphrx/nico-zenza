@@ -1,0 +1,29 @@
+:host {
+  display: block;
+  overflow: hidden;
+  width: 360px;
+  height: 60vh;
+  position: absolute;
+  top: 20vh;
+  right: 0;
+  border: 1px #252525 solid;
+
+  transition: translate 0.4s ease 1s;
+  will-change: translate;
+
+  div.info-panel {
+    height: calc(60vh - 32px);
+  }
+
+  > * {
+    transition: opacity 0.4s ease 0s;
+    will-change: opacity;
+  }
+}
+:host(:not(:hover)) {
+  translate: 288px;
+
+  > * {
+    opacity: 0;
+  }
+}

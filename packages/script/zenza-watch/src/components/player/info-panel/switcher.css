@@ -1,0 +1,15 @@
+:host {
+  display: flex;
+  height: 32px;
+  background: #000;
+}
+
+span[role="tab"] {
+  flex: 1;
+  font-size: 20px;
+  text-align: center;
+
+  &[aria-selected="true"] {
+    background: #252525;
+  }
+}

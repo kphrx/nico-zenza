@@ -1,7 +1,7 @@
 import {LitElement, html} from "lit";
 import {customElement, property} from "lit/decorators";
 import {PlayerHeader} from "./header";
-import {PlayerInfoPanel} from "./info-panel/video-info";
+import {PlayerInfoPanel} from "./info-panel";
 import {OpenController} from "./open-controller";
 import {WatchDataController} from "./watch-data-controller";
 import type {WatchV3Response} from "./watch-data";
