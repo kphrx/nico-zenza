@@ -6,8 +6,8 @@ import type {
   SeriesInfo,
   ChannelInfo,
   OwnerInfo,
-} from "./watch-data";
-import sheet from "./info-panel.css" with {type: "css"};
+} from "../watch-data";
+import sheet from "./video-info.css" with {type: "css"};
 
 const TAG_NAME = "zenza-watch-player-info-panel";
 
