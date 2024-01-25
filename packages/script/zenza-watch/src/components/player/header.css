@@ -5,7 +5,10 @@
   flex-wrap: wrap;
   gap: 0.5rem 1rem;
   padding: 0.5rem;
-  position: relative;
+
+  position: absolute;
+  inset: 0;
+  bottom: unset;
 }
 
 h2 {
@@ -44,7 +47,7 @@ ul {
     }
   }
 
-  &.tag {
+  &.tags {
     flex-basis: 100%;
 
     gap: 1ex;
@@ -54,6 +57,8 @@ ul {
     li {
       padding: 3px 6px;
       border-radius: 1rem;
+
+      cursor: pointer;
 
       &:hover {
         background: rgb(160, 160, 160, 0.5);

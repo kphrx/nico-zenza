@@ -67,7 +67,7 @@ export class PlayerHeader extends LitElement {
         <li>マイリスト: ${this.videoInfo?.count.mylist ?? 0}</li>
         <li>いいね: ${this.videoInfo?.count.like ?? 0}</li>
       </ul>
-      <ul class="tag">
+      <ul class="tags">
         ${this.tags?.items.map((tag) => {
           return html`<li
             class=${classMap({nicodic: tag.isNicodicArticleExists})}>

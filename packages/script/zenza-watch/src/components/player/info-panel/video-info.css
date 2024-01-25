@@ -1,11 +1,16 @@
 div.owner {
-  margin-top: 1rem;
+  margin-block: 16px;
   text-align: center;
 
   a {
     display: block;
     width: fit-content;
     margin: auto;
+
+    img {
+      width: 96px;
+      height: 96px;
+    }
   }
 
   .name {
@@ -19,6 +24,6 @@ p.description {
   color: #000;
   filter: invert(1);
 
-  margin: 0;
-  padding: 1rem;
+  margin: 8px;
+  padding: 0;
 }

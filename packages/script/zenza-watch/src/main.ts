@@ -26,3 +26,7 @@ document.body
     }),
   )
   .setAttribute("slot", "menu");
+
+GM_addStyle(`:root:has(zenza-watch-player-dialog[open]) {
+  overflow: hidden;
+}`);

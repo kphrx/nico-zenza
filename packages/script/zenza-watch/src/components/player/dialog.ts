@@ -1,4 +1,4 @@
-import {LitElement, html} from "lit";
+import {LitElement} from "lit";
 import {customElement, property} from "lit/decorators";
 import {PlayerHeader} from "./header";
 import {PlayerInfoPanel} from "./info-panel";
@@ -58,37 +58,35 @@ export class PlayerDialog extends LitElement {
   }
 
   render() {
-    return html`<div>
-      ${this.#watchData.render({
-        initial: () => {
-          this.#status.textContent = STATUS.Initial;
+    return this.#watchData.render({
+      initial: () => {
+        this.#status.textContent = STATUS.Initial;
 
-          return [this.#status];
-        },
-        pending: () => {
-          this.#header.reset();
-          this.#infoPanel.reset();
-          this.#status.textContent = STATUS.Loading(this.#watchData.videoId);
+        return [this.#status];
+      },
+      pending: () => {
+        this.#header.reset();
+        this.#infoPanel.reset();
+        this.#status.textContent = STATUS.Loading(this.#watchData.videoId);
 
-          return [this.#status, this.#header, this.#infoPanel];
-        },
-        complete: (result: WatchV3Response) => {
-          this.#header.init(result);
-          this.#infoPanel.init(result);
-          this.#status.textContent = STATUS.Loaded(this.#watchData.videoId);
+        return [this.#status, this.#header, this.#infoPanel];
+      },
+      complete: (result: WatchV3Response) => {
+        this.#header.init(result);
+        this.#infoPanel.init(result);
+        this.#status.textContent = STATUS.Loaded(this.#watchData.videoId);
 
-          return [this.#status, this.#header, this.#infoPanel];
-        },
-        error: (e: unknown) => {
-          if (e instanceof Error) {
-            this.#status.textContent = STATUS.Error(e.message);
-          } else {
-            this.#status.textContent = STATUS.Error(e);
-          }
+        return [this.#status, this.#header, this.#infoPanel];
+      },
+      error: (e: unknown) => {
+        if (e instanceof Error) {
+          this.#status.textContent = STATUS.Error(e.message);
+        } else {
+          this.#status.textContent = STATUS.Error(e);
+        }
 
-          return [this.#status, this.#header, this.#infoPanel];
-        },
-      })}
-    </div>`;
+        return [this.#status, this.#header, this.#infoPanel];
+      },
+    });
   }
 }

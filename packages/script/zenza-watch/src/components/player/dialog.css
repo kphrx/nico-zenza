@@ -5,10 +5,6 @@
   inset: 0;
   background: rgb(0 0 0 / 0.8);
   font-family: sans-serif;
-
-  > div {
-    margin: auto;
-  }
 }
 :host([open]) {
   display: block;

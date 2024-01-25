@@ -69,7 +69,7 @@ export class PlayerInfoPanelCommentsTab extends LitElement {
           return html`<p>Loading commetns...</p>`;
         },
         complete: (comments) => {
-          return html`<ul>
+          return html`<ul class="scrollable-body">
             ${repeat(
               comments,
               (comment) => comment.id,

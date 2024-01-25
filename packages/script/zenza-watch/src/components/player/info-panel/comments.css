@@ -1,5 +1,23 @@
+:host {
+  --panel-header-height: 36px;
+}
+
+div.panel-header {
+  padding: 4px;
+
+  select {
+    height: 100%;
+    float: right;
+
+    color: #fff;
+    background: #444;
+    text-align: right;
+    border: none;
+  }
+}
+
 ul {
-  margin: 1ex;
-  padding: 0;
+  margin: 0;
+  padding: 8px;
   list-style: none;
 }

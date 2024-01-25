@@ -86,7 +86,7 @@ export class PlayerInfoPanelVideoInfoTab extends LitElement {
       return Array.from(desc.body.childNodes);
     })();
 
-    return html`
+    return html`<div class="scrollable-body">
       <div class="owner">
         <a href=${ownerLink ?? "#"} rel="noopener" target="_blank">
           <img
@@ -102,6 +102,6 @@ export class PlayerInfoPanelVideoInfoTab extends LitElement {
         </p>
       </div>
       <p class="description">${description ?? nothing}</p>
-    `;
+    </div>`;
   }
 }
