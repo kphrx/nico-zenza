@@ -60,10 +60,20 @@ export class PlayerHeader extends LitElement {
         ${new Date(this.#videoInfo?.registeredAt ?? 0).toLocaleString()}
       </p>
       <ul class="count">
-        <li>再生: ${this.#videoInfo?.count.view ?? 0}</li>
-        <li>コメント: ${this.#videoInfo?.count.comment ?? 0}</li>
-        <li>マイリスト: ${this.#videoInfo?.count.mylist ?? 0}</li>
-        <li>いいね: ${this.#videoInfo?.count.like ?? 0}</li>
+        <li>
+          再生: <span class="value">${this.#videoInfo?.count.view ?? 0}</span>
+        </li>
+        <li>
+          コメント:
+          <span class="value">${this.#videoInfo?.count.comment ?? 0}</span>
+        </li>
+        <li>
+          マイリスト:
+          <span class="value">${this.#videoInfo?.count.mylist ?? 0}</span>
+        </li>
+        <li>
+          いいね: <span class="value">${this.#videoInfo?.count.like ?? 0}</span>
+        </li>
       </ul>
       <ul class="tags">
         ${this.#tags?.items.map((tag) => {

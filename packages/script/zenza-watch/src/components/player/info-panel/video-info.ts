@@ -90,9 +90,11 @@ export class PlayerInfoPanelVideoInfoTab extends LitElement {
 
     return html`<div class="series">
       <img src=${this.#seriesInfo.thumbnailUrl} alt="thumbnail" />
-      <a href=${this.#seriesLink} rel="noopener" target="_blank">
-        <p class="name">${this.#seriesInfo.title}</p>
-      </a>
+      <p class="name">
+        <a href=${this.#seriesLink} rel="noopener" target="_blank">
+          ${this.#seriesInfo.title}
+        </a>
+      </p>
     </div>`;
   }
 
@@ -119,17 +121,44 @@ export class PlayerInfoPanelVideoInfoTab extends LitElement {
       return nothing;
     }
 
-    const id = this.#seriesInfo.video.prev.id;
+    const {
+      id,
+      title,
+      thumbnail: {listingUrl: thumbnailUrl},
+      registeredAt,
+      duration,
+      count: {view, comment, mylist, like},
+    } = this.#seriesInfo.video.prev;
 
     return html`<div class="prev">
       <p>
         前の動画
         <a
           href="https://www.nicovideo.jp/watch/${id}"
-          @click=${this.#clickVideo(id)}
-          >${id}</a
-        >
+          @click=${this.#clickVideo(id)}>
+          ${id}
+        </a>
       </p>
+      <div class="card" @click=${this.#clickVideo(id)}>
+        <div class="thumbnail">
+          <img src=${thumbnailUrl} alt="thumbnail" />
+          <span class="duration">${this.#durationToTimestamp(duration)}</span>
+        </div>
+        <div class=info>
+          <p class="date">${new Date(registeredAt).toLocaleString()}</p>
+          <p class="title">
+          <p class="title"><a href="https://www.nicovideo.jp/watch/${id}">
+            ${title}
+          </a></p>
+          </p>
+        </div>
+        <ul class=count>
+          <li>再生: <span class=value>${view}</span></li>
+          <li>コメント: <span class=value>${comment}</span></li>
+          <li>マイリスト: <span class=value>${mylist}</span></li>
+          <li>いいね: <span class=value>${like}</span></li>
+        </ul>
+      </div>
     </div>`;
   }
 
@@ -138,17 +167,42 @@ export class PlayerInfoPanelVideoInfoTab extends LitElement {
       return nothing;
     }
 
-    const id = this.#seriesInfo.video.next.id;
+    const {
+      id,
+      title,
+      thumbnail: {listingUrl: thumbnailUrl},
+      registeredAt,
+      duration,
+      count: {view, comment, mylist, like},
+    } = this.#seriesInfo.video.next;
 
     return html`<div class="next">
       <p>
         次の動画
         <a
           href="https://www.nicovideo.jp/watch/${id}"
-          @click=${this.#clickVideo(id)}
-          >${id}</a
-        >
+          @click=${this.#clickVideo(id)}>
+          ${id}
+        </a>
       </p>
+      <div class="card" @click=${this.#clickVideo(id)}>
+        <div class="thumbnail">
+          <img src=${thumbnailUrl} alt="thumbnail" />
+          <span class="duration">${this.#durationToTimestamp(duration)}</span>
+        </div>
+        <div class="info">
+          <p class="date">${new Date(registeredAt).toLocaleString()}</p>
+          <p class="title">
+            <a href="https://www.nicovideo.jp/watch/${id}"> ${title} </a>
+          </p>
+        </div>
+        <ul class="count">
+          <li>再生: <span class="value">${view}</span></li>
+          <li>コメント: <span class="value">${comment}</span></li>
+          <li>マイリスト: <span class="value">${mylist}</span></li>
+          <li>いいね: <span class="value">${like}</span></li>
+        </ul>
+      </div>
     </div>`;
   }
 
@@ -171,6 +225,19 @@ export class PlayerInfoPanelVideoInfoTab extends LitElement {
         new CustomEvent("zenzawatch:playeropen", {detail: {videoId: id}}),
       );
     };
+  }
+
+  #durationToTimestamp(duration: number) {
+    const datetime = new Date(duration * 1000);
+    const hours = datetime.getUTCHours();
+    const minutes = String(datetime.getUTCMinutes()).padStart(2, "0");
+    const seconds = String(datetime.getUTCSeconds()).padStart(2, "0");
+    const formattedDuration =
+      hours > 0
+        ? `${String(hours).padStart(2, "0")}:${minutes}:${seconds}`
+        : `${minutes}:${seconds}`;
+
+    return formattedDuration;
   }
 
   constructor() {
