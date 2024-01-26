@@ -63,7 +63,6 @@ export class CommentsController implements ReactiveController {
   #dateCompare = CommentsController.#sortComments("postedAt", true);
   #nicoruCompare = CommentsController.#sortComments("nicoruCount", true);
 
-  params: NVComment | undefined;
   order: "vpos" | "date" | "nicoru" = "vpos";
 
   #host: ReactiveControllerHost;
@@ -125,7 +124,7 @@ export class CommentsController implements ReactiveController {
 
         return data;
       },
-      () => [this.params],
+      () => [this.#host.nvComment],
     );
     this.#sortTask = new Task<
       [FlattedComment[] | undefined, "vpos" | "date" | "nicoru"],

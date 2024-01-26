@@ -1,6 +1,8 @@
 import {LitElement} from "lit";
-import {customElement, property} from "lit/decorators";
+import {customElement, property, state} from "lit/decorators";
+import {provide} from "@lit/context";
 
+import {watchDataContext} from "@/contexts/watch-data-context";
 import type {WatchV3Response} from "@/watch-data";
 
 import {OpenController} from "./open-controller";
@@ -30,6 +32,11 @@ export class PlayerDialog extends LitElement {
   static styles = sheet;
 
   #watchData = new WatchDataController(this);
+
+  @provide({context: watchDataContext})
+  @state()
+  accessor watchData: WatchV3Response | undefined;
+
   #open = new OpenController(this, () => {
     this.#watchData.videoId = this.#open.videoId;
     this.open = true;
@@ -39,8 +46,7 @@ export class PlayerDialog extends LitElement {
 
   #header = new PlayerHeader(() => {
     this.#watchData.videoId = "";
-    this.#header.reset();
-    this.#infoPanel.reset();
+    this.watchData = undefined;
     this.open = false;
   });
 
@@ -68,15 +74,13 @@ export class PlayerDialog extends LitElement {
         return [this.#status];
       },
       pending: () => {
-        this.#header.reset();
-        this.#infoPanel.reset();
+        this.watchData = undefined;
         this.#status.textContent = STATUS.Loading(this.#watchData.videoId);
 
         return [this.#status, this.#header, this.#infoPanel];
       },
       complete: (result: WatchV3Response) => {
-        this.#header.init(result);
-        this.#infoPanel.init(result);
+        this.watchData = result;
         this.#status.textContent = STATUS.Loaded(this.#watchData.videoId);
 
         return [this.#status, this.#header, this.#infoPanel];

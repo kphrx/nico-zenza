@@ -1,8 +1,6 @@
 import {LitElement, html} from "lit";
 import {customElement} from "lit/decorators";
 
-import type {WatchV3Response} from "@/watch-data";
-
 import {PlayerInfoPanelSwitcher} from "./switcher";
 import {PlayerInfoPanelVideoInfoTab} from "./video-info";
 import {PlayerInfoPanelCommentsTab} from "./comments";
@@ -41,16 +39,6 @@ export class PlayerInfoPanel extends LitElement {
   );
   #videoInfoTab = new PlayerInfoPanelVideoInfoTab();
   #commentsTab = new PlayerInfoPanelCommentsTab();
-
-  init(watchData: WatchV3Response) {
-    this.#videoInfoTab.init(watchData);
-    this.#commentsTab.init(watchData);
-  }
-
-  reset() {
-    this.#videoInfoTab.reset();
-    this.#commentsTab.reset();
-  }
 
   render() {
     return [

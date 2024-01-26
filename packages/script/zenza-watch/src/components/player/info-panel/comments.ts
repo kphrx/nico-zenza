@@ -1,8 +1,10 @@
 import {LitElement, html} from "lit";
-import {customElement} from "lit/decorators";
+import {customElement, state} from "lit/decorators";
 import {repeat} from "lit/directives/repeat";
+import {consume} from "@lit/context";
 
-import type {NVComment} from "@/watch-data";
+import {watchDataContext} from "@/contexts/watch-data-context";
+import type {WatchV3Response, NVComment} from "@/watch-data";
 
 import {CommentsController} from "./comments-controller";
 
@@ -23,6 +25,14 @@ export class PlayerInfoPanelCommentsTab extends LitElement {
 
   #comments = new CommentsController(this);
 
+  @consume({context: watchDataContext, subscribe: true})
+  @state()
+  accessor watchData: WatchV3Response | undefined;
+
+  get nvComment(): NVComment | undefined {
+    return this.watchData?.comment.nvComment;
+  }
+
   constructor() {
     super();
 
@@ -30,16 +40,6 @@ export class PlayerInfoPanelCommentsTab extends LitElement {
     this.role = "tabpanel";
     this.tabIndex = 0;
     this.setAttribute("aria-labelledby", "zenza-player-comments-tab");
-  }
-
-  init({comment: {nvComment}}: {comment: {nvComment: NVComment}}) {
-    this.#comments.params = nvComment;
-    this.requestUpdate();
-  }
-
-  reset() {
-    this.#comments.params = undefined;
-    this.requestUpdate();
   }
 
   render() {

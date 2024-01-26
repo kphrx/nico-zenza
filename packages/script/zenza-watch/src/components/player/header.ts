@@ -1,8 +1,10 @@
 import {LitElement, html, nothing} from "lit";
 import {customElement, state} from "lit/decorators";
 import {classMap} from "lit/directives/class-map";
+import {consume} from "@lit/context";
 
 import type {WatchV3Response, VideoInfo, Tag} from "@/watch-data";
+import {watchDataContext} from "@/contexts/watch-data-context";
 
 import sheet from "./header.css" with {type: "css"};
 
@@ -18,17 +20,25 @@ declare global {
 export class PlayerHeader extends LitElement {
   static styles = sheet;
 
+  @consume({context: watchDataContext, subscribe: true})
   @state()
-  accessor videoInfo: VideoInfo | undefined;
+  accessor watchData: WatchV3Response | undefined;
 
-  @state()
-  accessor isUser = false;
+  get #videoInfo(): VideoInfo | undefined {
+    return this.watchData?.video;
+  }
 
-  @state()
-  accessor isChannel = false;
+  get #isUser(): boolean {
+    return this.watchData?.owner != null;
+  }
 
-  @state()
-  accessor tags: Tag | undefined;
+  get #isChannel(): boolean {
+    return this.watchData?.channel != null;
+  }
+
+  get #tags(): Tag | undefined {
+    return this.watchData?.tag;
+  }
 
   #onClose: () => void;
 
@@ -38,39 +48,25 @@ export class PlayerHeader extends LitElement {
     this.#onClose = onClose;
   }
 
-  init({video, tag, owner, channel}: WatchV3Response) {
-    this.videoInfo = video;
-    this.isChannel = channel !== null;
-    this.isUser = owner !== null;
-    this.tags = tag;
-  }
-
-  reset() {
-    this.videoInfo = undefined;
-    this.isUser = false;
-    this.isChannel = false;
-    this.tags = undefined;
-  }
-
   render() {
     return html`
-      <h2 title=${this.videoInfo?.title ?? nothing}>
-        ${this.videoInfo?.title ?? nothing}
+      <h2 title=${this.#videoInfo?.title ?? nothing}>
+        ${this.#videoInfo?.title ?? nothing}
       </h2>
       <p class="date">
-        ${(this.isUser && "投稿日時") ||
-        (this.isChannel && "配信日時") ||
+        ${(this.#isUser && "投稿日時") ||
+        (this.#isChannel && "配信日時") ||
         nothing}:
-        ${new Date(this.videoInfo?.registeredAt ?? 0).toLocaleString()}
+        ${new Date(this.#videoInfo?.registeredAt ?? 0).toLocaleString()}
       </p>
       <ul class="count">
-        <li>再生: ${this.videoInfo?.count.view ?? 0}</li>
-        <li>コメント: ${this.videoInfo?.count.comment ?? 0}</li>
-        <li>マイリスト: ${this.videoInfo?.count.mylist ?? 0}</li>
-        <li>いいね: ${this.videoInfo?.count.like ?? 0}</li>
+        <li>再生: ${this.#videoInfo?.count.view ?? 0}</li>
+        <li>コメント: ${this.#videoInfo?.count.comment ?? 0}</li>
+        <li>マイリスト: ${this.#videoInfo?.count.mylist ?? 0}</li>
+        <li>いいね: ${this.#videoInfo?.count.like ?? 0}</li>
       </ul>
       <ul class="tags">
-        ${this.tags?.items.map((tag) => {
+        ${this.#tags?.items.map((tag) => {
           return html`<li
             class=${classMap({nicodic: tag.isNicodicArticleExists})}>
             ${tag.name}

@@ -1,7 +1,15 @@
 import {LitElement, html, nothing} from "lit";
 import {customElement, state} from "lit/decorators";
+import {consume} from "@lit/context";
 
-import type {VideoInfo, SeriesInfo, ChannelInfo, OwnerInfo} from "@/watch-data";
+import {watchDataContext} from "@/contexts/watch-data-context";
+import type {
+  WatchV3Response,
+  VideoInfo,
+  SeriesInfo,
+  ChannelInfo,
+  OwnerInfo,
+} from "@/watch-data";
 
 import base from "./panel.css" with {type: "css"};
 import sheet from "./video-info.css" with {type: "css"};
@@ -18,33 +26,28 @@ declare global {
 export class PlayerInfoPanelVideoInfoTab extends LitElement {
   static styles = [base, sheet];
 
+  @consume({context: watchDataContext, subscribe: true})
   @state()
-  accessor videoInfo: VideoInfo | undefined;
+  accessor watchData: WatchV3Response | undefined;
 
-  @state()
-  accessor seriesInfo: SeriesInfo | null = null;
+  get #videoInfo(): VideoInfo | undefined {
+    return this.watchData?.video;
+  }
 
-  @state()
-  accessor ownerInfo: OwnerInfo | null = null;
+  get #seriesInfo(): SeriesInfo | null {
+    return this.watchData?.series ?? null;
+  }
 
-  @state()
-  accessor channelInfo: ChannelInfo | null = null;
+  get #ownerInfo(): OwnerInfo | null {
+    return this.watchData?.owner ?? null;
+  }
 
-  init({
-    video,
-    series,
-    owner,
-    channel,
-  }: {
-    video: VideoInfo;
-    series: SeriesInfo | null;
-    owner: OwnerInfo | null;
-    channel: ChannelInfo | null;
-  }) {
-    this.videoInfo = video;
-    this.seriesInfo = series;
-    this.ownerInfo = owner;
-    this.channelInfo = channel;
+  get #channelInfo(): ChannelInfo | null {
+    return this.watchData?.channel ?? null;
+  }
+
+  constructor() {
+    super();
 
     this.id = "zenza-player-video-info-panel";
     this.role = "tabpanel";
@@ -52,31 +55,24 @@ export class PlayerInfoPanelVideoInfoTab extends LitElement {
     this.setAttribute("aria-labelledby", "zenza-player-video-info-tab");
   }
 
-  reset() {
-    this.videoInfo = undefined;
-    this.seriesInfo = null;
-    this.channelInfo = null;
-    this.ownerInfo = null;
-  }
-
   render() {
     const ownerLink = (() => {
-      if (this.channelInfo != null) {
-        return `https://ch.nicovideo.jp/${this.channelInfo.id}`;
+      if (this.#channelInfo != null) {
+        return `https://ch.nicovideo.jp/${this.#channelInfo.id}`;
       }
-      if (this.ownerInfo != null) {
-        return `https://www.nicovideo.jp/user/${this.ownerInfo.id}`;
+      if (this.#ownerInfo != null) {
+        return `https://www.nicovideo.jp/user/${this.#ownerInfo.id}`;
       }
     })();
 
     const description = (() => {
-      if (this.videoInfo == null) {
+      if (this.#videoInfo == null) {
         return;
       }
 
       const domParser = new DOMParser();
       const desc = domParser.parseFromString(
-        this.videoInfo.description,
+        this.#videoInfo.description,
         "text/html",
       );
 
@@ -87,14 +83,14 @@ export class PlayerInfoPanelVideoInfoTab extends LitElement {
       <div class="owner">
         <a href=${ownerLink ?? "#"} rel="noopener" target="_blank">
           <img
-            src=${this.channelInfo?.thumbnail.url ??
-            this.ownerInfo?.iconUrl ??
+            src=${this.#channelInfo?.thumbnail.url ??
+            this.#ownerInfo?.iconUrl ??
             "https://secure-dcdn.cdn.nimg.jp/nicoaccount/usericon/defaults/blank.jpg"}
             alt="owner-icon" />
         </a>
         <p class="name">
-          ${this.channelInfo?.name ??
-          this.ownerInfo?.nickname ??
+          ${this.#channelInfo?.name ??
+          this.#ownerInfo?.nickname ??
           "(非公開ユーザー)"}
         </p>
       </div>
