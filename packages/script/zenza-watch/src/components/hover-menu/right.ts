@@ -1,8 +1,10 @@
 import {LitElement, html, css} from "lit";
 import {customElement, property} from "lit/decorators";
 import {styleMap} from "lit/directives/style-map";
+
 import {MouseController} from "./mouse-controller";
 import type {HoverMenuButton} from "./button";
+
 import sheet from "./base.css" with {type: "css"};
 
 const TAG_NAME_RIGHT = "zenza-right-hover-menu";

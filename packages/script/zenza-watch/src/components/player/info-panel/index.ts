@@ -1,9 +1,12 @@
 import {LitElement, html} from "lit";
 import {customElement} from "lit/decorators";
-import type {WatchV3Response} from "../watch-data";
+
+import type {WatchV3Response} from "@/watch-data";
+
 import {PlayerInfoPanelSwitcher} from "./switcher";
 import {PlayerInfoPanelVideoInfoTab} from "./video-info";
 import {PlayerInfoPanelCommentsTab} from "./comments";
+
 import sheet from "./style.css" with {type: "css"};
 
 const TAG_NAME = "zenza-watch-player-info-panel";

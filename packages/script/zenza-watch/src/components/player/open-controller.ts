@@ -1,4 +1,5 @@
 import type {ReactiveController} from "lit";
+
 import type {PlayerDialog} from "./dialog";
 
 type ReactiveControllerHost = PlayerDialog;

@@ -1,10 +1,13 @@
 import {LitElement} from "lit";
 import {customElement, property} from "lit/decorators";
-import {PlayerHeader} from "./header";
-import {PlayerInfoPanel} from "./info-panel";
+
+import type {WatchV3Response} from "@/watch-data";
+
 import {OpenController} from "./open-controller";
 import {WatchDataController} from "./watch-data-controller";
-import type {WatchV3Response} from "./watch-data";
+import {PlayerHeader} from "./header";
+import {PlayerInfoPanel} from "./info-panel";
+
 import sheet from "./dialog.css" with {type: "css"};
 
 const TAG_NAME = "zenza-watch-player-dialog";

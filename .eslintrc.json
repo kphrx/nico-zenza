@@ -18,10 +18,22 @@
         "prettier"
       ],
       "parser": "@typescript-eslint/parser",
+      "plugins": ["@typescript-eslint"],
       "parserOptions": {
-        "project": "./tsconfig.shared.json"
+        "project": "./tsconfig.shared.json",
+        "EXPERIMENTAL_useProjectService": true
+      }
+    },
+    {
+      "files": ["**/rollup.config.ts"],
+      "env": {
+        "node": true
       },
-      "plugins": ["@typescript-eslint"]
+      "rules": {
+        "@typescript-eslint/no-unsafe-assignment": "off",
+        "@typescript-eslint/no-unsafe-call": "off",
+        "@typescript-eslint/no-unsafe-member-access": "off"
+      }
     }
   ]
 }

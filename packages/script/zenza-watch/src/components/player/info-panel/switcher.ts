@@ -1,5 +1,6 @@
 import {LitElement, html} from "lit";
 import {customElement, state} from "lit/decorators";
+
 import sheet from "./switcher.css" with {type: "css"};
 
 const TAG_NAME = "zenza-watch-player-info-panel-switcher";

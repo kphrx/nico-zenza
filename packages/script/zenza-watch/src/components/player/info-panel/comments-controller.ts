@@ -1,9 +1,12 @@
 import type {ReactiveController} from "lit";
 import {initialState, Task} from "@lit/task";
 import type {StatusRenderer} from "@lit/task";
+
+import {isErrorResponse} from "@/nvapi-response";
+import type {NVAPIResponse} from "@/nvapi-response";
+import type {NVComment} from "@/watch-data";
+
 import type {PlayerInfoPanelCommentsTab} from "./comments";
-import {isErrorResponse} from "../watch-data";
-import type {NVAPIResponse, NVComment} from "../watch-data";
 
 type ReactiveControllerHost = PlayerInfoPanelCommentsTab;
 type CommentCompare = (a: FlattedComment, b: FlattedComment) => number;
@@ -72,6 +75,7 @@ export class CommentsController implements ReactiveController {
 
   constructor(host: ReactiveControllerHost) {
     this.#host = host;
+
     this.#loadTask = new Task<[NVComment | undefined], FlattedComment[]>(
       this.#host,
       async ([nvComment]: [NVComment | undefined], {signal}) => {

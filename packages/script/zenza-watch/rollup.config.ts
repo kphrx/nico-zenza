@@ -1,4 +1,3 @@
-/* eslint-env node */
 import {rollupConfig} from "build-util";
 import pkg from "./package.json" with {type: "json"};
 

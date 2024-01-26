@@ -1,5 +1,6 @@
 /* eslint-env node */
 import {env} from "node:process";
+
 import {defineConfig} from "rollup";
 import babel from "@rollup/plugin-babel";
 import nodeResolve from "@rollup/plugin-node-resolve";
@@ -81,6 +82,15 @@ export function rollupConfig({
         ],
         plugins: [
           useDecorator && ["@babel/proposal-decorators", {version: "2023-05"}],
+          [
+            "babel-plugin-tsconfig-paths",
+            {
+              relative: true,
+              extensions,
+              rootDir: ".",
+              tsconfig: "./tsconfig.json",
+            },
+          ],
         ].filter((x) => x),
         exclude: "node_modules/**",
         extensions,

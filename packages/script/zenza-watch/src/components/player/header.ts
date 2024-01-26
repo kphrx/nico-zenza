@@ -1,7 +1,9 @@
 import {LitElement, html, nothing} from "lit";
 import {customElement, state} from "lit/decorators";
 import {classMap} from "lit/directives/class-map";
-import type {WatchV3Response, VideoInfo, Tag} from "./watch-data";
+
+import type {WatchV3Response, VideoInfo, Tag} from "@/watch-data";
+
 import sheet from "./header.css" with {type: "css"};
 
 const TAG_NAME = "zenza-watch-player-header";

@@ -1,8 +1,11 @@
 import {LitElement, html} from "lit";
 import {customElement} from "lit/decorators";
 import {repeat} from "lit/directives/repeat";
+
+import type {NVComment} from "@/watch-data";
+
 import {CommentsController} from "./comments-controller";
-import type {NVComment} from "../watch-data";
+
 import base from "./panel.css" with {type: "css"};
 import sheet from "./comments.css" with {type: "css"};
 

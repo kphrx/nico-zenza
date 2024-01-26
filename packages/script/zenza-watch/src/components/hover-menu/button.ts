@@ -1,5 +1,6 @@
 import {LitElement, html} from "lit";
 import {customElement, property} from "lit/decorators";
+
 import sheet from "./button.css" with {type: "css"};
 
 type ClickEvent = GlobalEventHandlersEventMap["click"];

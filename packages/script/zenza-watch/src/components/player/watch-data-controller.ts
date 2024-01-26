@@ -1,9 +1,12 @@
 import type {ReactiveController} from "lit";
 import type {StatusRenderer} from "@lit/task";
 import {initialState, Task} from "@lit/task";
+
+import {isErrorResponse} from "@/nvapi-response";
+import type {NVAPIResponse} from "@/nvapi-response";
+import type {WatchV3Response} from "@/watch-data";
+
 import type {PlayerDialog} from "./dialog";
-import type {NVAPIResponse, WatchV3Response} from "./watch-data";
-import {isErrorResponse} from "./watch-data";
 
 type ReactiveControllerHost = PlayerDialog;
 

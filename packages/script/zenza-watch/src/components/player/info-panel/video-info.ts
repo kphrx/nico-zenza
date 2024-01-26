@@ -1,11 +1,8 @@
 import {LitElement, html, nothing} from "lit";
 import {customElement, state} from "lit/decorators";
-import type {
-  VideoInfo,
-  SeriesInfo,
-  ChannelInfo,
-  OwnerInfo,
-} from "../watch-data";
+
+import type {VideoInfo, SeriesInfo, ChannelInfo, OwnerInfo} from "@/watch-data";
+
 import base from "./panel.css" with {type: "css"};
 import sheet from "./video-info.css" with {type: "css"};
 
