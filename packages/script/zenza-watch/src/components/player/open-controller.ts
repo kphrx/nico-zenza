@@ -8,8 +8,6 @@ export class OpenController implements ReactiveController {
   #host: ReactiveControllerHost;
   #onOpen: () => void;
 
-  videoId = "";
-
   #onPlayerOpen = (
     ev: GlobalEventHandlersEventMap["zenzawatch:playeropen"],
   ) => {
@@ -18,6 +16,8 @@ export class OpenController implements ReactiveController {
     this.videoId = videoId;
     this.#onOpen();
   };
+
+  videoId = "";
 
   constructor(host: ReactiveControllerHost, onOpen: () => void) {
     this.#host = host;
