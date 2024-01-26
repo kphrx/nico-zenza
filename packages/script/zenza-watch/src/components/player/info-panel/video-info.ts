@@ -66,6 +66,36 @@ export class PlayerInfoPanelVideoInfoTab extends LitElement {
     );
   }
 
+  get #owner() {
+    return html`<div class="owner">
+      <a href=${this.#link} rel="noopener" target="_blank">
+        <img src=${this.#iconUrl} alt="owner-icon" />
+      </a>
+      <p class="name">${this.#name}</p>
+    </div>`;
+  }
+
+  get #seriesLink() {
+    if (this.#seriesInfo == null) {
+      return "#";
+    }
+
+    return `https://www.nicovideo.jp/series/${this.#seriesInfo.id}`;
+  }
+
+  get #series() {
+    if (this.#seriesInfo == null) {
+      return nothing;
+    }
+
+    return html`<div class="series">
+      <img src=${this.#seriesInfo.thumbnailUrl} alt="thumbnail" />
+      <a href=${this.#seriesLink} rel="noopener" target="_blank">
+        <p class="name">${this.#seriesInfo.title}</p>
+      </a>
+    </div>`;
+  }
+
   get #desc() {
     if (this.#videoInfo == null) {
       return;
@@ -80,6 +110,69 @@ export class PlayerInfoPanelVideoInfoTab extends LitElement {
     return Array.from(desc.body.childNodes);
   }
 
+  get #description() {
+    return html`<p class="description">${this.#desc ?? nothing}</p>`;
+  }
+
+  get #seriesPrev() {
+    if (this.#seriesInfo == null || this.#seriesInfo.video.prev == null) {
+      return nothing;
+    }
+
+    const id = this.#seriesInfo.video.prev.id;
+
+    return html`<div class="prev">
+      <p>
+        前の動画
+        <a
+          href="https://www.nicovideo.jp/watch/${id}"
+          @click=${this.#clickVideo(id)}
+          >${id}</a
+        >
+      </p>
+    </div>`;
+  }
+
+  get #seriesNext() {
+    if (this.#seriesInfo == null || this.#seriesInfo.video.next == null) {
+      return nothing;
+    }
+
+    const id = this.#seriesInfo.video.next.id;
+
+    return html`<div class="next">
+      <p>
+        次の動画
+        <a
+          href="https://www.nicovideo.jp/watch/${id}"
+          @click=${this.#clickVideo(id)}
+          >${id}</a
+        >
+      </p>
+    </div>`;
+  }
+
+  get #seriesNavigation() {
+    if (this.#seriesInfo == null) {
+      return nothing;
+    }
+
+    return html`<div class="series-nav">
+      <p>「${this.#seriesInfo.title}」 シリーズ前後の動画</p>
+      ${[this.#seriesPrev, this.#seriesNext]}
+    </div>`;
+  }
+
+  #clickVideo(id: string) {
+    return (ev: MouseEvent) => {
+      ev.preventDefault();
+
+      window.dispatchEvent(
+        new CustomEvent("zenzawatch:playeropen", {detail: {videoId: id}}),
+      );
+    };
+  }
+
   constructor() {
     super();
 
@@ -91,13 +184,7 @@ export class PlayerInfoPanelVideoInfoTab extends LitElement {
 
   render() {
     return html`<div class="scrollable-body">
-      <div class="owner">
-        <a href=${this.#link} rel="noopener" target="_blank"
-          ><img src=${this.#iconUrl} alt="owner-icon"
-        /></a>
-        <p class="name">${this.#name}</p>
-      </div>
-      <p class="description">${this.#desc ?? nothing}</p>
+      ${[this.#owner, this.#series, this.#description, this.#seriesNavigation]}
     </div>`;
   }
 }
