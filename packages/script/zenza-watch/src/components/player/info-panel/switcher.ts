@@ -21,19 +21,29 @@ export class PlayerInfoPanelSwitcher<T extends string> extends LitElement {
   @state()
   accessor selectedTab: T;
 
-  #onSelect: (id: T) => void;
+  #switcher: (current: T, previous: T) => void;
 
   #selectTab(id: T) {
-    this.#onSelect(id);
-    this.selectedTab = id;
+    return (ev: Event) => {
+      ev.preventDefault();
+      if (id === this.selectedTab) {
+        return;
+      }
+
+      this.#switcher(id, this.selectedTab);
+      this.selectedTab = id;
+    };
   }
 
-  constructor(panels: {id: T; name: string}[], onSelect: (id: T) => void) {
+  constructor(
+    panels: {id: T; name: string}[],
+    switcher: (current: T, previous: T) => void,
+  ) {
     super();
 
     this.selectedTab = panels[0].id;
     this.tabs = panels.map((panel) => ({...panel}));
-    this.#onSelect = onSelect;
+    this.#switcher = switcher;
     this.role = "tablist";
     this.ariaLabel = "ZenzaWatch player info panel tabs";
   }
@@ -46,7 +56,7 @@ export class PlayerInfoPanelSwitcher<T extends string> extends LitElement {
         aria-controls="zenza-player-info-${tab.id}-panel"
         id="zenza-player-info-${tab.id}-tab"
         tabindex=${index === 0 ? 0 : -1}
-        @click=${() => this.#selectTab(tab.id)}
+        @click=${this.#selectTab(tab.id)}
         >${tab.name}</span
       >`;
     });

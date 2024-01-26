@@ -24,21 +24,34 @@ export class PlayerInfoPanel extends LitElement {
       {id: "video-info", name: "動画情報"},
       {id: "comments", name: "コメント"},
     ],
-    (id) => {
-      switch (id) {
+    (current, previous) => {
+      switch (current) {
         case "video-info":
           this.#videoInfoTab.hidden = false;
-          this.#commentsTab.hidden = true;
           break;
         case "comments":
-          this.#videoInfoTab.hidden = true;
           this.#commentsTab.hidden = false;
+          break;
+      }
+
+      switch (previous) {
+        case "video-info":
+          this.#videoInfoTab.hidden = true;
+          break;
+        case "comments":
+          this.#commentsTab.hidden = true;
           break;
       }
     },
   );
   #videoInfoTab = new PlayerInfoPanelVideoInfoTab();
   #commentsTab = new PlayerInfoPanelCommentsTab();
+
+  constructor() {
+    super();
+
+    this.#commentsTab.hidden = true;
+  }
 
   render() {
     return [
