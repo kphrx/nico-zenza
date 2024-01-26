@@ -3,7 +3,7 @@ import {customElement, state} from "lit/decorators";
 import {classMap} from "lit/directives/class-map";
 import {consume} from "@lit/context";
 
-import type {WatchV3Response, VideoInfo, Tag} from "@/watch-data";
+import type {WatchV3Response} from "@/watch-data";
 import {watchDataContext} from "@/contexts/watch-data-context";
 
 import sheet from "./header.css" with {type: "css"};
@@ -24,19 +24,19 @@ export class PlayerHeader extends LitElement {
   @state()
   accessor watchData: WatchV3Response | undefined;
 
-  get #videoInfo(): VideoInfo | undefined {
+  get #videoInfo() {
     return this.watchData?.video;
   }
 
-  get #isUser(): boolean {
+  get #isUser() {
     return this.watchData?.owner != null;
   }
 
-  get #isChannel(): boolean {
+  get #isChannel() {
     return this.watchData?.channel != null;
   }
 
-  get #tags(): Tag | undefined {
+  get #tags() {
     return this.watchData?.tag;
   }
 

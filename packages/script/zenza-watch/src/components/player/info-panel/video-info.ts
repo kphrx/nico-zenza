@@ -3,13 +3,7 @@ import {customElement, state} from "lit/decorators";
 import {consume} from "@lit/context";
 
 import {watchDataContext} from "@/contexts/watch-data-context";
-import type {
-  WatchV3Response,
-  VideoInfo,
-  SeriesInfo,
-  ChannelInfo,
-  OwnerInfo,
-} from "@/watch-data";
+import type {WatchV3Response} from "@/watch-data";
 
 import base from "./panel.css" with {type: "css"};
 import sheet from "./video-info.css" with {type: "css"};
@@ -30,20 +24,60 @@ export class PlayerInfoPanelVideoInfoTab extends LitElement {
   @state()
   accessor watchData: WatchV3Response | undefined;
 
-  get #videoInfo(): VideoInfo | undefined {
+  get #videoInfo() {
     return this.watchData?.video;
   }
 
-  get #seriesInfo(): SeriesInfo | null {
+  get #seriesInfo() {
     return this.watchData?.series ?? null;
   }
 
-  get #ownerInfo(): OwnerInfo | null {
+  get #ownerInfo() {
     return this.watchData?.owner ?? null;
   }
 
-  get #channelInfo(): ChannelInfo | null {
+  get #channelInfo() {
     return this.watchData?.channel ?? null;
+  }
+
+  get #link() {
+    if (this.#channelInfo != null) {
+      return `https://ch.nicovideo.jp/${this.#channelInfo.id}`;
+    }
+
+    if (this.#ownerInfo != null) {
+      return `https://www.nicovideo.jp/user/${this.#ownerInfo.id}`;
+    }
+
+    return "#";
+  }
+
+  get #name() {
+    return (
+      this.#channelInfo?.name ?? this.#ownerInfo?.nickname ?? "(非公開ユーザー)"
+    );
+  }
+
+  get #iconUrl() {
+    return (
+      this.#channelInfo?.thumbnail.url ??
+      this.#ownerInfo?.iconUrl ??
+      "https://secure-dcdn.cdn.nimg.jp/nicoaccount/usericon/defaults/blank.jpg"
+    );
+  }
+
+  get #desc() {
+    if (this.#videoInfo == null) {
+      return;
+    }
+
+    const domParser = new DOMParser();
+    const desc = domParser.parseFromString(
+      this.#videoInfo.description,
+      "text/html",
+    );
+
+    return Array.from(desc.body.childNodes);
   }
 
   constructor() {
@@ -56,45 +90,14 @@ export class PlayerInfoPanelVideoInfoTab extends LitElement {
   }
 
   render() {
-    const ownerLink = (() => {
-      if (this.#channelInfo != null) {
-        return `https://ch.nicovideo.jp/${this.#channelInfo.id}`;
-      }
-      if (this.#ownerInfo != null) {
-        return `https://www.nicovideo.jp/user/${this.#ownerInfo.id}`;
-      }
-    })();
-
-    const description = (() => {
-      if (this.#videoInfo == null) {
-        return;
-      }
-
-      const domParser = new DOMParser();
-      const desc = domParser.parseFromString(
-        this.#videoInfo.description,
-        "text/html",
-      );
-
-      return Array.from(desc.body.childNodes);
-    })();
-
     return html`<div class="scrollable-body">
       <div class="owner">
-        <a href=${ownerLink ?? "#"} rel="noopener" target="_blank">
-          <img
-            src=${this.#channelInfo?.thumbnail.url ??
-            this.#ownerInfo?.iconUrl ??
-            "https://secure-dcdn.cdn.nimg.jp/nicoaccount/usericon/defaults/blank.jpg"}
-            alt="owner-icon" />
-        </a>
-        <p class="name">
-          ${this.#channelInfo?.name ??
-          this.#ownerInfo?.nickname ??
-          "(非公開ユーザー)"}
-        </p>
+        <a href=${this.#link} rel="noopener" target="_blank"
+          ><img src=${this.#iconUrl} alt="owner-icon"
+        /></a>
+        <p class="name">${this.#name}</p>
       </div>
-      <p class="description">${description ?? nothing}</p>
+      <p class="description">${this.#desc ?? nothing}</p>
     </div>`;
   }
 }

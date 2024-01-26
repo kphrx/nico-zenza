@@ -4,7 +4,7 @@ import {repeat} from "lit/directives/repeat";
 import {consume} from "@lit/context";
 
 import {watchDataContext} from "@/contexts/watch-data-context";
-import type {WatchV3Response, NVComment} from "@/watch-data";
+import type {WatchV3Response} from "@/watch-data";
 
 import {CommentsController} from "./comments-controller";
 
@@ -12,6 +12,12 @@ import base from "./panel.css" with {type: "css"};
 import sheet from "./comments.css" with {type: "css"};
 
 const TAG_NAME = "zenza-watch-player-info-panel-comments-tab";
+
+const ORDER_TYPES = [
+  ["vpos", "位置順に並べる"],
+  ["date", "新しい順に並べる"],
+  ["nicoru", "ニコるが多い順に並べる"],
+] as const;
 
 declare global {
   interface HTMLElementTagNameMap {
@@ -29,9 +35,17 @@ export class PlayerInfoPanelCommentsTab extends LitElement {
   @state()
   accessor watchData: WatchV3Response | undefined;
 
-  get nvComment(): NVComment | undefined {
+  get nvComment() {
     return this.watchData?.comment.nvComment;
   }
+
+  #changeOrder = (ev: Event) => {
+    const value = (ev.target as HTMLSelectElement).value;
+    if (value === "vpos" || value === "date" || value === "nicoru") {
+      this.#comments.order = value;
+      this.requestUpdate();
+    }
+  };
 
   constructor() {
     super();
@@ -45,23 +59,15 @@ export class PlayerInfoPanelCommentsTab extends LitElement {
   render() {
     return [
       html`<div class="panel-header">
-        <select
-          @change=${(ev: Event) => {
-            this.#comments.order = (ev.target as HTMLSelectElement).value as
-              | "vpos"
-              | "date"
-              | "nicoru";
-            this.requestUpdate();
-          }}>
-          <option value="vpos" ?selected=${this.#comments.order === "vpos"}>
-            位置順に並べる
-          </option>
-          <option value="date" ?selected=${this.#comments.order === "date"}>
-            新しい順に並べる
-          </option>
-          <option value="nicoru" ?selected=${this.#comments.order === "nicoru"}>
-            ニコるが多い順に並べる
-          </option>
+        <select @change=${this.#changeOrder}>
+          ${ORDER_TYPES.map(
+            ([key, name]) =>
+              html`<option
+                value="${key}"
+                ?selected=${this.#comments.order === key}>
+                ${name}
+              </option>`,
+          )}
         </select>
       </div>`,
       this.#comments.render({
