@@ -1,10 +1,12 @@
 import {LitElement, html} from "lit";
 import {customElement} from "lit/decorators";
 import {repeat} from "lit/directives/repeat";
-import {consume} from "@lit/context";
+import {consume, provide} from "@lit/context";
 
 import {watchDataContext} from "@/contexts/watch-data-context";
+import {commentContext} from "@/contexts/comment-context";
 import type {WatchV3Response} from "@/watch-data";
+import type {FlattedComment} from "@/comment-list";
 
 import {CommentsController} from "./comments-controller";
 
@@ -29,8 +31,6 @@ declare global {
 export class PlayerInfoPanelCommentsTab extends LitElement {
   static styles = [base, sheet];
 
-  #comments = new CommentsController(this);
-
   @consume({context: watchDataContext, subscribe: true})
   accessor watchData: WatchV3Response | undefined;
 
@@ -38,8 +38,17 @@ export class PlayerInfoPanelCommentsTab extends LitElement {
     return this.watchData?.comment.nvComment;
   }
 
+  #comments = new CommentsController(this);
+
+  @provide({context: commentContext})
+  accessor comments: FlattedComment[] | undefined;
+
   #changeOrder = (ev: Event) => {
     const value = (ev.target as HTMLSelectElement).value;
+    if (value === this.#comments.order) {
+      return;
+    }
+
     if (value === "vpos" || value === "date" || value === "nicoru") {
       this.#comments.order = value;
       this.requestUpdate();
@@ -77,20 +86,28 @@ export class PlayerInfoPanelCommentsTab extends LitElement {
           return html`<p>Loading commetns...</p>`;
         },
         complete: (comments) => {
+          this.comments = comments;
+
           return html`<ul class="scrollable-body">
-            ${repeat(
-              comments,
-              (comment) => comment.id,
-              (comment) =>
-                html`<li
-                  data-id=${comment.id}
-                  data-no=${comment.no}
-                  data-thread-id=${comment.threadId}
-                  data-fork=${comment.fork}
-                  data-posted-at=${comment.postedAt}>
-                  ${comment.body}
-                </li>`,
-            )}
+            ${this.#comments.sortingRender({
+              pending: () => {
+                return html`<p>Sorting commetns...</p>`;
+              },
+              complete: (comments) =>
+                repeat(
+                  comments,
+                  (comment) => comment.id,
+                  (comment) =>
+                    html`<li
+                      data-id=${comment.id}
+                      data-no=${comment.no}
+                      data-thread-id=${comment.threadId}
+                      data-fork=${comment.fork}
+                      data-posted-at=${comment.postedAt}>
+                      ${comment.body}
+                    </li>`,
+                ),
+            })}
           </ul>`;
         },
         error: (e) => {

@@ -5,42 +5,14 @@ import type {StatusRenderer} from "@lit/task";
 import {isErrorResponse} from "@/nvapi-response";
 import type {NVAPIResponse} from "@/nvapi-response";
 import type {NVComment} from "@/watch-data";
+import type {Threads, FlattedComment} from "@/comment-list";
 
 import type {PlayerInfoPanelCommentsTab} from "./comments";
 
 type ReactiveControllerHost = PlayerInfoPanelCommentsTab;
 type CommentCompare = (a: FlattedComment, b: FlattedComment) => number;
 
-interface ThreadComment {
-  id: string;
-  no: number;
-  vposMs: number;
-  body: string;
-  commands: string[];
-  userId: string;
-  isPremium: boolean;
-  score: number;
-  postedAt: string;
-  nicoruCount: number;
-  nicoruId: unknown;
-  source: string;
-  isMyPost: boolean;
-}
-
-interface Threads {
-  globalComments: {id: string; count: number}[];
-  threads: {
-    id: string;
-    fork: string;
-    commentCount: number;
-    comments: ThreadComment[];
-  }[];
-}
-
-export interface FlattedComment extends ThreadComment {
-  fork: string;
-  threadId: string;
-}
+const EMPTY_ARRAY = new Array<FlattedComment>();
 
 export class CommentsController implements ReactiveController {
   static #sortComments(
@@ -126,8 +98,9 @@ export class CommentsController implements ReactiveController {
       },
       () => [this.#host.nvComment],
     );
+
     this.#sortTask = new Task<
-      [FlattedComment[] | undefined, "vpos" | "date" | "nicoru"],
+      [FlattedComment[], "vpos" | "date" | "nicoru"],
       FlattedComment[]
     >(
       this.#host,
@@ -139,7 +112,7 @@ export class CommentsController implements ReactiveController {
         {signal},
       ) => {
         if (comments.length === 0) {
-          return initialState;
+          return comments;
         }
 
         signal.throwIfAborted();
@@ -153,7 +126,7 @@ export class CommentsController implements ReactiveController {
             return comments.toSorted(this.#nicoruCompare);
         }
       },
-      () => [this.#loadTask.value, this.order],
+      () => [this.#loadTask.value ?? EMPTY_ARRAY, this.order],
     );
 
     this.#host.addController(this);
@@ -162,6 +135,10 @@ export class CommentsController implements ReactiveController {
   hostUpdate() {}
 
   render(renderFunctions: StatusRenderer<FlattedComment[]>) {
+    return this.#loadTask.render(renderFunctions);
+  }
+
+  sortingRender(renderFunctions: StatusRenderer<FlattedComment[]>) {
     return this.#sortTask.render(renderFunctions);
   }
 }
