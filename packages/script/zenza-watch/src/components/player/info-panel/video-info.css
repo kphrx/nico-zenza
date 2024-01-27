@@ -110,6 +110,12 @@ div.series-nav {
 
         p.title {
           margin-block: 1ex;
+          overflow: hidden;
+
+          line-clamp: 2;
+          display: -webkit-box;
+          -moz-box-orient: vertical;
+          -webkit-line-clamp: 2;
         }
       }
 
