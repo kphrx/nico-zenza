@@ -4,6 +4,23 @@ import type {LeftHoverMenu, RightHoverMenu} from "./index";
 
 type ReactiveControllerHost = LeftHoverMenu | RightHoverMenu;
 
+const VIDEO_LINK_SELECTORS = (() => {
+  const absolute_selectors = [
+    'a[href*="//sp.nicovideo.jp/watch/"]',
+    'a[href*="//www.nicovideo.jp/watch/"]',
+    'a[href*="//nico.ms/"]',
+  ];
+
+  if (
+    window.location.hostname === "www.nicovideo.jp" ||
+    window.location.hostname === "sp.nicovideo.jp"
+  ) {
+    absolute_selectors.push('a[href^="/watch/"]');
+  }
+
+  return absolute_selectors.join(",");
+})();
+
 export class MouseController implements ReactiveController {
   #host: ReactiveControllerHost;
 
@@ -40,9 +57,8 @@ export class MouseController implements ReactiveController {
       return;
     }
 
-    const hoverLink: HTMLAnchorElement | null = el.closest(
-      'a[href*="//sp.nicovideo.jp/watch/"],a[href*="//www.nicovideo.jp/watch/"],a[href*="//nico.ms/"]',
-    );
+    const hoverLink: HTMLAnchorElement | null =
+      el.closest(VIDEO_LINK_SELECTORS);
 
     if (hoverLink === this.#target) {
       return;

@@ -1,5 +1,5 @@
 import {LitElement, html, nothing} from "lit";
-import {customElement, state} from "lit/decorators";
+import {customElement} from "lit/decorators";
 import {consume} from "@lit/context";
 
 import {watchDataContext} from "@/contexts/watch-data-context";
@@ -21,7 +21,6 @@ export class PlayerInfoPanelVideoInfoTab extends LitElement {
   static styles = [base, sheet];
 
   @consume({context: watchDataContext, subscribe: true})
-  @state()
   accessor watchData: WatchV3Response | undefined;
 
   get #videoInfo() {

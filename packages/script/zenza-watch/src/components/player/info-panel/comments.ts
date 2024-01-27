@@ -1,5 +1,5 @@
 import {LitElement, html} from "lit";
-import {customElement, state} from "lit/decorators";
+import {customElement} from "lit/decorators";
 import {repeat} from "lit/directives/repeat";
 import {consume} from "@lit/context";
 
@@ -32,7 +32,6 @@ export class PlayerInfoPanelCommentsTab extends LitElement {
   #comments = new CommentsController(this);
 
   @consume({context: watchDataContext, subscribe: true})
-  @state()
   accessor watchData: WatchV3Response | undefined;
 
   get nvComment() {
