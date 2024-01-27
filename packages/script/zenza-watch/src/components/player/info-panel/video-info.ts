@@ -207,7 +207,11 @@ export class PlayerInfoPanelVideoInfoTab extends LitElement {
   }
 
   get #seriesNavigation() {
-    if (this.#seriesInfo == null) {
+    if (
+      this.#seriesInfo == null ||
+      (this.#seriesInfo.video.prev == null &&
+        this.#seriesInfo.video.next == null)
+    ) {
       return nothing;
     }
 
