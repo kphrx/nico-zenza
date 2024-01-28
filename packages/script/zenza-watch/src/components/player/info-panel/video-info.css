@@ -45,6 +45,10 @@ p.description {
 
   margin: 8px;
   padding: 0;
+
+  zenza-watch-player-info-panel-video-card {
+    filter: invert(1);
+  }
 }
 
 div.series-nav {

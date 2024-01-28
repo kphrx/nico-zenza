@@ -108,9 +108,27 @@ export class PlayerInfoPanelVideoInfoTab extends LitElement {
     const desc = domParser.parseFromString(
       this.#videoInfo.description,
       "text/html",
-    );
+    ).body;
 
-    return Array.from(desc.body.childNodes);
+    const watchLinks: NodeListOf<HTMLAnchorElement> = desc.querySelectorAll(
+      'a.watch[href*="//www.nicovideo.jp/watch/"],a.watch[href*="//sp.nicovideo.jp/watch/"]',
+    );
+    const regex = /^\/watch\/([a-z0-9]+)/;
+    for (const watchLink of Array.from(watchLinks)) {
+      const id = regex.exec(new URL(watchLink.href).pathname)?.[1];
+      if (id == null) {
+        continue;
+      }
+
+      watchLink.after(
+        new PlayerInfoPanelVideoCard({
+          videoId: id,
+          onclick: this.#clickVideo(id),
+        }),
+      );
+    }
+
+    return Array.from(desc.childNodes);
   }
 
   get #description() {
@@ -119,9 +137,6 @@ export class PlayerInfoPanelVideoInfoTab extends LitElement {
 
   #seriesVideo = (info: SeriesVideo, isPrev: boolean) => {
     const id = info.id;
-
-    const card = new PlayerInfoPanelVideoCard();
-    card.info = info;
 
     return html`<div class="${isPrev ? "prev" : "next"}">
       <p>
@@ -132,7 +147,10 @@ export class PlayerInfoPanelVideoInfoTab extends LitElement {
           ${id}
         </a>
       </p>
-      <div class="card" @click=${this.#clickVideo(id)}>${card}</div>
+      ${new PlayerInfoPanelVideoCard({
+        info: info,
+        onclick: this.#clickVideo(id),
+      })}
     </div>`;
   };
 

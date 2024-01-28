@@ -3,6 +3,11 @@ import {customElement, property} from "lit/decorators";
 
 import sheet from "./card.css" with {type: "css"};
 
+type ConstructorOption<
+  T = {info: ThumbnailInfo} | {videoId: string},
+  A = {onclick?: (ev: MouseEvent) => void},
+> = A | (A & T);
+
 export interface ThumbnailInfo {
   id: string;
   title: string;
@@ -68,6 +73,27 @@ export class PlayerInfoPanelVideoCard extends LitElement {
         : `${minutes}:${seconds}`;
 
     return formattedDuration;
+  }
+
+  constructor(options?: ConstructorOption) {
+    super();
+
+    if (options == null) {
+      return;
+    }
+
+    const onclick = options.onclick;
+    if (typeof onclick === "function") {
+      this.addEventListener("click", onclick);
+    }
+
+    if ("info" in options) {
+      this.info = options.info;
+    }
+
+    if ("videoId" in options) {
+      this.videoId = options.videoId;
+    }
   }
 
   render() {
