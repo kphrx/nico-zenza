@@ -85,12 +85,24 @@ export class PlayerInfoPanelVideoCard extends LitElement {
           <a href="${this.#url}">${this.info?.title ?? nothing}</a>
         </p>
       </div>
-      <ul class="count">
-        <li>再生: <span class="value">${this.#count.view}</span></li>
-        <li>コメント: <span class="value">${this.#count.comment}</span></li>
-        <li>マイリスト: <span class="value">${this.#count.mylist}</span></li>
-        <li>いいね: <span class="value">${this.#count.like}</span></li>
-      </ul>
+      <table class="count">
+        <thead>
+          <tr>
+            <th>再生</th>
+            <th>コメント</th>
+            <th>マイリスト</th>
+            <th>いいね</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>${this.#count.view}</td>
+            <td>${this.#count.comment}</td>
+            <td>${this.#count.mylist}</td>
+            <td>${this.#count.like}</td>
+          </tr>
+        </tbody>
+      </table>
     `;
   }
 }
