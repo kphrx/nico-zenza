@@ -2,6 +2,7 @@ import {LitElement, html, nothing} from "lit";
 import {customElement} from "lit/decorators";
 import {consume} from "@lit/context";
 
+import {ICON, THUMBNAIL} from "@/constants";
 import {watchDataContext} from "@/contexts/watch-data-context";
 import type {WatchV3Response, SeriesVideo} from "@/watch-data";
 
@@ -60,11 +61,11 @@ export class PlayerInfoPanelVideoInfoTab extends LitElement {
   }
 
   get #iconUrl() {
-    return (
-      this.#channelInfo?.thumbnail.url ??
-      this.#ownerInfo?.iconUrl ??
-      "https://secure-dcdn.cdn.nimg.jp/nicoaccount/usericon/defaults/blank.jpg"
-    );
+    if (this.#channelInfo != null) {
+      return this.#channelInfo.thumbnail?.url ?? ICON.CHANNEL;
+    }
+
+    return this.#ownerInfo?.iconUrl ?? ICON.USER;
   }
 
   get #owner() {
@@ -90,7 +91,9 @@ export class PlayerInfoPanelVideoInfoTab extends LitElement {
     }
 
     return html`<div class="series">
-      <img src=${this.#seriesInfo.thumbnailUrl} alt="thumbnail" />
+      <img
+        src=${this.#seriesInfo.thumbnailUrl ?? THUMBNAIL.SERIES}
+        alt="thumbnail" />
       <p class="name">
         <a href=${this.#seriesLink} rel="noopener" target="_blank">
           ${this.#seriesInfo.title}

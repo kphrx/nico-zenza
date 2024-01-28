@@ -1,6 +1,8 @@
 import {LitElement, html, nothing} from "lit";
 import {customElement, property} from "lit/decorators";
 
+import {THUMBNAIL} from "@/constants";
+
 import sheet from "./card.css" with {type: "css"};
 
 type ConstructorOption<
@@ -100,8 +102,7 @@ export class PlayerInfoPanelVideoCard extends LitElement {
     return html`
       <div class="thumbnail">
         <img
-          src=${this.info?.thumbnail.middleUrl ??
-          "http://nicovideo.cdn.nimg.jp/web/img/common/no_thumbnail_M.jpg"}
+          src=${this.info?.thumbnail.middleUrl ?? THUMBNAIL.VIDEO}
           alt="thumbnail" />
         <span class="duration">${this.#duration}</span>
       </div>

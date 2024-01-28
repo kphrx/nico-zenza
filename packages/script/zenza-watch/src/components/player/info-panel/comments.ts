@@ -15,10 +15,10 @@ import sheet from "./comments.css" with {type: "css"};
 
 const EMPTY_ARRAY: FlattedComment[] = [] as const;
 
-const ORDER_TYPES = [
-  ["vpos", "位置順に並べる"],
-  ["date", "新しい順に並べる"],
-  ["nicoru", "ニコるが多い順に並べる"],
+export const ORDER_TYPES = [
+  ["vpos", "asc", "vposMs", "位置順に並べる"],
+  ["date", "desc", "postedAt", "新しい順に並べる"],
+  ["nicoru", "desc", "nicoruCount", "ニコるが多い順に並べる"],
 ] as const;
 
 const TAG_NAME = "zenza-watch-player-info-panel-comments-tab";
@@ -48,7 +48,7 @@ export class PlayerInfoPanelCommentsTab extends LitElement {
   accessor comments: FlattedComment[];
 
   #changeOrder = (ev: Event) => {
-    const value = (ev.target as HTMLSelectElement).value;
+    const value = (ev.target as HTMLSelectElement).value.split(":")[0];
     if (value === this.#commentList.order) {
       return;
     }
@@ -89,10 +89,10 @@ export class PlayerInfoPanelCommentsTab extends LitElement {
           html`<div class="panel-header">
             <select @change=${this.#changeOrder}>
               ${ORDER_TYPES.map(
-                ([key, name]) =>
+                ([orderType, order, , name]) =>
                   html`<option
-                    value="${key}"
-                    ?selected=${this.#commentList.order === key}>
+                    value="${orderType}:${order}"
+                    ?selected=${this.#commentList.order === orderType}>
                     ${name}
                   </option>`,
               )}

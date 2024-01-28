@@ -6,13 +6,18 @@ import {Task} from "@lit/task";
 import {commentContext} from "@/contexts/comment-context";
 import type {FlattedComment} from "@/comment-list";
 
+import {ORDER_TYPES} from "../comments";
+
 import sheet from "./list.css" with {type: "css"};
 
+type CommentsOrderTypes = (typeof ORDER_TYPES)[number][0];
+type Compare = (a: FlattedComment, b: FlattedComment) => number;
+
 const sortComments = (
-  key: "postedAt" | "vposMs" | "nicoruCount",
-  desc: boolean = false,
-) => {
-  const compare = (a: FlattedComment, b: FlattedComment) => {
+  key: (typeof ORDER_TYPES)[number][2],
+  order: (typeof ORDER_TYPES)[number][1] = "asc",
+): Compare => {
+  const compare: Compare = (a, b) => {
     const aValue = a[key];
     const bValue = b[key];
     if (aValue > bValue) {
@@ -23,14 +28,17 @@ const sortComments = (
     }
     return 0;
   };
-  return desc
-    ? (a: FlattedComment, b: FlattedComment) => compare(b, a)
-    : compare;
+  switch (order) {
+    case "asc":
+      return compare;
+    case "desc":
+      return (a, b) => compare(b, a);
+  }
 };
 
-const posCompare = sortComments("vposMs");
-const dateCompare = sortComments("postedAt", true);
-const nicoruCompare = sortComments("nicoruCount", true);
+const compares = Object.fromEntries(
+  ORDER_TYPES.map(([type, order, key]) => [type, sortComments(key, order)]),
+) as {readonly [key in CommentsOrderTypes]: Compare};
 
 const EMPTY_ARRAY: FlattedComment[] = [] as const;
 
@@ -50,15 +58,12 @@ export class PlayerInfoPanelCommentsList extends LitElement {
   accessor comments: FlattedComment[] = EMPTY_ARRAY;
 
   @property({reflect: true})
-  accessor order: "vpos" | "date" | "nicoru" = "vpos";
+  accessor order: CommentsOrderTypes = "vpos";
 
-  #task = new Task<
-    [FlattedComment[], "vpos" | "date" | "nicoru"],
-    FlattedComment[]
-  >(
+  #task = new Task<[FlattedComment[], CommentsOrderTypes], FlattedComment[]>(
     this,
     async (
-      [comments, order]: [FlattedComment[], "vpos" | "date" | "nicoru"],
+      [comments, order]: [FlattedComment[], CommentsOrderTypes],
       {signal},
     ) => {
       if (comments.length === 0) {
@@ -72,14 +77,7 @@ export class PlayerInfoPanelCommentsList extends LitElement {
           reject(signal.reason);
         });
 
-        switch (order) {
-          case "vpos":
-            return resolve(comments.toSorted(posCompare));
-          case "date":
-            return resolve(comments.toSorted(dateCompare));
-          case "nicoru":
-            return resolve(comments.toSorted(nicoruCompare));
-        }
+        return resolve(comments.toSorted(compares[order]));
       });
 
       return result;
