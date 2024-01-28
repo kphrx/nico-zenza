@@ -1,4 +1,4 @@
-interface SeriesVideo {
+export interface SeriesVideo {
   type: string;
   id: string;
   title: string;

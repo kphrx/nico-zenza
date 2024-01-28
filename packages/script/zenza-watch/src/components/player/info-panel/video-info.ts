@@ -3,7 +3,9 @@ import {customElement} from "lit/decorators";
 import {consume} from "@lit/context";
 
 import {watchDataContext} from "@/contexts/watch-data-context";
-import type {WatchV3Response} from "@/watch-data";
+import type {WatchV3Response, SeriesVideo} from "@/watch-data";
+
+import {PlayerInfoPanelVideoCard} from "./video-info/card";
 
 import base from "./panel.css" with {type: "css"};
 import sheet from "./video-info.css" with {type: "css"};
@@ -115,50 +117,31 @@ export class PlayerInfoPanelVideoInfoTab extends LitElement {
     return html`<p class="description">${this.#desc ?? nothing}</p>`;
   }
 
-  get #seriesPrev() {
-    if (this.#seriesInfo == null || this.#seriesInfo.video.prev == null) {
-      return nothing;
-    }
+  #seriesVideo = (info: SeriesVideo, isPrev: boolean) => {
+    const id = info.id;
 
-    const {
-      id,
-      title,
-      thumbnail: {listingUrl: thumbnailUrl},
-      registeredAt,
-      duration,
-      count: {view, comment, mylist, like},
-    } = this.#seriesInfo.video.prev;
+    const card = new PlayerInfoPanelVideoCard();
+    card.info = info;
 
-    return html`<div class="prev">
+    return html`<div class="${isPrev ? "prev" : "next"}">
       <p>
-        前の動画
+        ${isPrev ? "前" : "次"}の動画
         <a
           href="https://www.nicovideo.jp/watch/${id}"
           @click=${this.#clickVideo(id)}>
           ${id}
         </a>
       </p>
-      <div class="card" @click=${this.#clickVideo(id)}>
-        <div class="thumbnail">
-          <img src=${thumbnailUrl} alt="thumbnail" />
-          <span class="duration">${this.#durationToTimestamp(duration)}</span>
-        </div>
-        <div class=info>
-          <p class="date">${new Date(registeredAt).toLocaleString()}</p>
-          <p class="title">
-          <p class="title"><a href="https://www.nicovideo.jp/watch/${id}">
-            ${title}
-          </a></p>
-          </p>
-        </div>
-        <ul class=count>
-          <li>再生: <span class=value>${view}</span></li>
-          <li>コメント: <span class=value>${comment}</span></li>
-          <li>マイリスト: <span class=value>${mylist}</span></li>
-          <li>いいね: <span class=value>${like}</span></li>
-        </ul>
-      </div>
+      <div class="card" @click=${this.#clickVideo(id)}>${card}</div>
     </div>`;
+  };
+
+  get #seriesPrev() {
+    if (this.#seriesInfo == null || this.#seriesInfo.video.prev == null) {
+      return nothing;
+    }
+
+    return this.#seriesVideo(this.#seriesInfo.video.prev, true);
   }
 
   get #seriesNext() {
@@ -166,43 +149,7 @@ export class PlayerInfoPanelVideoInfoTab extends LitElement {
       return nothing;
     }
 
-    const {
-      id,
-      title,
-      thumbnail: {listingUrl: thumbnailUrl},
-      registeredAt,
-      duration,
-      count: {view, comment, mylist, like},
-    } = this.#seriesInfo.video.next;
-
-    return html`<div class="next">
-      <p>
-        次の動画
-        <a
-          href="https://www.nicovideo.jp/watch/${id}"
-          @click=${this.#clickVideo(id)}>
-          ${id}
-        </a>
-      </p>
-      <div class="card" @click=${this.#clickVideo(id)}>
-        <div class="thumbnail">
-          <img src=${thumbnailUrl} alt="thumbnail" />
-          <span class="duration">${this.#durationToTimestamp(duration)}</span>
-        </div>
-        <div class="info">
-          <p class="date">${new Date(registeredAt).toLocaleString()}</p>
-          <p class="title">
-            <a href="https://www.nicovideo.jp/watch/${id}"> ${title} </a>
-          </p>
-        </div>
-        <ul class="count">
-          <li>再生: <span class="value">${view}</span></li>
-          <li>コメント: <span class="value">${comment}</span></li>
-          <li>マイリスト: <span class="value">${mylist}</span></li>
-          <li>いいね: <span class="value">${like}</span></li>
-        </ul>
-      </div>
-    </div>`;
+    return this.#seriesVideo(this.#seriesInfo.video.next, false);
   }
 
   get #seriesNavigation() {
@@ -228,19 +175,6 @@ export class PlayerInfoPanelVideoInfoTab extends LitElement {
         new CustomEvent("zenzawatch:playeropen", {detail: {videoId: id}}),
       );
     };
-  }
-
-  #durationToTimestamp(duration: number) {
-    const datetime = new Date(duration * 1000);
-    const hours = datetime.getUTCHours();
-    const minutes = String(datetime.getUTCMinutes()).padStart(2, "0");
-    const seconds = String(datetime.getUTCSeconds()).padStart(2, "0");
-    const formattedDuration =
-      hours > 0
-        ? `${String(hours).padStart(2, "0")}:${minutes}:${seconds}`
-        : `${minutes}:${seconds}`;
-
-    return formattedDuration;
   }
 
   constructor() {
