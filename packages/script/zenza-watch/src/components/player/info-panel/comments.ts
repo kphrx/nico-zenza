@@ -1,6 +1,5 @@
 import {LitElement, html} from "lit";
 import {customElement} from "lit/decorators";
-import {repeat} from "lit/directives/repeat";
 import {consume, provide} from "@lit/context";
 
 import {watchDataContext} from "@/contexts/watch-data-context";
@@ -9,17 +8,20 @@ import type {WatchV3Response} from "@/watch-data";
 import type {FlattedComment} from "@/comment-list";
 
 import {CommentsController} from "./comments-controller";
+import {PlayerInfoPanelCommentsList} from "./comments/list";
 
 import base from "./panel.css" with {type: "css"};
 import sheet from "./comments.css" with {type: "css"};
 
-const TAG_NAME = "zenza-watch-player-info-panel-comments-tab";
+const EMPTY_ARRAY: FlattedComment[] = [] as const;
 
 const ORDER_TYPES = [
   ["vpos", "位置順に並べる"],
   ["date", "新しい順に並べる"],
   ["nicoru", "ニコるが多い順に並べる"],
 ] as const;
+
+const TAG_NAME = "zenza-watch-player-info-panel-comments-tab";
 
 declare global {
   interface HTMLElementTagNameMap {
@@ -31,6 +33,10 @@ declare global {
 export class PlayerInfoPanelCommentsTab extends LitElement {
   static styles = [base, sheet];
 
+  #comments = new CommentsController(this);
+
+  #commentList = new PlayerInfoPanelCommentsList();
+
   @consume({context: watchDataContext, subscribe: true})
   accessor watchData: WatchV3Response | undefined;
 
@@ -38,25 +44,24 @@ export class PlayerInfoPanelCommentsTab extends LitElement {
     return this.watchData?.comment.nvComment;
   }
 
-  #comments = new CommentsController(this);
-
   @provide({context: commentContext})
-  accessor comments: FlattedComment[] | undefined;
+  accessor comments: FlattedComment[];
 
   #changeOrder = (ev: Event) => {
     const value = (ev.target as HTMLSelectElement).value;
-    if (value === this.#comments.order) {
+    if (value === this.#commentList.order) {
       return;
     }
-
     if (value === "vpos" || value === "date" || value === "nicoru") {
-      this.#comments.order = value;
-      this.requestUpdate();
+      this.#commentList.order = value;
     }
   };
 
   constructor() {
     super();
+
+    this.comments = EMPTY_ARRAY;
+    this.#commentList.className = "scrollable-body";
 
     this.id = "zenza-player-comments-panel";
     this.role = "tabpanel";
@@ -65,55 +70,40 @@ export class PlayerInfoPanelCommentsTab extends LitElement {
   }
 
   render() {
-    return [
-      html`<div class="panel-header">
-        <select @change=${this.#changeOrder}>
-          ${ORDER_TYPES.map(
-            ([key, name]) =>
-              html`<option
-                value="${key}"
-                ?selected=${this.#comments.order === key}>
-                ${name}
-              </option>`,
-          )}
-        </select>
-      </div>`,
-      this.#comments.render({
-        initial: () => {
-          return html`<p>No comments</p>`;
-        },
-        pending: () => {
-          return html`<p>Loading commetns...</p>`;
-        },
-        complete: (comments) => {
-          this.comments = comments;
+    return this.#comments.render({
+      initial: () => {
+        this.comments = EMPTY_ARRAY;
 
-          return html`<ul class="scrollable-body">
-            ${this.#comments.sortingRender({
-              pending: () => {
-                return html`<p>Sorting commetns...</p>`;
-              },
-              complete: (comments) =>
-                repeat(
-                  comments,
-                  (comment) => comment.id,
-                  (comment) =>
-                    html`<li
-                      data-id=${comment.id}
-                      data-no=${comment.no}
-                      data-thread-id=${comment.threadId}
-                      data-fork=${comment.fork}
-                      data-posted-at=${comment.postedAt}>
-                      ${comment.body}
-                    </li>`,
-                ),
-            })}
-          </ul>`;
-        },
-        error: (e) => {
-          return html`<p>${e}</p>`;
-        },
-      }),
-    ];
+        return html`<p>No comments</p>`;
+      },
+      pending: () => {
+        this.comments = EMPTY_ARRAY;
+        this.#commentList.order = "vpos";
+
+        return html`<p>Loading commetns...</p>`;
+      },
+      complete: (comments) => {
+        this.comments = comments;
+
+        return [
+          html`<div class="panel-header">
+            <select @change=${this.#changeOrder}>
+              ${ORDER_TYPES.map(
+                ([key, name]) =>
+                  html`<option
+                    value="${key}"
+                    ?selected=${this.#commentList.order === key}>
+                    ${name}
+                  </option>`,
+              )}
+            </select>
+          </div>`,
+          this.#commentList,
+        ];
+      },
+      error: (e) => {
+        return html`<p>${e}</p>`;
+      },
+    });
   }
 }

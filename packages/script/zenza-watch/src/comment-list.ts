@@ -24,7 +24,8 @@ export interface Threads {
   }[];
 }
 
-export interface FlattedComment extends ThreadComment {
+export interface FlattedComment extends Omit<ThreadComment, "postedAt"> {
+  postedAt: number;
   fork: string;
   threadId: string;
 }
