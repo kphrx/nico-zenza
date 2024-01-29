@@ -69,13 +69,17 @@ export class PlayerInfoPanelCommentsTab extends LitElement {
       initial: () => {
         this.comments = EMPTY_ARRAY;
 
-        return html`<p>No comments</p>`;
+        return html`<div class="empty">
+          <p class="status">No comments</p>
+        </div>`;
       },
       pending: () => {
         this.comments = EMPTY_ARRAY;
         this.#commentList.order = "vpos:asc";
 
-        return html`<p>Loading commetns...</p>`;
+        return html`<div class="empty">
+          <p class="status">Loading commetns...</p>
+        </div>`;
       },
       complete: (comments) => {
         this.comments = comments;
