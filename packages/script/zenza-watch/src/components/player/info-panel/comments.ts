@@ -8,18 +8,15 @@ import type {WatchV3Response} from "@/watch-data";
 import type {FlattedComment} from "@/comment-list";
 
 import {CommentsController} from "./comments-controller";
-import {PlayerInfoPanelCommentsList} from "./comments/list";
+import {
+  ORDER_TYPES,
+  isOrderType,
+  EMPTY_ARRAY,
+  PlayerInfoPanelCommentsList,
+} from "./comments/list";
 
 import base from "./panel.css" with {type: "css"};
 import sheet from "./comments.css" with {type: "css"};
-
-const EMPTY_ARRAY: FlattedComment[] = [] as const;
-
-export const ORDER_TYPES = [
-  ["vpos", "asc", "vposMs", "位置順に並べる"],
-  ["date", "desc", "postedAt", "新しい順に並べる"],
-  ["nicoru", "desc", "nicoruCount", "ニコるが多い順に並べる"],
-] as const;
 
 const TAG_NAME = "zenza-watch-player-info-panel-comments-tab";
 
@@ -48,13 +45,11 @@ export class PlayerInfoPanelCommentsTab extends LitElement {
   accessor comments: FlattedComment[];
 
   #changeOrder = (ev: Event) => {
-    const value = (ev.target as HTMLSelectElement).value.split(":")[0];
-    if (value === this.#commentList.order) {
+    const value = (ev.target as HTMLSelectElement).value;
+    if (!isOrderType(value) || value === this.#commentList.order) {
       return;
     }
-    if (value === "vpos" || value === "date" || value === "nicoru") {
-      this.#commentList.order = value;
-    }
+    this.#commentList.order = value;
   };
 
   constructor() {
@@ -78,7 +73,7 @@ export class PlayerInfoPanelCommentsTab extends LitElement {
       },
       pending: () => {
         this.comments = EMPTY_ARRAY;
-        this.#commentList.order = "vpos";
+        this.#commentList.order = "vpos:asc";
 
         return html`<p>Loading commetns...</p>`;
       },
@@ -92,7 +87,8 @@ export class PlayerInfoPanelCommentsTab extends LitElement {
                 ([orderType, order, , name]) =>
                   html`<option
                     value="${orderType}:${order}"
-                    ?selected=${this.#commentList.order === orderType}>
+                    ?selected=${this.#commentList.order ===
+                    `${orderType}:${order}`}>
                     ${name}
                   </option>`,
               )}

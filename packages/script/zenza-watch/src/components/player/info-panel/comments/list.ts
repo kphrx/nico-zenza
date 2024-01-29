@@ -6,16 +6,29 @@ import {Task} from "@lit/task";
 import {commentContext} from "@/contexts/comment-context";
 import type {FlattedComment} from "@/comment-list";
 
-import {ORDER_TYPES} from "../comments";
-
 import sheet from "./list.css" with {type: "css"};
 
-type CommentsOrderTypes = (typeof ORDER_TYPES)[number][0];
+export const ORDER_TYPES = [
+  ["vpos", "asc", "vposMs", "位置順に並べる"],
+  ["date", "desc", "postedAt", "新しい順に並べる"],
+  ["nicoru", "desc", "nicoruCount", "ニコるが多い順に並べる"],
+] as const;
+export type CommentsOrderTypes =
+  `${(typeof ORDER_TYPES)[number][0]}:${(typeof ORDER_TYPES)[number][1]}`;
+const toOrder = (orderType: (typeof ORDER_TYPES)[number]) =>
+  `${orderType[0]}:${orderType[1]}` as CommentsOrderTypes;
+const ORDERS = ORDER_TYPES.map(toOrder);
+export const isOrderType = (tag: string): tag is CommentsOrderTypes => {
+  return (ORDERS as readonly string[]).includes(tag);
+};
+
+export const EMPTY_ARRAY: FlattedComment[] = [] as const;
+
 type Compare = (a: FlattedComment, b: FlattedComment) => number;
 
 const sortComments = (
   key: (typeof ORDER_TYPES)[number][2],
-  order: (typeof ORDER_TYPES)[number][1] = "asc",
+  order: (typeof ORDER_TYPES)[number][1],
 ): Compare => {
   const compare: Compare = (a, b) => {
     const aValue = a[key];
@@ -37,10 +50,11 @@ const sortComments = (
 };
 
 const compares = Object.fromEntries(
-  ORDER_TYPES.map(([type, order, key]) => [type, sortComments(key, order)]),
+  ORDER_TYPES.map((orderType) => [
+    toOrder(orderType),
+    sortComments(orderType[2], orderType[1]),
+  ]),
 ) as {readonly [key in CommentsOrderTypes]: Compare};
-
-const EMPTY_ARRAY: FlattedComment[] = [] as const;
 
 const TAG_NAME = "zenza-watch-player-info-panel-comments-list";
 
@@ -58,7 +72,7 @@ export class PlayerInfoPanelCommentsList extends LitElement {
   accessor comments: FlattedComment[] = EMPTY_ARRAY;
 
   @property({reflect: true})
-  accessor order: CommentsOrderTypes = "vpos";
+  accessor order: CommentsOrderTypes = "vpos:asc";
 
   #task = new Task<[FlattedComment[], CommentsOrderTypes], FlattedComment[]>(
     this,
