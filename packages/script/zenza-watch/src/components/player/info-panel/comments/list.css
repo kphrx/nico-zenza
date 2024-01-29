@@ -1,5 +1,32 @@
-ul {
+:host {
   margin: 0;
-  padding: 8px;
-  list-style: none;
+  padding: 1px;
+  background: #333;
+}
+
+div.comment {
+  margin-block: 1px;
+  padding-inline: 7px;
+  background: #1a1a1a;
+
+  &:nth-child(even) {
+    background: #252525;
+  }
+
+  div.info {
+    font-size: 0.9rem;
+    color: #aaa;
+
+    display: flex;
+    justify-content: space-between;
+  }
+
+  p.text {
+    font-size: 1rem;
+    margin: 0;
+
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
 }

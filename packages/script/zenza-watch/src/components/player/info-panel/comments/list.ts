@@ -5,6 +5,7 @@ import {Task} from "@lit/task";
 
 import {commentContext} from "@/contexts/comment-context";
 import type {FlattedComment} from "@/comment-list";
+import {durationMsToTimestamp} from "@/utils";
 
 import sheet from "./list.css" with {type: "css"};
 
@@ -104,18 +105,22 @@ export class PlayerInfoPanelCommentsList extends LitElement {
   }
 
   render() {
-    return html`<ul>
-      ${this.#sortedComments.map(
-        (comment) =>
-          html`<li
-            data-id=${comment.id}
-            data-no=${comment.no}
-            data-thread-id=${comment.threadId}
-            data-fork=${comment.fork}
-            data-posted-at=${new Date(comment.postedAt).toISOString()}>
-            ${comment.body}
-          </li>`,
-      )}
-    </ul>`;
+    return this.#sortedComments.map(
+      (comment) =>
+        html`<div
+          class="comment"
+          data-id=${comment.id}
+          data-no=${comment.no}
+          data-thread-id=${comment.threadId}
+          data-fork=${comment.fork}>
+          <div class="info">
+            <span class="vpos">${durationMsToTimestamp(comment.vposMs)}</span>
+            <span class="date"
+              >${new Date(comment.postedAt).toLocaleString()}</span
+            >
+          </div>
+          <p class="text">${comment.body}</p>
+        </div>`,
+    );
   }
 }
