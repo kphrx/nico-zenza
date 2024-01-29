@@ -1,6 +1,6 @@
 import {LeftHoverMenu, HoverMenuButton} from "./components/hover-menu";
 import {PlayerDialog} from "./components/player/dialog";
-import {computeBaseZIndex} from "./util";
+import {computeBaseZIndex} from "./utils";
 
 console.log(
   "userscript manager:",

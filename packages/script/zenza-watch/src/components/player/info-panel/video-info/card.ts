@@ -2,6 +2,7 @@ import {LitElement, html, nothing} from "lit";
 import {customElement, property} from "lit/decorators";
 
 import {THUMBNAIL} from "@/constants";
+import {durationToTimestamp} from "@/utils";
 
 import sheet from "./card.css" with {type: "css"};
 
@@ -65,16 +66,7 @@ export class PlayerInfoPanelVideoCard extends LitElement {
   }
 
   get #duration() {
-    const datetime = new Date((this.info?.duration ?? 0) * 1000);
-    const hours = datetime.getUTCHours();
-    const minutes = String(datetime.getUTCMinutes()).padStart(2, "0");
-    const seconds = String(datetime.getUTCSeconds()).padStart(2, "0");
-    const formattedDuration =
-      hours > 0
-        ? `${String(hours).padStart(2, "0")}:${minutes}:${seconds}`
-        : `${minutes}:${seconds}`;
-
-    return formattedDuration;
+    return durationToTimestamp(this.info?.duration ?? 0);
   }
 
   constructor(options?: ConstructorOption) {
