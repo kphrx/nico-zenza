@@ -109,6 +109,7 @@ export class PlayerInfoPanelCommentsList extends LitElement {
       (comment) =>
         html`<div
           class="comment"
+          tabindex="0"
           data-id=${comment.id}
           data-no=${comment.no}
           data-thread-id=${comment.threadId}
