@@ -5,6 +5,7 @@ import {consume} from "@lit/context";
 
 import type {WatchV3Response} from "@/watch-data";
 import {watchDataContext} from "@/contexts/watch-data-context";
+import {dateFormatter} from "@/utils";
 
 import sheet from "./header.css" with {type: "css"};
 
@@ -39,6 +40,10 @@ export class PlayerHeader extends LitElement {
     return this.watchData?.tag;
   }
 
+  get #registeredAt() {
+    return new Date(this.#videoInfo?.registeredAt ?? 0);
+  }
+
   #onClose: () => void;
 
   constructor(onClose: () => void) {
@@ -56,7 +61,7 @@ export class PlayerHeader extends LitElement {
         ${(this.#isUser && "投稿日時") ||
         (this.#isChannel && "配信日時") ||
         nothing}:
-        ${new Date(this.#videoInfo?.registeredAt ?? 0).toLocaleString()}
+        ${dateFormatter(this.#registeredAt)}
       </p>
       <ul class="count">
         <li>

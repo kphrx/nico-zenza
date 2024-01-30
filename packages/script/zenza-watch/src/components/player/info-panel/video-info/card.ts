@@ -66,7 +66,7 @@ export class PlayerInfoPanelVideoCard extends LitElement {
   }
 
   get #duration() {
-    return durationToTimestamp(this.info?.duration ?? 0);
+    return durationToTimestamp(this.info?.duration ?? 0, true);
   }
 
   constructor(options?: ConstructorOption) {

@@ -5,7 +5,7 @@ import {Task} from "@lit/task";
 
 import {commentContext} from "@/contexts/comment-context";
 import type {FlattedComment} from "@/comment-list";
-import {durationMsToTimestamp} from "@/utils";
+import {durationMsToTimestamp, dateFormatter} from "@/utils";
 
 import sheet from "./list.css" with {type: "css"};
 
@@ -116,7 +116,7 @@ export class PlayerInfoPanelCommentsList extends LitElement {
           <div class="info">
             <span class="vpos">${durationMsToTimestamp(comment.vposMs)}</span>
             <span class="date"
-              >${new Date(comment.postedAt).toLocaleString()}</span
+              >${dateFormatter(new Date(comment.postedAt))}</span
             >
           </div>
           <p class="text">${comment.body}</p>
