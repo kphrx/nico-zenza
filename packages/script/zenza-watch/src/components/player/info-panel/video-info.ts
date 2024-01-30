@@ -113,25 +113,34 @@ export class PlayerInfoPanelVideoInfoTab extends LitElement {
       "text/html",
     ).body;
 
-    const watchLinks: NodeListOf<HTMLAnchorElement> = desc.querySelectorAll(
-      'a.watch[href*="//www.nicovideo.jp/watch/"],a.watch[href*="//sp.nicovideo.jp/watch/"]',
-    );
     const regex = /^\/watch\/([a-z0-9]+)/;
-    for (const watchLink of Array.from(watchLinks)) {
-      const id = regex.exec(new URL(watchLink.href).pathname)?.[1];
-      if (id == null) {
-        continue;
+    return Array.from(desc.childNodes).reduce<ChildNode[]>((acc, cur) => {
+      acc.push(cur);
+      if (!(cur instanceof HTMLAnchorElement) || cur.className !== "watch") {
+        return acc;
       }
 
-      watchLink.after(
+      const href = new URL(cur.href);
+      if (
+        href.hostname !== "www.nicovideo.jp" &&
+        href.hostname !== "sp.nicovideo.jp"
+      ) {
+        return acc;
+      }
+
+      const id = regex.exec(new URL(cur.href).pathname)?.[1];
+      if (id == null) {
+        return acc;
+      }
+
+      acc.push(
         new PlayerInfoPanelVideoCard({
           videoId: id,
           onclick: this.#clickVideo(id),
         }),
       );
-    }
-
-    return Array.from(desc.childNodes);
+      return acc;
+    }, []);
   }
 
   get #description() {
