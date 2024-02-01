@@ -4,6 +4,7 @@ import {consume} from "@lit/context";
 import {Task} from "@lit/task";
 
 import {commentContext} from "@/contexts/comment-context";
+import type {CommentContext} from "@/contexts/comment-context";
 import type {FlattedComment} from "@/comment-list";
 import {durationMsToTimestamp, dateFormatter} from "@/utils";
 
@@ -70,15 +71,15 @@ export class PlayerInfoPanelCommentsList extends LitElement {
   static styles = sheet;
 
   @consume({context: commentContext, subscribe: true})
-  accessor comments: FlattedComment[] = EMPTY_ARRAY;
+  accessor comments: CommentContext = EMPTY_ARRAY;
 
   @property({reflect: true})
   accessor order: CommentsOrderTypes = "vpos:asc";
 
-  #task = new Task<[FlattedComment[], CommentsOrderTypes], FlattedComment[]>(
+  #task = new Task<[CommentContext, CommentsOrderTypes], FlattedComment[]>(
     this,
     async (
-      [comments, order]: [FlattedComment[], CommentsOrderTypes],
+      [comments, order]: [CommentContext, CommentsOrderTypes],
       {signal},
     ) => {
       if (comments.length === 0) {
@@ -105,23 +106,20 @@ export class PlayerInfoPanelCommentsList extends LitElement {
   }
 
   render() {
-    return this.#sortedComments.map(
-      (comment) =>
-        html`<div
-          class="comment"
-          tabindex="0"
-          data-id=${comment.id}
-          data-no=${comment.no}
-          data-thread-id=${comment.threadId}
-          data-fork=${comment.fork}>
-          <div class="info">
-            <span class="vpos">${durationMsToTimestamp(comment.vposMs)}</span>
-            <span class="date"
-              >${dateFormatter(new Date(comment.postedAt))}</span
-            >
-          </div>
-          <p class="text">${comment.body}</p>
-        </div>`,
-    );
+    return this.#sortedComments.map((comment) => {
+      return html`<div
+        class="comment"
+        tabindex="0"
+        data-id=${comment.id}
+        data-no=${comment.no}
+        data-thread-id=${comment.threadId}
+        data-fork=${comment.fork}>
+        <div class="info">
+          <span class="vpos">${durationMsToTimestamp(comment.vposMs)}</span>
+          <span class="date">${dateFormatter(new Date(comment.postedAt))}</span>
+        </div>
+        <p class="text">${comment.body}</p>
+      </div>`;
+    });
   }
 }

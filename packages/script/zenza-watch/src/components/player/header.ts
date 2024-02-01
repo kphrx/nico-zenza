@@ -3,8 +3,8 @@ import {customElement} from "lit/decorators";
 import {classMap} from "lit/directives/class-map";
 import {consume} from "@lit/context";
 
-import type {WatchV3Response} from "@/watch-data";
 import {watchDataContext} from "@/contexts/watch-data-context";
+import type {WatchDataContext} from "@/contexts/watch-data-context";
 import {dateFormatter} from "@/utils";
 
 import sheet from "./header.css" with {type: "css"};
@@ -22,7 +22,7 @@ export class PlayerHeader extends LitElement {
   static styles = sheet;
 
   @consume({context: watchDataContext, subscribe: true})
-  accessor watchData: WatchV3Response | undefined;
+  accessor watchData: WatchDataContext;
 
   get #videoInfo() {
     return this.watchData?.video;

@@ -4,8 +4,8 @@ import {consume, provide} from "@lit/context";
 
 import {watchDataContext} from "@/contexts/watch-data-context";
 import {commentContext} from "@/contexts/comment-context";
-import type {WatchV3Response} from "@/watch-data";
-import type {FlattedComment} from "@/comment-list";
+import type {WatchDataContext} from "@/contexts/watch-data-context";
+import type {CommentContext} from "@/contexts/comment-context";
 
 import {CommentsController} from "./comments-controller";
 import {
@@ -35,14 +35,14 @@ export class PlayerInfoPanelCommentsTab extends LitElement {
   #commentList = new PlayerInfoPanelCommentsList();
 
   @consume({context: watchDataContext, subscribe: true})
-  accessor watchData: WatchV3Response | undefined;
+  accessor watchData: WatchDataContext;
 
   get nvComment() {
     return this.watchData?.comment.nvComment;
   }
 
   @provide({context: commentContext})
-  accessor comments: FlattedComment[];
+  accessor comments: CommentContext;
 
   #changeOrder = (ev: Event) => {
     const value = (ev.target as HTMLSelectElement).value;

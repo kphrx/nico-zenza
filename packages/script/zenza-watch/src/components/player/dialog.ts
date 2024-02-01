@@ -3,24 +3,19 @@ import {customElement, property} from "lit/decorators";
 import {provide} from "@lit/context";
 
 import {watchDataContext} from "@/contexts/watch-data-context";
-import type {WatchV3Response} from "@/watch-data";
+import type {WatchDataContext} from "@/contexts/watch-data-context";
+import {playerMessageContext} from "@/contexts/player-message-context";
 
 import {OpenController} from "./open-controller";
 import {WatchDataController} from "./watch-data-controller";
 import {PlayerHeader} from "./header";
 import {PlayerInfoPanel} from "./info-panel";
 import {PlayerVideo} from "./video";
+import {PlayerMessage} from "./message";
 
 import sheet from "./dialog.css" with {type: "css"};
 
 const TAG_NAME = "zenza-watch-player-dialog";
-
-const STATUS = {
-  Initial: "No Video",
-  Loaded: (id: string) => `Loaded ${id}`,
-  Loading: (id: string) => `Loading ${id}...`,
-  Error: (e: unknown) => String(e),
-} as const;
 
 declare global {
   interface HTMLElementTagNameMap {
@@ -42,8 +37,6 @@ export class PlayerDialog extends LitElement {
     }
   });
 
-  #status!: HTMLParagraphElement;
-
   #header = new PlayerHeader(() => {
     this.videoId = "";
     this.watchData = undefined;
@@ -54,6 +47,9 @@ export class PlayerDialog extends LitElement {
 
   #video = new PlayerVideo();
 
+  @provide({context: playerMessageContext})
+  accessor playerMessage = new PlayerMessage();
+
   set videoId(value) {
     this.#open.videoId = value;
   }
@@ -63,7 +59,7 @@ export class PlayerDialog extends LitElement {
   }
 
   @provide({context: watchDataContext})
-  accessor watchData: WatchV3Response | undefined;
+  accessor watchData: WatchDataContext;
 
   @property({type: Boolean, reflect: true})
   accessor open = false;
@@ -75,36 +71,28 @@ export class PlayerDialog extends LitElement {
     }
 
     super();
-    this.#status = document.createElement("p");
-    this.#status.className = "status";
   }
 
   render() {
     return this.#watchData.render({
       initial: () => {
-        this.#status.textContent = STATUS.Initial;
-
-        return [this.#status];
+        return [this.playerMessage];
       },
       pending: () => {
-        this.#status.textContent = STATUS.Loading(this.videoId);
+        this.playerMessage.info(`動画情報読み込み中 ${this.videoId}`);
 
-        return [this.#status, this.#video, this.#header, this.#infoPanel];
+        return [this.playerMessage, this.#video, this.#header, this.#infoPanel];
       },
-      complete: (result: WatchV3Response) => {
+      complete: (result) => {
         this.watchData = result;
-        this.#status.textContent = STATUS.Loaded(this.videoId);
+        this.playerMessage.success(`動画情報読み込み完了 ${this.videoId}`);
 
-        return [this.#status, this.#video, this.#header, this.#infoPanel];
+        return [this.playerMessage, this.#video, this.#header, this.#infoPanel];
       },
-      error: (e: unknown) => {
-        if (e instanceof Error) {
-          this.#status.textContent = STATUS.Error(e.message);
-        } else {
-          this.#status.textContent = STATUS.Error(e);
-        }
+      error: (e) => {
+        this.playerMessage.failure(e);
 
-        return [this.#status, this.#video, this.#header, this.#infoPanel];
+        return [this.playerMessage, this.#video, this.#header, this.#infoPanel];
       },
     });
   }

@@ -4,7 +4,8 @@ import {consume} from "@lit/context";
 
 import {ICON, THUMBNAIL} from "@/constants";
 import {watchDataContext} from "@/contexts/watch-data-context";
-import type {WatchV3Response, SeriesVideo} from "@/watch-data";
+import type {WatchDataContext} from "@/contexts/watch-data-context";
+import type {SeriesVideo} from "@/watch-data";
 
 import {PlayerInfoPanelVideoCard} from "./video-info/card";
 
@@ -24,7 +25,7 @@ export class PlayerInfoPanelVideoInfoTab extends LitElement {
   static styles = [base, sheet];
 
   @consume({context: watchDataContext, subscribe: true})
-  accessor watchData: WatchV3Response | undefined;
+  accessor watchData: WatchDataContext;
 
   get #videoInfo() {
     return this.watchData?.video;

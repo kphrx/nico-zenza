@@ -1,10 +1,12 @@
 import {LitElement, nothing} from "lit";
 import {customElement, property} from "lit/decorators";
 import {consume} from "@lit/context";
-import {default as Hls, Events} from "hls.js";
+import {default as Hls, Events, ErrorDetails, ErrorTypes} from "hls.js";
 
 import {watchDataContext} from "@/contexts/watch-data-context";
-import type {WatchV3Response} from "@/watch-data";
+import type {WatchDataContext} from "@/contexts/watch-data-context";
+import {playerMessageContext} from "@/contexts/player-message-context";
+import type {PlayerMessageContext} from "@/contexts/player-message-context";
 
 import {SessionController} from "./session-controller";
 
@@ -30,7 +32,10 @@ export class PlayerVideo extends LitElement {
   #session = new SessionController(this);
 
   @consume({context: watchDataContext, subscribe: true})
-  accessor watchData: WatchV3Response | undefined;
+  accessor watchData: WatchDataContext;
+
+  @consume({context: playerMessageContext, subscribe: true})
+  accessor playerMessage!: PlayerMessageContext;
 
   @property({reflect: true})
   set src(url) {
@@ -83,6 +88,10 @@ export class PlayerVideo extends LitElement {
     });
 
     this.hls.on(Events.MANIFEST_PARSED, (_event, data) => {
+      this.playerMessage.success(
+        `動画読み込み完了 ${this.watchData?.video.id}`,
+      );
+
       console.info(
         `manifest loaded, found ${data.levels.length} quality level`,
       );
@@ -90,6 +99,30 @@ export class PlayerVideo extends LitElement {
         console.debug(
           `resolution: ${level.width}x${level.height}, fps: ${Math.floor(level.frameRate)}`,
         );
+      }
+    });
+
+    this.hls.on(Events.ERROR, (_, data) => {
+      if (data.fatal) {
+        switch (data.type) {
+          case ErrorTypes.MEDIA_ERROR:
+            console.log("fatal media error encountered, try to recover");
+            this.hls?.recoverMediaError();
+            break;
+          case ErrorTypes.NETWORK_ERROR:
+            this.playerMessage.failure(
+              `動画読み込み失敗 ${this.watchData?.video.id}`,
+            );
+            console.error("fatal network error encountered", data);
+            break;
+          default:
+            this.hls?.destroy();
+            break;
+        }
+      }
+      switch (data.details) {
+        case ErrorDetails.FRAG_LOAD_ERROR:
+          break;
       }
     });
   }
@@ -115,6 +148,7 @@ export class PlayerVideo extends LitElement {
     return this.#session.render({
       pending: () => {
         this.src = undefined;
+        this.playerMessage.info(`動画読み込み中 ${this.watchData?.video.id}`);
 
         return nothing;
       },
@@ -125,7 +159,7 @@ export class PlayerVideo extends LitElement {
       },
       error: (e) => {
         this.src = undefined;
-        console.error(e);
+        this.playerMessage.failure(e);
 
         return nothing;
       },

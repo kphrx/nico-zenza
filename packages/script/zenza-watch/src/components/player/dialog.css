@@ -18,14 +18,3 @@
 :host([open]) {
   display: block;
 }
-
-p.status {
-  color: #fff;
-  background: #000;
-  margin: 0;
-  line-height: 1.2;
-
-  position: absolute;
-  bottom: 0;
-  left: 0;
-}
