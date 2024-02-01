@@ -1,6 +1,19 @@
+type VideoId = `${"so" | "sm" | "nm"}${number}`;
+type ChannelId = `ch${number}`;
+type CommunityId = `co${number}`;
+
+interface SeriesVideoOwner<T = string, I = string> {
+  ownerType: T;
+  type: T;
+  visibility: string;
+  id: I;
+  name: string;
+  iconUrl: string;
+}
+
 export interface SeriesVideo {
   type: string;
-  id: string;
+  id: VideoId;
   title: string;
   registeredAt: string;
   count: {
@@ -22,14 +35,9 @@ export interface SeriesVideo {
   isChannelVideo: boolean;
   isPaymentRequired: boolean;
   playbackPosition: unknown;
-  owner: {
-    ownerType: string;
-    type: string;
-    visibility: string;
-    id: string;
-    name: string;
-    iconUrl: string;
-  };
+  owner:
+    | SeriesVideoOwner<"user", `${number}`>
+    | SeriesVideoOwner<"channel", ChannelId>;
   requireSensitiveMasking: boolean;
   videoLive: unknown;
   isMuted: boolean;
@@ -45,7 +53,7 @@ export interface SeriesInfo {
   video: {
     prev: SeriesVideo | null;
     next: SeriesVideo | null;
-    first: SeriesVideo;
+    first: SeriesVideo | null;
   };
 }
 
@@ -82,7 +90,7 @@ export interface NVComment {
 }
 
 export interface VideoInfo {
-  id: string;
+  id: VideoId;
   title: string;
   description: string;
   count: {
@@ -125,7 +133,11 @@ export interface OwnerInfo {
   id: number;
   nickname: string;
   iconUrl: string;
-  channel: unknown;
+  channel: {
+    id: ChannelId;
+    name: string;
+    url: string;
+  } | null;
   live: unknown;
   isVideosPublic: string;
   isMylistsPublic: string;
@@ -136,7 +148,7 @@ export interface OwnerInfo {
 }
 
 export interface ChannelInfo {
-  id: string;
+  id: ChannelId;
   name: string;
   isOfficialAnime: boolean;
   isDisplayAdBanner: boolean;
@@ -160,15 +172,15 @@ export interface WatchV3Response {
   channel: ChannelInfo | null;
   client: {
     nicosid: string;
-    watchId: string;
+    watchId: VideoId;
     watchTrackId: string;
   };
   comment: {
     server: {
-      url: string;
+      url: "";
     };
     keys: {
-      userKey: string;
+      userKey: "";
     };
     layers: {
       index: number;
@@ -183,7 +195,7 @@ export interface WatchV3Response {
       id: number;
       fork: number;
       forkLabel: string;
-      videoId: string;
+      videoId: VideoId;
       isActive: boolean;
       isDefaultPostTarget: boolean;
       isEasyCommentPostTarget: boolean;
@@ -218,10 +230,13 @@ export interface WatchV3Response {
   };
   community: {
     main: {
-      id: string;
+      id: CommunityId;
       name: string;
     };
-    belong: unknown;
+    belong: {
+      id: CommunityId;
+      name: string;
+    } | null;
   } | null;
   easyComment: {
     phrases: {
@@ -333,10 +348,31 @@ export interface WatchV3Response {
           }[];
         };
       };
-      storyboard: unknown;
+      storyboard: {
+        session: {
+          recipeId: string;
+          playerId: string;
+          videos: string[];
+          authTypes: {
+            storyboard: string;
+          };
+          serviceUserId: string;
+          token: string;
+          signature: string;
+          contentId: string;
+          heartbeatLifetime: number;
+          contentKeyTimeout: number;
+          priority: number;
+          urls: {
+            url: string;
+            isWellKnownPort: boolean;
+            isSsl: boolean;
+          }[];
+        };
+      } | null;
       trackingId: string;
     } | null;
-    deliveryLegacy: unknown;
+    deliveryLegacy: null;
   };
   okReason: string;
   owner: OwnerInfo | null;
@@ -367,7 +403,10 @@ export interface WatchV3Response {
   };
   pcWatchPage: null;
   player: {
-    initialPlayback: unknown;
+    initialPlayback: {
+      type: string;
+      position: number;
+    } | null;
     comment: {
       isDefaultInvisible: boolean;
     };
@@ -399,7 +438,7 @@ export interface WatchV3Response {
   video: VideoInfo;
   videoAds: {
     additionalParams: {
-      videoId: string;
+      videoId: VideoId;
       videoDuration: number;
       isAdultRatingNG: boolean;
       isAuthenticationRequired: boolean;

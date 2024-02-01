@@ -1,5 +1,5 @@
 interface ThreadComment {
-  id: string;
+  id: `${number}`;
   no: number;
   vposMs: number;
   body: string;
@@ -15,9 +15,9 @@ interface ThreadComment {
 }
 
 export interface Threads {
-  globalComments: {id: string; count: number}[];
+  globalComments: {id: `${number}`; count: number}[];
   threads: {
-    id: string;
+    id: `${number}`;
     fork: string;
     commentCount: number;
     comments: ThreadComment[];
@@ -27,5 +27,5 @@ export interface Threads {
 export interface FlattedComment extends Omit<ThreadComment, "postedAt"> {
   postedAt: number;
   fork: string;
-  threadId: string;
+  threadId: `${number}`;
 }
