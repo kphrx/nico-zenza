@@ -9,6 +9,7 @@ import {OpenController} from "./open-controller";
 import {WatchDataController} from "./watch-data-controller";
 import {PlayerHeader} from "./header";
 import {PlayerInfoPanel} from "./info-panel";
+import {PlayerVideo} from "./video";
 
 import sheet from "./dialog.css" with {type: "css"};
 
@@ -51,6 +52,8 @@ export class PlayerDialog extends LitElement {
 
   #infoPanel = new PlayerInfoPanel();
 
+  #video = new PlayerVideo();
+
   set videoId(value) {
     this.#open.videoId = value;
   }
@@ -86,13 +89,13 @@ export class PlayerDialog extends LitElement {
       pending: () => {
         this.#status.textContent = STATUS.Loading(this.videoId);
 
-        return [this.#status, this.#header, this.#infoPanel];
+        return [this.#status, this.#video, this.#header, this.#infoPanel];
       },
       complete: (result: WatchV3Response) => {
         this.watchData = result;
         this.#status.textContent = STATUS.Loaded(this.videoId);
 
-        return [this.#status, this.#header, this.#infoPanel];
+        return [this.#status, this.#video, this.#header, this.#infoPanel];
       },
       error: (e: unknown) => {
         if (e instanceof Error) {
@@ -101,7 +104,7 @@ export class PlayerDialog extends LitElement {
           this.#status.textContent = STATUS.Error(e);
         }
 
-        return [this.#status, this.#header, this.#infoPanel];
+        return [this.#status, this.#video, this.#header, this.#infoPanel];
       },
     });
   }

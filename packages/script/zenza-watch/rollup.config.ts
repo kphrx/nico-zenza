@@ -32,5 +32,6 @@ export default rollupConfig({
     "lit/directives/repeat":
       'await import("https://esm.run/lit@^3.1.1/directives/repeat")',
     "@lit/task": 'await import("https://esm.run/@lit/task@^1.0.0")',
+    "hls.js": "Hls",
   },
 });

@@ -47,7 +47,7 @@ export class CommentsController implements ReactiveController {
         if (isErrorResponse(json)) {
           const {meta, data} = json;
 
-          throw Error(
+          throw new Error(
             `Failed to fetch comments [${nvComment.params.targets[0]?.id ?? "unknown"}]: ${meta.status.toString()}: ${meta.errorCode} ${data?.reasonCode ?? ""}`,
           );
         }

@@ -55,7 +55,7 @@ export class WatchDataController implements ReactiveController {
         if (isErrorResponse(json)) {
           const {meta, data} = json;
 
-          throw Error(
+          throw new Error(
             `Failed to fetch [${videoId}]: ${meta.status.toString()}: ${meta.errorCode} ${data?.reasonCode ?? ""}`,
           );
         }
