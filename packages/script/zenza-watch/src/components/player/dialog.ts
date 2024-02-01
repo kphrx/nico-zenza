@@ -1,4 +1,4 @@
-import {LitElement} from "lit";
+import {LitElement, html} from "lit";
 import {customElement, property} from "lit/decorators";
 import {provide} from "@lit/context";
 
@@ -37,11 +37,17 @@ export class PlayerDialog extends LitElement {
     }
   });
 
-  #header = new PlayerHeader(() => {
-    this.videoId = "";
-    this.watchData = undefined;
-    this.open = false;
-  });
+  #close = html`<button
+    class="close"
+    @click=${() => {
+      this.videoId = "";
+      this.watchData = undefined;
+      this.open = false;
+    }}>
+    Close
+  </button>`;
+
+  #header = new PlayerHeader();
 
   #infoPanel = new PlayerInfoPanel();
 
@@ -73,26 +79,74 @@ export class PlayerDialog extends LitElement {
     super();
   }
 
+  #timeoutId?: number;
+
+  #mousehover = () => {
+    window.clearTimeout(this.#timeoutId);
+    if (this.classList.contains("is-autohide")) {
+      this.classList.toggle("is-autohide");
+    }
+    const timeoutId = window.setTimeout(() => {
+      if (!this.classList.contains("is-autohide")) {
+        this.classList.toggle("is-autohide");
+      }
+      if (this.#timeoutId === timeoutId) {
+        this.#timeoutId = undefined;
+      }
+    }, 3500);
+    this.#timeoutId = timeoutId;
+  };
+
+  override connectedCallback() {
+    super.connectedCallback();
+
+    this.addEventListener("mousemove", this.#mousehover);
+  }
+
+  override disconnectedCallback() {
+    this.removeEventListener("mousemove", this.#mousehover);
+
+    super.disconnectedCallback();
+  }
+
   render() {
     return this.#watchData.render({
       initial: () => {
-        return [this.playerMessage];
+        return [this.#close, this.playerMessage];
       },
       pending: () => {
         this.playerMessage.info(`動画情報読み込み中 ${this.videoId}`);
 
-        return [this.playerMessage, this.#video, this.#header, this.#infoPanel];
+        return [
+          this.#close,
+          this.playerMessage,
+          this.#video,
+          this.#header,
+          this.#infoPanel,
+        ];
       },
       complete: (result) => {
         this.watchData = result;
         this.playerMessage.success(`動画情報読み込み完了 ${this.videoId}`);
 
-        return [this.playerMessage, this.#video, this.#header, this.#infoPanel];
+        return [
+          this.#close,
+          this.playerMessage,
+          this.#video,
+          this.#header,
+          this.#infoPanel,
+        ];
       },
       error: (e) => {
         this.playerMessage.failure(e);
 
-        return [this.playerMessage, this.#video, this.#header, this.#infoPanel];
+        return [
+          this.#close,
+          this.playerMessage,
+          this.#video,
+          this.#header,
+          this.#infoPanel,
+        ];
       },
     });
   }

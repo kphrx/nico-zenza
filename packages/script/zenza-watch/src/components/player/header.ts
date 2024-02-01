@@ -44,14 +44,6 @@ export class PlayerHeader extends LitElement {
     return new Date(this.#videoInfo?.registeredAt ?? 0);
   }
 
-  #onClose: () => void;
-
-  constructor(onClose: () => void) {
-    super();
-
-    this.#onClose = onClose;
-  }
-
   render() {
     return html`
       <h2 title=${this.#videoInfo?.title ?? nothing}>
@@ -87,7 +79,6 @@ export class PlayerHeader extends LitElement {
           </li>`;
         }) ?? []}
       </ul>
-      <button class="close" @click=${this.#onClose}>Close</button>
     `;
   }
 }

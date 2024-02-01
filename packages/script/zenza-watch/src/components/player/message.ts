@@ -50,39 +50,44 @@ export class PlayerMessage extends LitElement {
     this.requestUpdate();
   }
 
-  info(message: string) {
+  info(message: string, context?: string) {
     if (!this.isConnected) {
       return;
     }
+
+    const prefix = context != null ? `[${context}] ` : "";
 
     void this.#newMessages({
       type: "normal" as const,
-      status: message,
+      status: prefix + message,
       hide: true,
     });
   }
 
-  success(message: string) {
+  success(message: string, context?: string) {
     if (!this.isConnected) {
       return;
     }
+
+    const prefix = context != null ? `[${context}] ` : "";
 
     void this.#newMessages({
       type: "success" as const,
-      status: message,
+      status: prefix + message,
       hide: true,
     });
   }
 
-  failure(error: unknown) {
+  failure(error: unknown, context?: string) {
     if (!this.isConnected) {
       return;
     }
 
+    const prefix = context != null ? `[${context}] ` : "";
     const message = error instanceof Error ? error.message : String(error);
     void this.#newMessages({
       type: "failure" as const,
-      status: `ERROR: ${message}`,
+      status: `${prefix}ERROR: ${message}`,
       hide: true,
     });
   }

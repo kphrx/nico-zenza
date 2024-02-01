@@ -86,29 +86,3 @@ ul {
     }
   }
 }
-
-button.close {
-  font-size: 0;
-
-  position: absolute;
-  top: 0px;
-  right: 1px;
-  background: #000;
-  color: #fff;
-  border: 1px solid #777;
-  opacity: 0.5;
-
-  &:hover {
-    opacity: 0.8;
-  }
-
-  &:active {
-    opacity: 1;
-  }
-
-  &::before {
-    content: "✕";
-    font-size: 1.5rem;
-    line-height: 1;
-  }
-}
