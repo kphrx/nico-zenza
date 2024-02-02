@@ -115,7 +115,9 @@ export class PlayerDialog extends LitElement {
         return [this.#close, this.playerMessage];
       },
       pending: () => {
-        this.playerMessage.info(`動画情報読み込み中 ${this.videoId}`);
+        if (this.videoId != "") {
+          this.playerMessage.info("動画情報読み込み中", this.videoId);
+        }
 
         return [
           this.#close,
@@ -127,7 +129,7 @@ export class PlayerDialog extends LitElement {
       },
       complete: (result) => {
         this.watchData = result;
-        this.playerMessage.success(`動画情報読み込み完了 ${this.videoId}`);
+        this.playerMessage.success("動画情報読み込み完了", this.videoId);
 
         return [
           this.#close,
@@ -138,7 +140,7 @@ export class PlayerDialog extends LitElement {
         ];
       },
       error: (e) => {
-        this.playerMessage.failure(e);
+        this.playerMessage.failure(e, this.videoId);
 
         return [
           this.#close,

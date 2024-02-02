@@ -1,7 +1,7 @@
 import {LitElement, nothing} from "lit";
 import {customElement, property} from "lit/decorators";
 import {consume} from "@lit/context";
-import {default as Hls, Events, ErrorDetails, ErrorTypes} from "hls.js";
+import {default as Hls, Events, ErrorTypes} from "hls.js";
 
 import {watchDataContext} from "@/contexts/watch-data-context";
 import type {WatchDataContext} from "@/contexts/watch-data-context";
@@ -87,10 +87,8 @@ export class PlayerVideo extends LitElement {
       console.debug(`detached hls.js`);
     });
 
-    this.hls.on(Events.MANIFEST_PARSED, (_event, data) => {
-      this.playerMessage.success(
-        `動画読み込み完了 ${this.watchData?.video.id}`,
-      );
+    this.hls.on(Events.MANIFEST_PARSED, (_eventName, data) => {
+      this.playerMessage.success("動画読み込み完了", this.watchData?.video.id);
 
       console.info(
         `manifest loaded, found ${data.levels.length} quality level`,
@@ -102,26 +100,26 @@ export class PlayerVideo extends LitElement {
       }
     });
 
-    this.hls.on(Events.ERROR, (_, data) => {
-      if (data.fatal) {
-        switch (data.type) {
-          case ErrorTypes.MEDIA_ERROR:
-            console.log("fatal media error encountered, try to recover");
-            this.hls?.recoverMediaError();
-            break;
-          case ErrorTypes.NETWORK_ERROR:
-            this.playerMessage.failure(
-              `動画読み込み失敗 ${this.watchData?.video.id}`,
-            );
-            console.error("fatal network error encountered", data);
-            break;
-          default:
-            this.hls?.destroy();
-            break;
-        }
+    this.hls.on(Events.ERROR, (_eventName, data) => {
+      if (!data.fatal) {
+        return;
       }
-      switch (data.details) {
-        case ErrorDetails.FRAG_LOAD_ERROR:
+
+      this.playerMessage.failure(
+        `動画読み込み失敗 ${data.error.message}`,
+        this.watchData?.video.id,
+      );
+
+      switch (data.type) {
+        case ErrorTypes.MEDIA_ERROR:
+          console.warn("fatal media error encountered, try to recover");
+          this.hls?.recoverMediaError();
+          break;
+        case ErrorTypes.NETWORK_ERROR:
+          console.error("fatal network error encountered", data);
+          break;
+        default:
+          this.hls?.destroy();
           break;
       }
     });
@@ -148,18 +146,27 @@ export class PlayerVideo extends LitElement {
     return this.#session.render({
       pending: () => {
         this.src = undefined;
-        this.playerMessage.info(`動画読み込み中 ${this.watchData?.video.id}`);
+        if (this.watchData != null) {
+          this.playerMessage.info(
+            "動画セッション開始中",
+            this.watchData.video.id,
+          );
+        }
 
         return nothing;
       },
       complete: ({contentUrl}) => {
         this.src = contentUrl;
+        this.playerMessage.success(
+          "動画セッション開始",
+          this.watchData?.video.id,
+        );
 
         return this.video;
       },
       error: (e) => {
         this.src = undefined;
-        this.playerMessage.failure(e);
+        this.playerMessage.failure(e, this.watchData?.video.id);
 
         return nothing;
       },

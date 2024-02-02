@@ -48,15 +48,16 @@ export class WatchDataController implements ReactiveController {
             signal,
           });
           json = (await res.json()) as typeof json;
-        } catch {
-          throw new Error(`Failed to fetch [${videoId}]`);
+        } catch (e) {
+          console.error(e);
+          throw new Error("Failed to fetch");
         }
 
         if (isErrorResponse(json)) {
           const {meta, data} = json;
 
           throw new Error(
-            `Failed to fetch [${videoId}]: ${meta.status.toString()}: ${meta.errorCode} ${data?.reasonCode ?? ""}`,
+            `Failed to fetch - ${meta.status.toString()}: ${meta.errorCode} ${data?.reasonCode ?? ""}`,
           );
         }
 
