@@ -7,6 +7,8 @@ import {watchDataContext} from "@/contexts/watch-data-context";
 import type {WatchDataContext} from "@/contexts/watch-data-context";
 import {playerMessageContext} from "@/contexts/player-message-context";
 import type {PlayerMessageContext} from "@/contexts/player-message-context";
+import {createCustomEvent, timeRangesToIterable} from "@/event";
+import type {IterableTimeRanges} from "@/event";
 
 import {SessionController} from "./session-controller";
 
@@ -63,6 +65,12 @@ export class PlayerVideo extends LitElement {
 
     this.video = document.createElement("video");
     this.video.autoplay = true;
+    this.video.addEventListener("timeupdate", () => {
+      this.#updateCurrentPosition(this.video.currentTime);
+    });
+    this.video.addEventListener("progress", () => {
+      this.#updateBuffered(timeRangesToIterable(this.video.buffered));
+    });
 
     if (!Hls.isSupported()) {
       return;
@@ -98,6 +106,10 @@ export class PlayerVideo extends LitElement {
           `resolution: ${level.width}x${level.height}, fps: ${Math.floor(level.frameRate)}`,
         );
       }
+    });
+
+    this.hls.on(Events.LEVEL_LOADED, (_eventName, data) => {
+      this.#updateTotalDuration(data.details.totalduration);
     });
 
     this.hls.on(Events.ERROR, (_eventName, data) => {
@@ -140,6 +152,24 @@ export class PlayerVideo extends LitElement {
     }
 
     super.disconnectedCallback();
+  }
+
+  #updateTotalDuration(duration: number) {
+    window.dispatchEvent(
+      createCustomEvent("zenzawatch:updateTotalDuration", {detail: {duration}}),
+    );
+  }
+
+  #updateCurrentPosition(vpos: number) {
+    window.dispatchEvent(
+      createCustomEvent("zenzawatch:updateCurrentPosition", {detail: {vpos}}),
+    );
+  }
+
+  #updateBuffered(buffered: IterableTimeRanges) {
+    window.dispatchEvent(
+      createCustomEvent("zenzawatch:updateBuffered", {detail: {buffered}}),
+    );
   }
 
   render() {

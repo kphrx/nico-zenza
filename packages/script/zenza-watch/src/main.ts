@@ -1,4 +1,5 @@
 import {LeftHoverMenu, HoverMenuButton} from "./components/hover-menu";
+import {createCustomEvent} from "./event";
 import {PlayerDialog} from "./components/player/dialog";
 import {computeBaseZIndex} from "./utils";
 
@@ -21,7 +22,7 @@ document.body
       }
 
       dispatchEvent(
-        new CustomEvent("zenzawatch:playeropen", {detail: {videoId}}),
+        createCustomEvent("zenzawatch:playeropen", {detail: {videoId}}),
       );
     }),
   )

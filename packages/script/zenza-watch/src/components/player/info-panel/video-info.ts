@@ -6,6 +6,7 @@ import {ICON, THUMBNAIL} from "@/constants";
 import {watchDataContext} from "@/contexts/watch-data-context";
 import type {WatchDataContext} from "@/contexts/watch-data-context";
 import type {SeriesVideo} from "@/watch-data";
+import {createCustomEvent} from "@/event";
 
 import {PlayerInfoPanelVideoCard} from "./video-info/card";
 
@@ -198,12 +199,12 @@ export class PlayerInfoPanelVideoInfoTab extends LitElement {
     </div>`;
   }
 
-  #clickVideo(id: string) {
+  #clickVideo(videoId: string) {
     return (ev: MouseEvent) => {
       ev.preventDefault();
 
       window.dispatchEvent(
-        new CustomEvent("zenzawatch:playeropen", {detail: {videoId: id}}),
+        createCustomEvent("zenzawatch:playeropen", {detail: {videoId}}),
       );
     };
   }

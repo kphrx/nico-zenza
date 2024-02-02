@@ -10,6 +10,7 @@ import {OpenController} from "./open-controller";
 import {WatchDataController} from "./watch-data-controller";
 import {PlayerHeader} from "./header";
 import {PlayerInfoPanel} from "./info-panel";
+import {PlayerControls} from "./controls";
 import {PlayerVideo} from "./video";
 import {PlayerMessage} from "./message";
 
@@ -50,6 +51,8 @@ export class PlayerDialog extends LitElement {
   #header = new PlayerHeader();
 
   #infoPanel = new PlayerInfoPanel();
+
+  #controls = new PlayerControls();
 
   #video = new PlayerVideo();
 
@@ -123,6 +126,7 @@ export class PlayerDialog extends LitElement {
           this.#close,
           this.playerMessage,
           this.#video,
+          this.#controls,
           this.#header,
           this.#infoPanel,
         ];
@@ -135,6 +139,7 @@ export class PlayerDialog extends LitElement {
           this.#close,
           this.playerMessage,
           this.#video,
+          this.#controls,
           this.#header,
           this.#infoPanel,
         ];
@@ -146,6 +151,7 @@ export class PlayerDialog extends LitElement {
           this.#close,
           this.playerMessage,
           this.#video,
+          this.#controls,
           this.#header,
           this.#infoPanel,
         ];
