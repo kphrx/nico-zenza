@@ -4,7 +4,7 @@ import type {StatusRenderer} from "@lit/task";
 
 import {isErrorResponse} from "@/nvapi-response";
 import type {NVAPIResponse} from "@/nvapi-response";
-import type {NVComment} from "@/watch-data";
+import type {WatchV3Response} from "@/watch-data";
 import type {Threads, FlattedComment} from "@/comment-list";
 
 import type {PlayerInfoPanelCommentsTab} from "./comments";
@@ -13,17 +13,21 @@ type ReactiveControllerHost = PlayerInfoPanelCommentsTab;
 
 export class CommentsController implements ReactiveController {
   #host: ReactiveControllerHost;
-  #task: Task<[NVComment | undefined], FlattedComment[]>;
+  #task: Task<[WatchV3Response | undefined], FlattedComment[]>;
 
   constructor(host: ReactiveControllerHost) {
     this.#host = host;
 
-    this.#task = new Task<[NVComment | undefined], FlattedComment[]>(
+    this.#task = new Task<[WatchV3Response | undefined], FlattedComment[]>(
       this.#host,
-      async ([nvComment]: [NVComment | undefined], {signal}) => {
-        if (nvComment == null) {
+      async ([watchData]: [WatchV3Response | undefined], {signal}) => {
+        if (watchData == null) {
           return initialState;
         }
+
+        const nvComment = watchData.comment.nvComment;
+
+        this.#host.playerMessage.info("コメント読み込み中", watchData.video.id);
 
         let json: NVAPIResponse<Threads>;
         try {
@@ -39,17 +43,23 @@ export class CommentsController implements ReactiveController {
           });
           json = (await res.json()) as typeof json;
         } catch {
-          throw new Error(
+          const error = new Error(
             `Failed to fetch comments [${nvComment.params.targets[0]?.id ?? "unknown"}]`,
           );
+          this.#host.playerMessage.failure(error, watchData.video.id);
+
+          throw error;
         }
 
         if (isErrorResponse(json)) {
           const {meta, data} = json;
 
-          throw new Error(
+          const error = new Error(
             `Failed to fetch comments [${nvComment.params.targets[0]?.id ?? "unknown"}]: ${meta.status.toString()}: ${meta.errorCode} ${data?.reasonCode ?? ""}`,
           );
+          this.#host.playerMessage.failure(error, watchData.video.id);
+
+          throw error;
         }
 
         const data = json.data.threads.reduce((prev, thread) => {
@@ -66,9 +76,14 @@ export class CommentsController implements ReactiveController {
           return prev;
         }, [] as FlattedComment[]);
 
+        this.#host.playerMessage.success(
+          "コメント読み込み完了",
+          watchData.video.id,
+        );
+
         return data;
       },
-      () => [this.#host.nvComment],
+      () => [this.#host.watchData],
     );
 
     this.#host.addController(this);

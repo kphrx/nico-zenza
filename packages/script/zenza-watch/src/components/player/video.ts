@@ -213,27 +213,16 @@ export class PlayerVideo extends LitElement {
     return this.#session.render({
       pending: () => {
         this.src = undefined;
-        if (this.watchData != null) {
-          this.playerMessage.info(
-            "動画セッション開始中",
-            this.watchData.video.id,
-          );
-        }
 
         return nothing;
       },
       complete: ({contentUrl}) => {
         this.src = contentUrl;
-        this.playerMessage.success(
-          "動画セッション開始",
-          this.watchData?.video.id,
-        );
 
         return this.video;
       },
-      error: (e) => {
+      error: () => {
         this.src = undefined;
-        this.playerMessage.failure(e, this.watchData?.video.id);
 
         return nothing;
       },

@@ -40,10 +40,6 @@ export class PlayerInfoPanelCommentsTab extends LitElement {
   @consume({context: watchDataContext, subscribe: true})
   accessor watchData: WatchDataContext;
 
-  get nvComment() {
-    return this.watchData?.comment.nvComment;
-  }
-
   @consume({context: playerMessageContext, subscribe: true})
   accessor playerMessage!: PlayerMessageContext;
 
@@ -135,12 +131,6 @@ export class PlayerInfoPanelCommentsTab extends LitElement {
       pending: () => {
         this.comments = EMPTY_ARRAY;
         this.order = "vpos:asc";
-        if (this.watchData != null) {
-          this.playerMessage.info(
-            "コメント読み込み中",
-            this.watchData.video.id,
-          );
-        }
 
         return html`<div class="empty">
           <p class="status">コメント読み込み中</p>
@@ -148,10 +138,6 @@ export class PlayerInfoPanelCommentsTab extends LitElement {
       },
       complete: (comments) => {
         this.comments = comments;
-        this.playerMessage.success(
-          "コメント読み込み完了",
-          this.watchData?.video.id,
-        );
 
         return [
           html`<div class="panel-header">

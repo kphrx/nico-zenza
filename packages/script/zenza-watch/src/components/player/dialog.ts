@@ -115,25 +115,18 @@ export class PlayerDialog extends LitElement {
   render() {
     return this.#watchData.render({
       initial: () => {
-        return [this.#close, this.playerMessage];
+        return [this.#close];
       },
-      pending: () => {
-        if (this.videoId != "") {
-          this.playerMessage.info("動画情報読み込み中", this.videoId);
-        }
-
-        return [
-          this.#close,
-          this.playerMessage,
-          this.#video,
-          this.#controls,
-          this.#header,
-          this.#infoPanel,
-        ];
-      },
+      pending: () => [
+        this.#close,
+        this.playerMessage,
+        this.#video,
+        this.#controls,
+        this.#header,
+        this.#infoPanel,
+      ],
       complete: (result) => {
         this.watchData = result;
-        this.playerMessage.success("動画情報読み込み完了", this.videoId);
 
         return [
           this.#close,
@@ -144,18 +137,14 @@ export class PlayerDialog extends LitElement {
           this.#infoPanel,
         ];
       },
-      error: (e) => {
-        this.playerMessage.failure(e, this.videoId);
-
-        return [
-          this.#close,
-          this.playerMessage,
-          this.#video,
-          this.#controls,
-          this.#header,
-          this.#infoPanel,
-        ];
-      },
+      error: () => [
+        this.#close,
+        this.playerMessage,
+        this.#video,
+        this.#controls,
+        this.#header,
+        this.#infoPanel,
+      ],
     });
   }
 }

@@ -29,9 +29,17 @@ export class SessionController implements ReactiveController {
           return initialState;
         }
 
+        this.#host.playerMessage.info(
+          "動画セッション開始中",
+          watchData.video.id,
+        );
+
         const {domand} = watchData.media;
         if (domand == null) {
-          throw new Error("Not supported non domand video");
+          const error = new Error("Not supported non domand video");
+          this.#host.playerMessage.failure(error, watchData.video.id);
+
+          throw error;
         }
 
         let json: NVAPIResponse<AccessRights>;
@@ -63,18 +71,27 @@ export class SessionController implements ReactiveController {
           });
           json = (await res.json()) as typeof json;
         } catch {
-          throw new Error(
-            `Failed to fetch comments [${watchData.client.watchId}]`,
-          );
+          const error = new Error(`Failed to fetch comments`);
+          this.#host.playerMessage.failure(error, watchData.video.id);
+
+          throw error;
         }
 
         if (isErrorResponse(json)) {
           const {meta, data} = json;
 
-          throw new Error(
-            `Failed to right access hls [${watchData.client.watchId}]: ${meta.status.toString()}: ${meta.errorCode} ${data?.reasonCode ?? ""}`,
+          const error = new Error(
+            `Failed to right access hls: ${meta.status.toString()}: ${meta.errorCode} ${data?.reasonCode ?? ""}`,
           );
+          this.#host.playerMessage.failure(error, watchData.video.id);
+
+          throw error;
         }
+
+        this.#host.playerMessage.success(
+          "動画セッション開始",
+          watchData.video.id,
+        );
 
         return json.data;
       },

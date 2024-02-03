@@ -36,19 +36,30 @@ export class WatchDataController implements ReactiveController {
           return initialState;
         }
 
+        this.#host.playerMessage.info("動画情報読み込み中", videoId);
+
         const json = await this.#fetchWatchV3API(
           videoId,
           WatchDataController.#trackId(),
           signal,
-        );
+        ).catch((e) => {
+          this.#host.playerMessage.failure(e, videoId);
+
+          throw e;
+        });
 
         if (isErrorResponse(json)) {
           const {meta, data} = json;
 
-          throw new Error(
+          const error = new Error(
             `Failed to fetch - ${meta.status.toString()}: ${meta.errorCode} ${data?.reasonCode ?? ""}`,
           );
+          this.#host.playerMessage.failure(error, videoId);
+
+          throw error;
         }
+
+        this.#host.playerMessage.success("動画情報読み込み完了", videoId);
 
         return json.data;
       },
