@@ -6,6 +6,7 @@ import {styleMap} from "lit/directives/style-map";
 import {watchDataContext} from "@/contexts/watch-data-context";
 import type {WatchDataContext} from "@/contexts/watch-data-context";
 import {durationToTimestamp} from "@/utils";
+import {createCustomEvent} from "@/event";
 
 import sheet from "./controls.css" with {type: "css"};
 
@@ -31,26 +32,29 @@ export class PlayerControls extends LitElement {
   accessor currentPosition: number = 0;
 
   @state()
+  accessor seekPosition: number | undefined;
+
+  @state()
   accessor bufferedStart: number = 0;
 
   @state()
   accessor bufferedEnd: number = 0;
 
-  #updateTotalDuration: (
+  #updateTotalDuration = (
     ev: GlobalEventHandlersEventMap["zenzawatch:updateTotalDuration"],
-  ) => void = (ev) => {
-    this.totalDuration = Math.floor(ev.detail.duration);
+  ) => {
+    this.totalDuration = ev.detail.duration;
   };
 
-  #updateCurrentPosition: (
+  #updateCurrentPosition = (
     ev: GlobalEventHandlersEventMap["zenzawatch:updateCurrentPosition"],
-  ) => void = (ev) => {
-    this.currentPosition = Math.floor(ev.detail.vpos);
+  ) => {
+    this.currentPosition = ev.detail.vpos;
   };
 
-  #updateBuffered: (
+  #updateBuffered = (
     ev: GlobalEventHandlersEventMap["zenzawatch:updateBuffered"],
-  ) => void = (ev) => {
+  ) => {
     const {buffered} = ev.detail;
     if (buffered.length === 0) {
       this.bufferedStart = 0;
@@ -68,6 +72,55 @@ export class PlayerControls extends LitElement {
 
       break;
     }
+  };
+
+  #seeking = (ev: PointerEvent, end: boolean = false) => {
+    const target = ev.target as HTMLDivElement | null;
+    if (target == null) {
+      return;
+    }
+    const {width} = target.getBoundingClientRect();
+    const rectPosition = Math.min(ev.clientX, width) / width;
+
+    const vpos =
+      rectPosition *
+      Math.max(this.totalDuration, this.watchData?.video.duration ?? 0);
+    this.seekPosition = vpos;
+    window.dispatchEvent(
+      createCustomEvent("zenzawatch:seeking", {detail: {vpos}}),
+    );
+
+    if (end) {
+      this.currentPosition = this.seekPosition;
+      window.dispatchEvent(
+        createCustomEvent("zenzawatch:seeked", {detail: {playing: true}}),
+      );
+    }
+  };
+
+  #startSeeking = (ev: PointerEvent) => {
+    const target = ev.target as HTMLDivElement | null;
+    if (target == null || ev.button !== 0) {
+      return;
+    }
+
+    target.addEventListener("pointermove", this.#seeking);
+    target.setPointerCapture(ev.pointerId);
+    this.#seeking(ev);
+    target.classList.add("seeking");
+  };
+
+  #endSeeking = (ev: PointerEvent) => {
+    const target = ev.target as HTMLDivElement | null;
+    if (target == null || ev.button !== 0) {
+      return;
+    }
+
+    target.removeEventListener("pointermove", this.#seeking);
+    target.releasePointerCapture(ev.pointerId);
+    this.#seeking(ev, true);
+    target.classList.remove("seeking");
+    this.seekPosition = undefined;
   };
 
   override connectedCallback() {
@@ -104,18 +157,22 @@ export class PlayerControls extends LitElement {
   render() {
     return html`
       <div
+        @pointerdown=${this.#startSeeking}
+        @pointerup=${this.#endSeeking}
         class="seekbar"
         style=${styleMap({
-          "--total-duration": String(
-            Math.max(this.totalDuration, this.watchData?.video.duration ?? 0),
+          "--total-duration": Math.max(
+            this.totalDuration,
+            this.watchData?.video.duration ?? 0,
           ),
-          "--position": String(this.currentPosition),
-          "--buffered-start": String(this.bufferedStart),
-          "--buffered-end": String(this.bufferedEnd),
+          "--position": this.currentPosition,
+          "--seek-position": this.seekPosition,
+          "--buffered-start": this.bufferedStart,
+          "--buffered-end": this.bufferedEnd,
         })}></div>
       <div class="duration">
         <span class="current-position">
-          ${durationToTimestamp(this.currentPosition)}
+          ${durationToTimestamp(this.seekPosition ?? this.currentPosition)}
         </span>
         /
         <span class="duration">

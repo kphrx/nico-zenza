@@ -57,10 +57,12 @@ export class PlayerMessage extends LitElement {
 
     const prefix = context != null ? `[${context}] ` : "";
 
-    void this.#newMessages({
+    this.#newMessages({
       type: "normal" as const,
       status: prefix + message,
       hide: true,
+    }).catch((e) => {
+      throw e;
     });
   }
 
@@ -71,10 +73,12 @@ export class PlayerMessage extends LitElement {
 
     const prefix = context != null ? `[${context}] ` : "";
 
-    void this.#newMessages({
+    this.#newMessages({
       type: "success" as const,
       status: prefix + message,
       hide: true,
+    }).catch((e) => {
+      throw e;
     });
   }
 
@@ -85,10 +89,12 @@ export class PlayerMessage extends LitElement {
 
     const prefix = context != null ? `[${context}] ` : "";
     const message = error instanceof Error ? error.message : String(error);
-    void this.#newMessages({
+    this.#newMessages({
       type: "failure" as const,
       status: `${prefix}ERROR: ${message}`,
       hide: true,
+    }).catch((e) => {
+      throw e;
     });
   }
 

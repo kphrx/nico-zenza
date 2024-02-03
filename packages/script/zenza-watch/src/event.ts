@@ -4,6 +4,8 @@ declare global {
     "zenzawatch:updateTotalDuration": CustomEvent<{duration: number}>;
     "zenzawatch:updateCurrentPosition": CustomEvent<{vpos: number}>;
     "zenzawatch:updateBuffered": CustomEvent<{buffered: IterableTimeRanges}>;
+    "zenzawatch:seeking": CustomEvent<{vpos: number}>;
+    "zenzawatch:seeked": CustomEvent<{playing: boolean}>;
   }
 }
 

@@ -45,7 +45,7 @@ export class PlayerInfoPanelCommentsTab extends LitElement {
   accessor comments: CommentContext;
 
   #changeOrder = (ev: Event) => {
-    const value = (ev.target as HTMLSelectElement).value;
+    const value = (ev.target as HTMLSelectElement | null)?.value ?? "";
     if (!isOrderType(value) || value === this.#commentList.order) {
       return;
     }

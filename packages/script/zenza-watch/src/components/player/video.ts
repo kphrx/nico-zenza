@@ -137,6 +137,19 @@ export class PlayerVideo extends LitElement {
     });
   }
 
+  #seeking = (ev: GlobalEventHandlersEventMap["zenzawatch:seeking"]) => {
+    this.video.pause();
+    this.video.currentTime = ev.detail.vpos;
+  };
+
+  #seeked = (ev: GlobalEventHandlersEventMap["zenzawatch:seeked"]) => {
+    if (ev.detail.playing) {
+      this.video.play().catch((e) => {
+        throw e;
+      });
+    }
+  };
+
   override connectedCallback() {
     super.connectedCallback();
 
@@ -144,9 +157,15 @@ export class PlayerVideo extends LitElement {
       this.hls?.loadSource(this.#src);
       this.hls?.attachMedia(this.video);
     }
+
+    window.addEventListener("zenzawatch:seeking", this.#seeking);
+    window.addEventListener("zenzawatch:seeked", this.#seeked);
   }
 
   override disconnectedCallback() {
+    window.removeEventListener("zenzawatch:seeking", this.#seeking);
+    window.removeEventListener("zenzawatch:seeked", this.#seeked);
+
     if (Hls.isSupported()) {
       this.hls?.detachMedia();
     }

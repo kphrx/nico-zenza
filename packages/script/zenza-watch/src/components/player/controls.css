@@ -16,6 +16,7 @@ div.seekbar {
   height: 8px;
 
   position: relative;
+  cursor: pointer;
 
   &:hover {
     height: 20px;
@@ -46,11 +47,15 @@ div.seekbar {
     width: 14px;
     height: 100%;
 
-    cursor: pointer;
     translate: -50%;
 
     margin-left: calc(var(--position, 0) / var(--total-duration, 0) * 100%);
-    transition: margin 1s linear 0s;
+  }
+
+  &.seeking::after {
+    margin-left: calc(
+      var(--seek-position, 0) / var(--total-duration, 0) * 100%
+    );
   }
 }
 
