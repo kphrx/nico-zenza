@@ -8,7 +8,6 @@ import type {WatchDataContext} from "@/contexts/watch-data-context";
 import {playerMessageContext} from "@/contexts/player-message-context";
 import type {PlayerMessageContext} from "@/contexts/player-message-context";
 import {createCustomEvent, timeRangesToIterable} from "@/event";
-import type {IterableTimeRanges} from "@/event";
 
 import {SessionController} from "./session-controller";
 
@@ -66,12 +65,30 @@ export class PlayerVideo extends LitElement {
     this.video = document.createElement("video");
     this.video.autoplay = true;
     this.video.addEventListener("timeupdate", () => {
-      this.#updateCurrentPosition(this.video.currentTime);
+      window.dispatchEvent(
+        createCustomEvent("zenzawatch:updateCurrentPosition", {
+          detail: {vpos: this.video.currentTime},
+        }),
+      );
     });
     this.video.addEventListener("progress", () => {
-      this.#updateBuffered(timeRangesToIterable(this.video.buffered));
+      window.dispatchEvent(
+        createCustomEvent("zenzawatch:updateBuffered", {
+          detail: {buffered: timeRangesToIterable(this.video.buffered)},
+        }),
+      );
+    });
+    this.video.addEventListener("play", () => {
+      window.dispatchEvent(createCustomEvent("zenzawatch:playing"));
+    });
+    this.video.addEventListener("pause", () => {
+      window.dispatchEvent(createCustomEvent("zenzawatch:pausing"));
     });
 
+    this.#initializeHls();
+  }
+
+  #initializeHls() {
     if (!Hls.isSupported()) {
       return;
     }
@@ -109,7 +126,11 @@ export class PlayerVideo extends LitElement {
     });
 
     this.hls.on(Events.LEVEL_LOADED, (_eventName, data) => {
-      this.#updateTotalDuration(data.details.totalduration);
+      window.dispatchEvent(
+        createCustomEvent("zenzawatch:updateTotalDuration", {
+          detail: {duration: data.details.totalduration},
+        }),
+      );
     });
 
     this.hls.on(Events.ERROR, (_eventName, data) => {
@@ -132,6 +153,7 @@ export class PlayerVideo extends LitElement {
           break;
         default:
           this.hls?.destroy();
+          this.#initializeHls();
           break;
       }
     });
@@ -150,6 +172,16 @@ export class PlayerVideo extends LitElement {
     }
   };
 
+  #play = () => {
+    this.video.play().catch((e) => {
+      throw e;
+    });
+  };
+
+  #pause = () => {
+    this.video.pause();
+  };
+
   override connectedCallback() {
     super.connectedCallback();
 
@@ -160,35 +192,21 @@ export class PlayerVideo extends LitElement {
 
     window.addEventListener("zenzawatch:seeking", this.#seeking);
     window.addEventListener("zenzawatch:seeked", this.#seeked);
+    window.addEventListener("zenzawatch:play", this.#play);
+    window.addEventListener("zenzawatch:pause", this.#pause);
   }
 
   override disconnectedCallback() {
     window.removeEventListener("zenzawatch:seeking", this.#seeking);
     window.removeEventListener("zenzawatch:seeked", this.#seeked);
+    window.removeEventListener("zenzawatch:play", this.#play);
+    window.removeEventListener("zenzawatch:pause", this.#pause);
 
     if (Hls.isSupported()) {
       this.hls?.detachMedia();
     }
 
     super.disconnectedCallback();
-  }
-
-  #updateTotalDuration(duration: number) {
-    window.dispatchEvent(
-      createCustomEvent("zenzawatch:updateTotalDuration", {detail: {duration}}),
-    );
-  }
-
-  #updateCurrentPosition(vpos: number) {
-    window.dispatchEvent(
-      createCustomEvent("zenzawatch:updateCurrentPosition", {detail: {vpos}}),
-    );
-  }
-
-  #updateBuffered(buffered: IterableTimeRanges) {
-    window.dispatchEvent(
-      createCustomEvent("zenzawatch:updateBuffered", {detail: {buffered}}),
-    );
   }
 
   render() {

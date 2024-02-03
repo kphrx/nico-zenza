@@ -1,6 +1,7 @@
 import {LitElement, html} from "lit";
 import {customElement, state} from "lit/decorators";
 import {consume} from "@lit/context";
+import {classMap} from "lit/directives/class-map";
 import {styleMap} from "lit/directives/style-map";
 
 import {watchDataContext} from "@/contexts/watch-data-context";
@@ -24,6 +25,12 @@ export class PlayerControls extends LitElement {
 
   @consume({context: watchDataContext, subscribe: true})
   accessor watchData: WatchDataContext;
+
+  @state()
+  accessor paused: boolean = false;
+
+  @state()
+  accessor seeking: boolean = false;
 
   @state()
   accessor totalDuration: number = 0;
@@ -79,8 +86,12 @@ export class PlayerControls extends LitElement {
     if (target == null) {
       return;
     }
-    const {width} = target.getBoundingClientRect();
-    const rectPosition = Math.min(ev.clientX, width) / width;
+    const {paddingLeft, paddingRight} = getComputedStyle(target);
+    const left = parseFloat(paddingLeft);
+    const width =
+      target.getBoundingClientRect().width - left - parseFloat(paddingRight);
+    const rectPosition =
+      Math.min(Math.max(ev.clientX, left) - left, width) / width;
 
     const vpos =
       rectPosition *
@@ -93,7 +104,9 @@ export class PlayerControls extends LitElement {
     if (end) {
       this.currentPosition = this.seekPosition;
       window.dispatchEvent(
-        createCustomEvent("zenzawatch:seeked", {detail: {playing: true}}),
+        createCustomEvent("zenzawatch:seeked", {
+          detail: {playing: !this.paused},
+        }),
       );
     }
   };
@@ -107,7 +120,7 @@ export class PlayerControls extends LitElement {
     target.addEventListener("pointermove", this.#seeking);
     target.setPointerCapture(ev.pointerId);
     this.#seeking(ev);
-    target.classList.add("seeking");
+    this.seeking = true;
   };
 
   #endSeeking = (ev: PointerEvent) => {
@@ -119,8 +132,29 @@ export class PlayerControls extends LitElement {
     target.removeEventListener("pointermove", this.#seeking);
     target.releasePointerCapture(ev.pointerId);
     this.#seeking(ev, true);
-    target.classList.remove("seeking");
+    this.seeking = false;
     this.seekPosition = undefined;
+  };
+
+  #playOrPause = () => {
+    this.paused = !this.paused;
+    window.dispatchEvent(
+      createCustomEvent(`zenzawatch:${this.paused ? "pause" : "play"}`),
+    );
+  };
+
+  #play = () => {
+    if (this.seeking) {
+      return;
+    }
+    this.paused = false;
+  };
+
+  #pause = () => {
+    if (this.seeking) {
+      return;
+    }
+    this.paused = true;
   };
 
   override connectedCallback() {
@@ -135,9 +169,13 @@ export class PlayerControls extends LitElement {
       this.#updateCurrentPosition,
     );
     window.addEventListener("zenzawatch:updateBuffered", this.#updateBuffered);
+    window.addEventListener("zenzawatch:playing", this.#play);
+    window.addEventListener("zenzawatch:pausing", this.#pause);
   }
 
   override disconnectedCallback() {
+    window.removeEventListener("zenzawatch:playing", this.#play);
+    window.removeEventListener("zenzawatch:pausing", this.#pause);
     window.removeEventListener(
       "zenzawatch:updateBuffered",
       this.#updateBuffered,
@@ -159,7 +197,10 @@ export class PlayerControls extends LitElement {
       <div
         @pointerdown=${this.#startSeeking}
         @pointerup=${this.#endSeeking}
-        class="seekbar"
+        class=${classMap({
+          seekbar: true,
+          seeking: this.seeking,
+        })}
         style=${styleMap({
           "--total-duration": Math.max(
             this.totalDuration,
@@ -170,14 +211,34 @@ export class PlayerControls extends LitElement {
           "--buffered-start": this.bufferedStart,
           "--buffered-end": this.bufferedEnd,
         })}></div>
-      <div class="duration">
-        <span class="current-position">
-          ${durationToTimestamp(this.seekPosition ?? this.currentPosition)}
-        </span>
-        /
-        <span class="duration">
-          ${durationToTimestamp(this.watchData?.video.duration ?? 0)}
-        </span>
+
+      <div class="controlbar">
+        <div class="left">
+          <span class="version">ver ${GM_info.script.version}</span>
+        </div>
+
+        <div class="center">
+          <div class="controls">
+            <span
+              @click=${this.#playOrPause}
+              class=${classMap({
+                playControl: true,
+                play: this.paused,
+                pause: !this.paused,
+              })}></span>
+          </div>
+          <div class="duration">
+            <span class="current">
+              ${durationToTimestamp(this.seekPosition ?? this.currentPosition)}
+            </span>
+            /
+            <span class="total">
+              ${durationToTimestamp(this.watchData?.video.duration ?? 0)}
+            </span>
+          </div>
+        </div>
+
+        <div class="right"></div>
       </div>
     `;
   }

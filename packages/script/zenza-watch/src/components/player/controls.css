@@ -10,16 +10,16 @@
 div.seekbar {
   background: rgb(36 36 36 / 0.5);
   margin: auto;
-  padding-inline: 7px;
+  padding-inline: 6px;
 
-  width: calc(100% - 14px);
+  width: calc(100% - 12px);
   height: 8px;
 
   position: relative;
   cursor: pointer;
 
   &:hover {
-    height: 20px;
+    height: 18px;
   }
 
   &::before {
@@ -44,7 +44,7 @@ div.seekbar {
     background: #ddd;
 
     display: block;
-    width: 14px;
+    width: 12px;
     height: 100%;
 
     translate: -50%;
@@ -59,12 +59,89 @@ div.seekbar {
   }
 }
 
-div.duration {
-  color: #fff;
-  background: #000;
-  margin: auto;
-  padding: 1ex;
+div.controlbar {
+  position: relative;
+  left: 0;
+  right: 0;
+  margin-top: 1ex;
 
-  width: fit-content;
-  height: fit-content;
+  line-height: 1;
+  height: calc(1em + 2ex);
+
+  > div {
+    color: #ddd;
+    margin: 0;
+    padding: 1ex;
+
+    display: flex;
+    gap: 1ex;
+
+    position: absolute;
+    width: fit-content;
+    height: fit-content;
+
+    &.left {
+      left: 0;
+
+      span.version {
+        display: inline-block;
+      }
+    }
+
+    &.center {
+      left: 50%;
+      translate: -50%;
+      background: rgb(25 25 25 / 0.8);
+
+      div.controls {
+        display: flex;
+        gap: 0.5ex;
+
+        span.playControl {
+          width: calc(1.2em / 1.4142135623730950488016887242097);
+          height: 1.2em;
+          margin: -0.1em;
+          display: inline-block;
+          box-sizing: border-box;
+
+          &.play {
+            background:
+              no-repeat top / 100% 50%
+                linear-gradient(
+                  to top right,
+                  currentcolor 0,
+                  currentcolor 50%,
+                  transparent 0,
+                  transparent 100%
+                ),
+              no-repeat bottom / 100% 50%
+                linear-gradient(
+                  to bottom right,
+                  currentcolor 0,
+                  currentcolor 50%,
+                  transparent 0,
+                  transparent 100%
+                );
+          }
+
+          &.pause {
+            background: no-repeat center / 100%
+              linear-gradient(
+                to right,
+                currentcolor 0,
+                currentcolor 34%,
+                transparent 0,
+                transparent 65%,
+                currentcolor 0,
+                currentcolor 100%
+              );
+          }
+        }
+      }
+    }
+
+    &.right {
+      right: 0;
+    }
+  }
 }

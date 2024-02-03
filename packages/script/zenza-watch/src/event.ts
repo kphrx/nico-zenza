@@ -1,11 +1,18 @@
 declare global {
   interface GlobalEventHandlersEventMap {
     "zenzawatch:playeropen": CustomEvent<{videoId: string}>;
+
     "zenzawatch:updateTotalDuration": CustomEvent<{duration: number}>;
     "zenzawatch:updateCurrentPosition": CustomEvent<{vpos: number}>;
     "zenzawatch:updateBuffered": CustomEvent<{buffered: IterableTimeRanges}>;
+
     "zenzawatch:seeking": CustomEvent<{vpos: number}>;
     "zenzawatch:seeked": CustomEvent<{playing: boolean}>;
+
+    "zenzawatch:play": CustomEvent<void>;
+    "zenzawatch:pause": CustomEvent<void>;
+    "zenzawatch:playing": CustomEvent<void>;
+    "zenzawatch:pausing": CustomEvent<void>;
   }
 }
 
