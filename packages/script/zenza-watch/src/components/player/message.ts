@@ -32,70 +32,83 @@ export class PlayerMessage extends LitElement {
   @state()
   accessor messages: Map<number, Message> = new Map();
 
-  async #newMessages(msg: Message) {
+  async #newMessage(msg: Message, showMs: number) {
     const id = this.#counter++;
-    this.messages.set(this.#counter++, msg);
+    this.messages.set(id, msg);
     this.requestUpdate();
 
-    await sleep(1000);
+    await sleep(500);
     msg.hide = false;
     this.requestUpdate();
 
-    await sleep(4000);
+    await sleep(showMs);
     msg.hide = true;
     this.requestUpdate();
 
-    await sleep(1500);
+    await sleep(1000);
     this.messages.delete(id);
     this.requestUpdate();
   }
 
-  info(message: string, context?: string) {
-    if (!this.isConnected) {
-      return;
-    }
-
+  #createMessage({
+    type,
+    message,
+    context,
+    showMs,
+  }: {
+    type: Message["type"];
+    message: string;
+    context?: string;
+    showMs: number;
+  }) {
     const prefix = context != null ? `[${context}] ` : "";
 
-    this.#newMessages({
-      type: "normal" as const,
-      status: prefix + message,
-      hide: true,
-    }).catch((e) => {
+    this.#newMessage(
+      {
+        type,
+        status: prefix + message,
+        hide: true,
+      },
+      showMs,
+    ).catch((e) => {
       throw e;
     });
   }
 
-  success(message: string, context?: string) {
+  info(message: string, context?: string, showMs: number = 3000) {
     if (!this.isConnected) {
       return;
     }
 
-    const prefix = context != null ? `[${context}] ` : "";
-
-    this.#newMessages({
-      type: "success" as const,
-      status: prefix + message,
-      hide: true,
-    }).catch((e) => {
-      throw e;
-    });
+    this.#createMessage({type: "normal", message, showMs, context});
   }
 
-  failure(error: unknown, context?: string) {
+  success(message: string, context?: string, showMs: number = 4000) {
     if (!this.isConnected) {
       return;
     }
 
-    const prefix = context != null ? `[${context}] ` : "";
+    this.#createMessage({type: "success", message, showMs, context});
+  }
+
+  failure(error: unknown, context?: string, showMs: number = 6000) {
+    if (!this.isConnected) {
+      return;
+    }
+
     const message = error instanceof Error ? error.message : String(error);
-    this.#newMessages({
-      type: "failure" as const,
-      status: `${prefix}ERROR: ${message}`,
-      hide: true,
-    }).catch((e) => {
-      throw e;
+    this.#createMessage({
+      type: "failure",
+      message: `ERROR: ${message}`,
+      context,
+      showMs,
     });
+  }
+
+  override disconnectedCallback() {
+    this.#counter = 0;
+    this.messages.clear();
+    super.disconnectedCallback();
   }
 
   render() {
