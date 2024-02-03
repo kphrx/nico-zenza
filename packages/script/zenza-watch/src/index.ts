@@ -1,3 +1,6 @@
 import "./meta.js?userscript-metadata";
+import main from "./main";
 
-import "./main";
+if (window.top === window) {
+  main();
+}
