@@ -4,8 +4,10 @@ import {consume, provide} from "@lit/context";
 
 import {watchDataContext} from "@/contexts/watch-data-context";
 import {commentContext} from "@/contexts/comment-context";
+import {playerMessageContext} from "@/contexts/player-message-context";
 import type {WatchDataContext} from "@/contexts/watch-data-context";
 import type {CommentContext} from "@/contexts/comment-context";
+import type {PlayerMessageContext} from "@/contexts/player-message-context";
 
 import {CommentsController} from "./comments-controller";
 import {
@@ -41,6 +43,9 @@ export class PlayerInfoPanelCommentsTab extends LitElement {
     return this.watchData?.comment.nvComment;
   }
 
+  @consume({context: playerMessageContext, subscribe: true})
+  accessor playerMessage!: PlayerMessageContext;
+
   @provide({context: commentContext})
   accessor comments: CommentContext;
 
@@ -70,19 +75,29 @@ export class PlayerInfoPanelCommentsTab extends LitElement {
         this.comments = EMPTY_ARRAY;
 
         return html`<div class="empty">
-          <p class="status">No comments</p>
+          <p class="status">コメントがありません</p>
         </div>`;
       },
       pending: () => {
         this.comments = EMPTY_ARRAY;
         this.#commentList.order = "vpos:asc";
+        if (this.watchData != null) {
+          this.playerMessage.info(
+            "コメント読み込み中",
+            this.watchData.video.id,
+          );
+        }
 
         return html`<div class="empty">
-          <p class="status">Loading commetns...</p>
+          <p class="status">コメント読み込み中</p>
         </div>`;
       },
       complete: (comments) => {
         this.comments = comments;
+        this.playerMessage.success(
+          "コメント読み込み完了",
+          this.watchData?.video.id,
+        );
 
         return [
           html`<div class="panel-header">
