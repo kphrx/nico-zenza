@@ -69,7 +69,7 @@ export class PlayerControls extends LitElement {
       return;
     }
 
-    for (const range of buffered) {
+    for (const range of buffered.toReversed()) {
       if (range.start >= this.currentPosition) {
         continue;
       }
