@@ -35,19 +35,15 @@ div.comment {
     white-space: nowrap;
   }
 
-  &:focus-within {
+  &:hover {
     position: absolute;
-    left: 1px;
-    right: 15px;
-
-    background: #404030;
-    border: 1px solid #eee;
+    left: 2px;
+    right: 16px;
 
     height: fit-content;
-    margin-top: -1px;
 
-    &:first-child {
-      translate: 0 2px;
+    &:not(:first-child) {
+      margin-top: 0;
     }
 
     + div.comment {
@@ -58,5 +54,9 @@ div.comment {
       overflow: visible;
       white-space: break-spaces;
     }
+  }
+
+  &:focus-within {
+    background: #404030;
   }
 }
