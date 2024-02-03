@@ -23,6 +23,7 @@ export class WatchDataController implements ReactiveController {
     return id + "_" + Date.now();
   }
 
+  #isLoggedIn = true;
   #host: ReactiveControllerHost;
   #task: Task<[string], WatchV3Response>;
 
@@ -35,23 +36,11 @@ export class WatchDataController implements ReactiveController {
           return initialState;
         }
 
-        const url = new URL(`https://www.nicovideo.jp/api/watch/v3/${videoId}`);
-
-        url.searchParams.set("actionTrackId", WatchDataController.#trackId());
-        url.searchParams.set("additionals", "series");
-
-        let json: NVAPIResponse<WatchV3Response>;
-        try {
-          const res = await fetch(url, {
-            headers: {"X-Frontend-Id": "6", "X-Frontend-Version": "0"},
-            credentials: "include",
-            signal,
-          });
-          json = (await res.json()) as typeof json;
-        } catch (e) {
-          console.error(e);
-          throw new Error("Failed to fetch");
-        }
+        const json = await this.#fetchWatchV3API(
+          videoId,
+          WatchDataController.#trackId(),
+          signal,
+        );
 
         if (isErrorResponse(json)) {
           const {meta, data} = json;
@@ -68,6 +57,48 @@ export class WatchDataController implements ReactiveController {
 
     this.#host.addController(this);
   }
+
+  #fetchWatchV3API = async (
+    videoId: string,
+    trackId: string,
+    signal: AbortSignal,
+  ): Promise<NVAPIResponse<WatchV3Response>> => {
+    const url = new URL(
+      `https://www.nicovideo.jp/api/watch/${this.#isLoggedIn ? "v3" : "v3_guest"}/${videoId}`,
+    );
+
+    url.searchParams.set("actionTrackId", trackId);
+    url.searchParams.set("additionals", "series");
+
+    try {
+      const res = await fetch(url, {
+        headers: {"X-Frontend-Id": "6", "X-Frontend-Version": "0"},
+        credentials: this.#isLoggedIn ? "include" : "omit",
+        signal,
+      });
+      const json = (await res.json()) as NVAPIResponse<WatchV3Response>;
+
+      if (
+        !isErrorResponse(json) ||
+        !this.#isLoggedIn ||
+        json.meta.status !== 400 ||
+        json.meta.errorCode !== "UNAUTHORIZED"
+      ) {
+        return json;
+      }
+
+      this.#isLoggedIn = false;
+
+      return await this.#fetchWatchV3API(
+        videoId,
+        WatchDataController.#trackId(),
+        signal,
+      );
+    } catch (e) {
+      console.error(e);
+      throw new Error("Failed to fetch");
+    }
+  };
 
   hostUpdate() {}
 
