@@ -101,12 +101,12 @@ export class PlayerInfoPanelCommentsList extends LitElement {
     () => [this.comments, this.order],
   );
 
-  get #sortedComments() {
+  get sortedComments() {
     return this.#task.value ?? EMPTY_ARRAY;
   }
 
   render() {
-    return this.#sortedComments.map((comment) => {
+    return this.sortedComments.map((comment) => {
       return html`<div
         class="comment"
         tabindex="0"

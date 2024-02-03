@@ -5,14 +5,26 @@
 div.panel-header {
   padding: 4px;
 
+  button,
   select {
     height: 100%;
-    float: right;
-
     color: #fff;
     background: #444;
-    text-align: right;
     border: none;
+  }
+
+  button {
+    float: left;
+    text-align: left;
+
+    &.enable {
+      background: #885;
+    }
+  }
+
+  select {
+    float: right;
+    text-align: right;
   }
 }
 
