@@ -101,8 +101,7 @@ div.controlbar {
         gap: 1ex;
 
         div.playControl {
-          --height: calc(1em / var(--sqrt3) * 2);
-
+          --height: calc(1em / var(--sqrt3, 1.732050807568877) * 2);
           width: 1em;
           height: var(--height);
 

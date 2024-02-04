@@ -193,8 +193,6 @@ export class PlayerControls extends LitElement {
   }
 
   render() {
-    const sqrt3 = Math.sqrt(3);
-
     return html`
       <div
         @pointerdown=${this.#startSeeking}
@@ -224,15 +222,15 @@ export class PlayerControls extends LitElement {
             <div
               @click=${this.#playOrPause}
               class="playControl"
-              style=${styleMap({"--sqrt3": sqrt3})}>
+              style=${styleMap({"--sqrt3": 1.732050807568877})}>
               <svg
                 xmlns="http://www.w3.org/2000/svg"
-                viewBox="0 0 ${sqrt3 * 10} 20">
+                viewBox="0 0 17.32050807568877 20">
                 ${this.paused
-                  ? svg`<path fill="currentColor" d="M0,0 V20 L${sqrt3 * 10},10 Z" />`
+                  ? svg`<path fill="currentColor" d="M0,0 V20 L17.32050807568877,10 Z"></path>`
                   : [
-                      svg`<path fill="currentColor" d="M0,0 V20 H${(sqrt3 * 10) / 3} V0 Z" />`,
-                      svg`<path fill="currentColor" d="M20,0 V20 H${((sqrt3 * 10) / 3) * 2} V0 Z" />`,
+                      svg`<path fill="currentColor" d="M0,0 V20 H5.773502691896257 V0 Z"></path>`,
+                      svg`<path fill="currentColor" d="M17.32050807568877,0 V20 H11.547005383792513 V0 Z"></path>`,
                     ]}
               </svg>
             </div>
