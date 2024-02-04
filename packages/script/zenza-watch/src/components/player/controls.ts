@@ -1,4 +1,4 @@
-import {LitElement, html} from "lit";
+import {LitElement, html, svg} from "lit";
 import {customElement, state} from "lit/decorators";
 import {consume} from "@lit/context";
 import {classMap} from "lit/directives/class-map";
@@ -27,9 +27,6 @@ export class PlayerControls extends LitElement {
   accessor watchData: WatchDataContext;
 
   @state()
-  accessor paused: boolean = false;
-
-  @state()
   accessor seeking: boolean = false;
 
   @state()
@@ -46,6 +43,9 @@ export class PlayerControls extends LitElement {
 
   @state()
   accessor bufferedEnd: number = 0;
+
+  @state()
+  accessor paused: boolean = false;
 
   #updateTotalDuration = (
     ev: GlobalEventHandlersEventMap["zenzawatch:updateTotalDuration"],
@@ -193,6 +193,8 @@ export class PlayerControls extends LitElement {
   }
 
   render() {
+    const sqrt3 = Math.sqrt(3);
+
     return html`
       <div
         @pointerdown=${this.#startSeeking}
@@ -219,13 +221,21 @@ export class PlayerControls extends LitElement {
 
         <div class="center">
           <div class="controls">
-            <span
+            <div
               @click=${this.#playOrPause}
-              class=${classMap({
-                playControl: true,
-                play: this.paused,
-                pause: !this.paused,
-              })}></span>
+              class="playControl"
+              style=${styleMap({"--sqrt3": sqrt3})}>
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 ${sqrt3 * 10} 20">
+                ${this.paused
+                  ? svg`<path fill="currentColor" d="M0,0 V20 L${sqrt3 * 10},10 Z" />`
+                  : [
+                      svg`<path fill="currentColor" d="M0,0 V20 H${(sqrt3 * 10) / 3} V0 Z" />`,
+                      svg`<path fill="currentColor" d="M20,0 V20 H${((sqrt3 * 10) / 3) * 2} V0 Z" />`,
+                    ]}
+              </svg>
+            </div>
           </div>
           <div class="duration">
             <span class="current">
