@@ -1,4 +1,4 @@
-import {LitElement, html, svg} from "lit";
+import {LitElement, html, nothing, svg} from "lit";
 import {customElement, state} from "lit/decorators";
 import {consume} from "@lit/context";
 import {classMap} from "lit/directives/class-map";
@@ -46,6 +46,9 @@ export class PlayerControls extends LitElement {
 
   @state()
   accessor paused: boolean = false;
+
+  @state()
+  accessor muted: boolean = false;
 
   #updateTotalDuration = (
     ev: GlobalEventHandlersEventMap["zenzawatch:updateTotalDuration"],
@@ -157,6 +160,13 @@ export class PlayerControls extends LitElement {
     this.paused = true;
   };
 
+  #mute = () => {
+    this.muted = !this.muted;
+    window.dispatchEvent(
+      createCustomEvent(`zenzawatch:${this.muted ? "mute" : "unmute"}`),
+    );
+  };
+
   override connectedCallback() {
     super.connectedCallback();
 
@@ -243,6 +253,25 @@ export class PlayerControls extends LitElement {
             <span class="total">
               ${durationToTimestamp(this.watchData?.video.duration ?? 0)}
             </span>
+          </div>
+          <div class="sound">
+            <div
+              @click=${this.#mute}
+              class="mute"
+              style=${styleMap({"--speaker-aspect": 0.9598076211353316})}>
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 28.794228634059948 30">
+                ${svg`<path fill="currentColor" d="M0,12 H5.196152422706631 L10,9.226497308103742 V20.773502691896258 L5.196152422706631,18 H0 Z"></path>`}
+                ${svg`<path fill="transparent" stroke="currentColor" d="M12.698003589195011,12 Q15.296079800548327,15 12.698003589195011,18"></path>`}
+                ${svg`<path fill="transparent" stroke="currentColor" d="M16.849001794597505,9 Q22.045154217304137,15 16.849001794597505,21"></path>`}
+                ${svg`<path fill="transparent" stroke="currentColor" d="M21,6 Q28.794228634059948,15 21,24"></path>`}
+                ${this.muted
+                  ? svg`<path fill="transparent" stroke="currentColor" d="M0,1.205771365940052 L28.794228634059948,28.794228634059948"></path>`
+                  : nothing}
+              </svg>
+            </div>
+            <div class="soundbar"></div>
           </div>
         </div>
 

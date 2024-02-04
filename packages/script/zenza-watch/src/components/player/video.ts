@@ -182,6 +182,14 @@ export class PlayerVideo extends LitElement {
     this.video.pause();
   };
 
+  #mute = () => {
+    this.video.muted = true;
+  };
+
+  #unmute = () => {
+    this.video.muted = false;
+  };
+
   override connectedCallback() {
     super.connectedCallback();
 
@@ -194,6 +202,8 @@ export class PlayerVideo extends LitElement {
     window.addEventListener("zenzawatch:seeked", this.#seeked);
     window.addEventListener("zenzawatch:play", this.#play);
     window.addEventListener("zenzawatch:pause", this.#pause);
+    window.addEventListener("zenzawatch:mute", this.#mute);
+    window.addEventListener("zenzawatch:unmute", this.#unmute);
   }
 
   override disconnectedCallback() {
@@ -201,6 +211,8 @@ export class PlayerVideo extends LitElement {
     window.removeEventListener("zenzawatch:seeked", this.#seeked);
     window.removeEventListener("zenzawatch:play", this.#play);
     window.removeEventListener("zenzawatch:pause", this.#pause);
+    window.removeEventListener("zenzawatch:mute", this.#mute);
+    window.removeEventListener("zenzawatch:unmute", this.#unmute);
 
     if (Hls.isSupported()) {
       this.hls?.detachMedia();

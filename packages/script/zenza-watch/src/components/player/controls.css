@@ -104,7 +104,17 @@ div.controlbar {
           --height: calc(1em / var(--sqrt3, 1.732050807568877) * 2);
           width: 1em;
           height: var(--height);
+          margin-block: calc((var(--height) - 1em) / -2);
+        }
+      }
 
+      div.sound {
+        div.mute {
+          --height: calc(1em + 2ex);
+          width: calc(
+            var(--height) * var(--speaker-aspect, 0.9575499102701247)
+          );
+          height: var(--height);
           margin-block: calc((var(--height) - 1em) / -2);
 
           svg {

@@ -13,6 +13,9 @@ declare global {
     "zenzawatch:pause": CustomEvent<void>;
     "zenzawatch:playing": CustomEvent<void>;
     "zenzawatch:pausing": CustomEvent<void>;
+
+    "zenzawatch:mute": CustomEvent<void>;
+    "zenzawatch:unmute": CustomEvent<void>;
   }
 }
 
