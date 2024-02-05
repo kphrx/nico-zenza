@@ -88,17 +88,7 @@ export class PlayerInfoPanelCommentsTab extends LitElement {
       return;
     }
 
-    const comment = this.#commentList.sortedComments.find((comment) => {
-      return comment.vposMs > Math.floor(ev.detail.vpos * 1000);
-    });
-
-    if (comment == null) {
-      return;
-    }
-
-    this.#commentList.renderRoot
-      .querySelector(`div.comment[data-id="${comment.id}"]`)
-      ?.previousElementSibling?.scrollIntoView();
+    this.#commentList.scrolInto(Math.floor(ev.detail * 1000));
   };
 
   override connectedCallback() {

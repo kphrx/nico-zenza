@@ -67,14 +67,14 @@ export class PlayerVideo extends LitElement {
     this.video.addEventListener("timeupdate", () => {
       window.dispatchEvent(
         createCustomEvent("zenzawatch:updateCurrentPosition", {
-          detail: {vpos: this.video.currentTime},
+          detail: this.video.currentTime,
         }),
       );
     });
     this.video.addEventListener("progress", () => {
       window.dispatchEvent(
         createCustomEvent("zenzawatch:updateBuffered", {
-          detail: {buffered: timeRangesToIterable(this.video.buffered)},
+          detail: timeRangesToIterable(this.video.buffered),
         }),
       );
     });
@@ -128,7 +128,7 @@ export class PlayerVideo extends LitElement {
     this.hls.on(Events.LEVEL_LOADED, (_eventName, data) => {
       window.dispatchEvent(
         createCustomEvent("zenzawatch:updateTotalDuration", {
-          detail: {duration: data.details.totalduration},
+          detail: data.details.totalduration,
         }),
       );
     });
@@ -161,7 +161,7 @@ export class PlayerVideo extends LitElement {
 
   #seeking = (ev: GlobalEventHandlersEventMap["zenzawatch:seeking"]) => {
     this.video.pause();
-    this.video.currentTime = ev.detail.vpos;
+    this.video.currentTime = ev.detail;
   };
 
   #seeked = (ev: GlobalEventHandlersEventMap["zenzawatch:seeked"]) => {

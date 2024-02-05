@@ -101,12 +101,26 @@ export class PlayerInfoPanelCommentsList extends LitElement {
     () => [this.comments, this.order],
   );
 
-  get sortedComments() {
+  get #sortedComments() {
     return this.#task.value ?? EMPTY_ARRAY;
   }
 
+  scrolInto(vposMs: number) {
+    const comment = this.#sortedComments.find((comment) => {
+      return comment.vposMs > vposMs;
+    });
+
+    if (comment == null) {
+      return;
+    }
+
+    this.renderRoot
+      .querySelector(`div.comment[data-id="${comment.id}"]`)
+      ?.previousElementSibling?.scrollIntoView();
+  }
+
   render() {
-    return this.sortedComments.map((comment) => {
+    return this.#sortedComments.map((comment) => {
       return html`<div
         class="comment"
         tabindex="0"

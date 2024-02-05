@@ -75,19 +75,19 @@ export class PlayerControls extends LitElement {
   #updateTotalDuration = (
     ev: GlobalEventHandlersEventMap["zenzawatch:updateTotalDuration"],
   ) => {
-    this.totalDuration = ev.detail.duration;
+    this.totalDuration = ev.detail;
   };
 
   #updateCurrentPosition = (
     ev: GlobalEventHandlersEventMap["zenzawatch:updateCurrentPosition"],
   ) => {
-    this.currentPosition = ev.detail.vpos;
+    this.currentPosition = ev.detail;
   };
 
   #updateBuffered = (
     ev: GlobalEventHandlersEventMap["zenzawatch:updateBuffered"],
   ) => {
-    const {buffered} = ev.detail;
+    const buffered = ev.detail;
     if (buffered.length === 0) {
       this.bufferedStart = 0;
       this.bufferedEnd = 0;
@@ -123,7 +123,7 @@ export class PlayerControls extends LitElement {
       Math.max(this.totalDuration, this.watchData?.video.duration ?? 0);
     this.seekPosition = vpos;
     window.dispatchEvent(
-      createCustomEvent("zenzawatch:seeking", {detail: {vpos}}),
+      createCustomEvent("zenzawatch:seeking", {detail: vpos}),
     );
 
     if (end) {
