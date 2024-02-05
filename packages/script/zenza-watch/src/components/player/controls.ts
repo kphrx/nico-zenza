@@ -11,6 +11,22 @@ import {createCustomEvent} from "@/event";
 
 import sheet from "./controls.css" with {type: "css"};
 
+type PlaybackRate = `${number}.${number}` | `${number}`;
+const PLAYBACK_RATE = [
+  "10",
+  "5",
+  "4",
+  "3",
+  "2",
+  "1.5",
+  "1.25",
+  "1",
+  "0.75",
+  "0.5",
+  "0.25",
+  "0.1",
+] as const;
+
 const TAG_NAME = "zenza-watch-player-controls";
 
 declare global {
@@ -46,6 +62,12 @@ export class PlayerControls extends LitElement {
 
   @state()
   accessor paused: boolean = false;
+
+  @state()
+  accessor playbackRate: PlaybackRate = "1";
+
+  @state()
+  accessor openedRateOptions = false;
 
   @state()
   accessor muted: boolean = false;
@@ -160,6 +182,27 @@ export class PlayerControls extends LitElement {
     this.paused = true;
   };
 
+  #rateOptions = (ev: MouseEvent) => {
+    if (ev.defaultPrevented) {
+      ev.preventDefault();
+      return;
+    }
+    this.openedRateOptions = !this.openedRateOptions;
+  };
+
+  #changeRate = (ev: MouseEvent) => {
+    ev.preventDefault();
+    this.playbackRate =
+      ((ev.target as HTMLDivElement | null)?.dataset.value as
+        | PlaybackRate
+        | undefined) ?? "1";
+    window.dispatchEvent(
+      createCustomEvent("zenzawatch:changePlaybackRate", {
+        detail: parseFloat(this.playbackRate),
+      }),
+    );
+  };
+
   #mute = () => {
     this.muted = !this.muted;
     window.dispatchEvent(
@@ -243,6 +286,22 @@ export class PlayerControls extends LitElement {
                       svg`<path fill="currentColor" d="M17.32050807568877,0 V20 H11.547005383792513 V0 Z"></path>`,
                     ]}
               </svg>
+            </div>
+            <div
+              @click=${this.#rateOptions}
+              class="playbackRate"
+              ?open=${this.openedRateOptions}>
+              <p class="current">x${this.playbackRate}</p>
+              <datalist>
+                ${PLAYBACK_RATE.map((rate) => {
+                  return html`<div
+                    @click=${this.#changeRate}
+                    data-value=${rate}
+                    ?selected=${rate === this.playbackRate}>
+                    ${rate === "1" ? "標準速度(x1)" : `${rate}倍`}
+                  </div>`;
+                })}
+              </datalist>
             </div>
           </div>
           <div class="duration">

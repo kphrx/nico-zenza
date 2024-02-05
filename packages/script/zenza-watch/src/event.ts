@@ -16,6 +16,8 @@ declare global {
 
     "zenzawatch:mute": CustomEvent<void>;
     "zenzawatch:unmute": CustomEvent<void>;
+
+    "zenzawatch:changePlaybackRate": CustomEvent<number>;
   }
 }
 
@@ -36,9 +38,14 @@ export const timeRangesToIterable = (
   });
 };
 
-export const createCustomEvent = <K extends keyof GlobalEventHandlersEventMap>(
+export const createCustomEvent = <
+  K extends keyof GlobalEventHandlersEventMap,
+  T extends GlobalEventHandlersEventMap[K] extends CustomEvent<infer T>
+    ? T
+    : never,
+>(
   type: K,
-  eventInitDict?: CustomEventInit<
-    GlobalEventHandlersEventMap[K] extends CustomEvent<infer T> ? T : never
-  >,
-) => new CustomEvent(type, eventInitDict);
+  ...eventInitDict: T extends undefined | void
+    ? [CustomEventInit<T>?]
+    : [Omit<CustomEventInit, "detail"> & {detail: T}]
+) => new CustomEvent(type, ...eventInitDict);

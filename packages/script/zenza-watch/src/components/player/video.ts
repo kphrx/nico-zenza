@@ -190,6 +190,12 @@ export class PlayerVideo extends LitElement {
     this.video.muted = false;
   };
 
+  #changeRate = (
+    ev: GlobalEventHandlersEventMap["zenzawatch:changePlaybackRate"],
+  ) => {
+    this.video.playbackRate = ev.detail;
+  };
+
   override connectedCallback() {
     super.connectedCallback();
 
@@ -204,6 +210,7 @@ export class PlayerVideo extends LitElement {
     window.addEventListener("zenzawatch:pause", this.#pause);
     window.addEventListener("zenzawatch:mute", this.#mute);
     window.addEventListener("zenzawatch:unmute", this.#unmute);
+    window.addEventListener("zenzawatch:changePlaybackRate", this.#changeRate);
   }
 
   override disconnectedCallback() {
@@ -213,6 +220,10 @@ export class PlayerVideo extends LitElement {
     window.removeEventListener("zenzawatch:pause", this.#pause);
     window.removeEventListener("zenzawatch:mute", this.#mute);
     window.removeEventListener("zenzawatch:unmute", this.#unmute);
+    window.removeEventListener(
+      "zenzawatch:changePlaybackRate",
+      this.#changeRate,
+    );
 
     if (Hls.isSupported()) {
       this.hls?.detachMedia();
