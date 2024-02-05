@@ -258,16 +258,16 @@ export class PlayerControls extends LitElement {
             <div
               @click=${this.#mute}
               class="mute"
-              style=${styleMap({"--speaker-aspect": 0.9598076211353316})}>
+              style=${styleMap({"--speaker-aspect": 0.9182211123289434})}>
               <svg
                 xmlns="http://www.w3.org/2000/svg"
-                viewBox="0 0 28.794228634059948 30">
-                ${svg`<path fill="currentColor" d="M0,12 H5.196152422706631 L10,9.226497308103742 V20.773502691896258 L5.196152422706631,18 H0 Z"></path>`}
-                ${svg`<path fill="transparent" stroke="currentColor" d="M12.698003589195011,12 Q15.296079800548327,15 12.698003589195011,18"></path>`}
-                ${svg`<path fill="transparent" stroke="currentColor" d="M16.849001794597505,9 Q22.045154217304137,15 16.849001794597505,21"></path>`}
-                ${svg`<path fill="transparent" stroke="currentColor" d="M21,6 Q28.794228634059948,15 21,24"></path>`}
+                viewBox="0 0 27.546633369868303 30">
+                ${svg`<path fill="currentColor" d="M0,11.5 H6.06217782649107 L12,8.07179676972449 V21.92820323027551 L6.06217782649107,18.5 H0 Z"></path>`}
+                ${svg`<path fill="transparent" stroke="currentColor" d="M14.237604307034013,11.5 Q17.26869322027955,15 14.237604307034013,18.5"></path>`}
+                ${svg`<path fill="transparent" stroke="currentColor" d="M18.118802153517006,8 Q24.180979980008075,15 18.118802153517006,22"></path>`}
+                ${svg`<path fill="transparent" stroke="currentColor" d="M22,4.5 Q31.093266739736606,15 22,25.5"></path>`}
                 ${this.muted
-                  ? svg`<path fill="transparent" stroke="currentColor" d="M0,1.205771365940052 L28.794228634059948,28.794228634059948"></path>`
+                  ? svg`<path fill="transparent" stroke="currentColor" stroke-width=2 d="M1,3.453366630131697 L26.546633369868303,26.546633369868303"></path>`
                   : nothing}
               </svg>
             </div>
