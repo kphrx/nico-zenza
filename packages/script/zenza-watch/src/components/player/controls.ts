@@ -78,6 +78,8 @@ export class PlayerControls extends LitElement {
   @state()
   accessor currentVolume = 100;
 
+  #beforeVolume = 100;
+
   get #prevented() {
     return this.seeking || this.changingVolume;
   }
@@ -229,6 +231,7 @@ export class PlayerControls extends LitElement {
       return;
     }
 
+    this.currentVolume = this.muted ? this.#beforeVolume : 0;
     this.muted = !this.muted;
     window.dispatchEvent(
       createCustomEvent(`zenzawatch:${this.muted ? "mute" : "unmute"}`),
@@ -246,6 +249,7 @@ export class PlayerControls extends LitElement {
       Math.min(Math.max(ev.clientX, left) - left, width) / width;
 
     this.currentVolume = Math.floor(rectPosition * 100);
+    this.muted = this.currentVolume === 0;
     window.dispatchEvent(
       createCustomEvent("zenzawatch:changeVolume", {
         detail: this.currentVolume,
@@ -259,6 +263,9 @@ export class PlayerControls extends LitElement {
       return;
     }
 
+    if (this.muted) {
+      window.dispatchEvent(createCustomEvent("zenzawatch:unmute"));
+    }
     target.addEventListener("pointermove", this.#changeVolume);
     target.setPointerCapture(ev.pointerId);
     this.#changeVolume(ev);
@@ -274,6 +281,16 @@ export class PlayerControls extends LitElement {
     target.removeEventListener("pointermove", this.#changeVolume);
     target.releasePointerCapture(ev.pointerId);
     this.#changeVolume(ev);
+    if (this.currentVolume !== 0) {
+      this.#beforeVolume = this.currentVolume;
+    } else {
+      window.dispatchEvent(createCustomEvent("zenzawatch:mute"));
+      window.dispatchEvent(
+        createCustomEvent("zenzawatch:changeVolume", {
+          detail: this.#beforeVolume,
+        }),
+      );
+    }
     setTimeout(() => {
       this.changingVolume = false;
     }, 50);
