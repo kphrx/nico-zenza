@@ -78,6 +78,10 @@ export class PlayerControls extends LitElement {
   @state()
   accessor currentVolume = 100;
 
+  get #prevented() {
+    return this.seeking || this.changingVolume;
+  }
+
   #updateTotalDuration = (
     ev: GlobalEventHandlersEventMap["zenzawatch:updateTotalDuration"],
   ) => {
@@ -117,6 +121,7 @@ export class PlayerControls extends LitElement {
     if (target == null) {
       return;
     }
+
     const {paddingLeft, paddingRight} = getComputedStyle(target);
     const left = parseFloat(paddingLeft);
     const width =
@@ -162,11 +167,18 @@ export class PlayerControls extends LitElement {
     target.removeEventListener("pointermove", this.#seeking);
     target.releasePointerCapture(ev.pointerId);
     this.#seeking(ev, true);
-    this.seeking = false;
-    this.seekPosition = undefined;
+    setTimeout(() => {
+      this.seeking = false;
+      this.seekPosition = undefined;
+    }, 50);
   };
 
-  #playOrPause = () => {
+  #playOrPause = (ev: MouseEvent) => {
+    if (ev.defaultPrevented || this.#prevented) {
+      ev.preventDefault();
+      return;
+    }
+
     this.paused = !this.paused;
     window.dispatchEvent(
       createCustomEvent(`zenzawatch:${this.paused ? "pause" : "play"}`),
@@ -177,6 +189,7 @@ export class PlayerControls extends LitElement {
     if (this.seeking) {
       return;
     }
+
     this.paused = false;
   };
 
@@ -184,14 +197,16 @@ export class PlayerControls extends LitElement {
     if (this.seeking) {
       return;
     }
+
     this.paused = true;
   };
 
   #rateOptions = (ev: MouseEvent) => {
-    if (ev.defaultPrevented) {
+    if (ev.defaultPrevented || this.#prevented) {
       ev.preventDefault();
       return;
     }
+
     this.openedRateOptions = !this.openedRateOptions;
   };
 
@@ -208,7 +223,12 @@ export class PlayerControls extends LitElement {
     );
   };
 
-  #mute = () => {
+  #mute = (ev: MouseEvent) => {
+    if (ev.defaultPrevented || this.#prevented) {
+      ev.preventDefault();
+      return;
+    }
+
     this.muted = !this.muted;
     window.dispatchEvent(
       createCustomEvent(`zenzawatch:${this.muted ? "mute" : "unmute"}`),
@@ -220,6 +240,7 @@ export class PlayerControls extends LitElement {
     if (target == null) {
       return;
     }
+
     const {left, width} = target.getBoundingClientRect();
     const rectPosition =
       Math.min(Math.max(ev.clientX, left) - left, width) / width;
@@ -253,7 +274,9 @@ export class PlayerControls extends LitElement {
     target.removeEventListener("pointermove", this.#changeVolume);
     target.releasePointerCapture(ev.pointerId);
     this.#changeVolume(ev);
-    this.changingVolume = false;
+    setTimeout(() => {
+      this.changingVolume = false;
+    }, 50);
   };
 
   override connectedCallback() {
