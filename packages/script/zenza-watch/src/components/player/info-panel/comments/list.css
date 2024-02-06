@@ -1,0 +1,62 @@
+:host {
+  margin: 0;
+  padding-inline: 2px 16px;
+  background: #151515;
+
+  position: relative;
+}
+
+div.comment {
+  margin-block: 2px;
+  padding-inline: 7px;
+  background: #333;
+
+  --comment-height: calc(1rem * 1.6 + 0.9rem * 1.6);
+  height: var(--comment-height);
+
+  &:nth-child(even) {
+    background: #252525;
+  }
+
+  div.info {
+    font-size: 0.9rem;
+    color: #aaa;
+
+    display: flex;
+    justify-content: space-between;
+  }
+
+  p.text {
+    font-size: 1rem;
+    margin: 0;
+
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  &:hover {
+    position: absolute;
+    left: 2px;
+    right: 16px;
+
+    height: fit-content;
+
+    &:not(:first-child) {
+      margin-top: 0;
+    }
+
+    + div.comment {
+      margin-top: calc(var(--comment-height) + 4px);
+    }
+
+    p.text {
+      overflow: visible;
+      white-space: break-spaces;
+    }
+  }
+
+  &:focus-within {
+    background: #404030;
+  }
+}

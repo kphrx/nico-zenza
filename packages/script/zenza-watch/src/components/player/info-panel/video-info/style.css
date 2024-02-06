@@ -1,0 +1,74 @@
+div.owner {
+  margin-block: 16px;
+  text-align: center;
+
+  a {
+    display: block;
+    width: fit-content;
+    margin: auto;
+
+    img {
+      width: 96px;
+      height: 96px;
+    }
+  }
+
+  .name {
+    display: block;
+    font-size: 1.2rem;
+    margin: 0;
+  }
+}
+
+div.series {
+  display: flex;
+  flex-direction: row;
+  gap: 1rem;
+
+  margin: 8px;
+  padding: 1ex;
+
+  background: #444;
+
+  img {
+    width: 128px;
+  }
+
+  p.name a {
+    filter: invert(1);
+  }
+}
+
+p.description {
+  color: #000;
+  filter: invert(1);
+
+  margin: 8px;
+  padding: 0;
+
+  zenza-watch-player-info-panel-video-card {
+    filter: invert(1);
+  }
+}
+
+div.series-nav {
+  margin: 0;
+  padding: 8px;
+
+  p > a {
+    filter: invert(1);
+  }
+
+  > p {
+    margin-block: 8px;
+  }
+
+  div.prev,
+  div.next {
+    margin-block-start: 8px;
+
+    p {
+      margin: 0;
+    }
+  }
+}

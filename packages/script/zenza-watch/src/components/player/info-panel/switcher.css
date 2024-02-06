@@ -1,0 +1,29 @@
+:host {
+  display: flex;
+  height: 32px;
+  background: #000;
+}
+
+span[role="tab"] {
+  color: #888;
+  margin-top: 2px;
+  margin-inline: 1px;
+
+  flex: 1;
+  font-size: 1rem;
+  line-height: 29px;
+  text-align: center;
+
+  cursor: pointer;
+
+  &:hover {
+    color: #eee;
+    background: #444;
+  }
+
+  &[aria-selected="true"] {
+    color: #ddd;
+    background: #252525;
+    cursor: initial;
+  }
+}

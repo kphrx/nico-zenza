@@ -1,0 +1,70 @@
+:host {
+  display: none;
+  z-index: calc(var(--zenza-base-z-index, 0) + 100001);
+  position: fixed;
+  inset: 0;
+  background: rgb(0 0 0 / 0.8);
+
+  font-size: 0.8rem;
+  font-family: sans-serif;
+  font-weight: 400;
+  line-height: 1.6;
+
+  /* ニコニコガレージがこれを設定していて他のページと表示が変わるので上書きする :( */
+  -moz-osx-font-smoothing: auto;
+  -webkit-font-smoothing: auto;
+  font-smooth: auto;
+}
+:host([open]) {
+  display: block;
+
+  :not(zenza-watch-player-video) {
+    transition: opacity 0.5s ease 0s;
+  }
+
+  zenza-watch-player-info-panel {
+    transition:
+      opacity 0.5s ease 0s,
+      translate 0.4s ease 1s;
+  }
+}
+
+:host(.is-autohide[open]) {
+  zenza-watch-player-video,
+  :not(:hover) {
+    cursor: none;
+  }
+
+  :not(zenza-watch-player-video):not(:hover) {
+    opacity: 0;
+  }
+}
+
+button.close {
+  font-size: 0;
+
+  position: absolute;
+  top: 0px;
+  right: 1px;
+
+  z-index: calc(var(--zenza-base-z-index, 0) + 100002);
+
+  background: #000;
+  color: #fff;
+  border: 1px solid #777;
+  opacity: 0.5;
+
+  &:hover {
+    opacity: 0.8;
+  }
+
+  &:active {
+    opacity: 1;
+  }
+
+  &::before {
+    content: "✕";
+    font-size: 1.5rem;
+    line-height: 1;
+  }
+}

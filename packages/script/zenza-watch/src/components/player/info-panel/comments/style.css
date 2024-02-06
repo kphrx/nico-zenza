@@ -1,0 +1,46 @@
+:host {
+  --panel-header-height: 36px;
+}
+
+div.panel-header {
+  padding: 4px;
+
+  button,
+  select {
+    height: 100%;
+    color: #fff;
+    background: #444;
+    border: none;
+  }
+
+  button {
+    float: left;
+    text-align: left;
+
+    &.enable {
+      background: #885;
+    }
+  }
+
+  select {
+    float: right;
+    text-align: right;
+  }
+}
+
+div.empty {
+  margin: 0;
+  padding: 1px;
+  background: #333;
+  width: 100%;
+  height: 100%;
+
+  p.status {
+    width: fit-content;
+    box-sizing: border-box;
+    margin: auto;
+    position: relative;
+    top: 50%;
+    translate: 0 -50%;
+  }
+}

@@ -1,8 +1,10 @@
 /* eslint-env node */
 import {env} from "node:process";
+
 import {defineConfig} from "rollup";
 import babel from "@rollup/plugin-babel";
 import nodeResolve from "@rollup/plugin-node-resolve";
+import importCss from "rollup-plugin-import-css";
 import userscript from "rollup-plugin-userscript";
 
 function addSuffix(filename?: string, version?: string) {
@@ -32,6 +34,7 @@ interface Options {
   author: string;
   tracker: string;
   homepage: string;
+  useDecorator: boolean;
   externals: {[key: string]: string};
 }
 
@@ -43,6 +46,7 @@ export function rollupConfig({
   author,
   tracker,
   homepage,
+  useDecorator = false,
   externals = {},
 }: Partial<Options> = {}) {
   const {name, ver} = addSuffix(filename, version);
@@ -64,24 +68,35 @@ export function rollupConfig({
     plugins: [
       babel({
         babelrc: false,
-        babelHelpers: "runtime",
+        babelHelpers: "bundled",
         presets: [
           [
-            "@babel/preset-env",
-            {modules: false, targets: "> 0.5%, Firefox ESR, not dead"},
+            "@babel/env",
+            {
+              modules: false,
+              targets: "> 0.5%, Firefox ESR, not dead",
+              shippedProposals: true,
+            },
           ],
-          "@babel/preset-typescript",
+          "@babel/typescript",
         ],
         plugins: [
+          useDecorator && ["@babel/proposal-decorators", {version: "2023-05"}],
           [
-            "@babel/plugin-transform-runtime",
-            {useESModules: true, version: "^7.5.0"},
+            "babel-plugin-tsconfig-paths",
+            {
+              relative: true,
+              extensions,
+              rootDir: ".",
+              tsconfig: "./tsconfig.json",
+            },
           ],
-        ],
+        ].filter((x) => x),
         exclude: "node_modules/**",
         extensions,
       }),
       nodeResolve({browser: false, extensions}),
+      importCss({modules: true, minify: true}),
       userscript((meta) => {
         return meta
           .replace("{{version}}", ver ?? "-")

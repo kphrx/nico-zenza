@@ -26,8 +26,7 @@
   "homepage": "https://github.com/kphrx/nico-zenza#readme",
   "devDependencies": {
     "@babel/eslint-parser": "^7.23.9",
-    "@babel/plugin-syntax-import-assertions": "^7.23.3",
-    "@babel/plugin-transform-runtime": "^7.23.9",
+    "@babel/plugin-proposal-decorators": "^7.23.9",
     "@babel/preset-env": "^7.23.9",
     "@babel/preset-typescript": "^7.23.3",
     "@rollup/plugin-babel": "^6.0.4",
@@ -38,6 +37,7 @@
     "@typescript-eslint/eslint-plugin": "^6.19.1",
     "@typescript-eslint/parser": "^6.19.1",
     "@violentmonkey/types": "^0.1.7",
+    "babel-plugin-tsconfig-paths": "^1.0.3",
     "colorette": "^2.0.20",
     "eslint": "^8.56.0",
     "eslint-config-prettier": "^9.1.0",
@@ -46,6 +46,7 @@
     "mocha": "^10.2.0",
     "prettier": "^3.2.4",
     "rollup": "^4.9.6",
+    "rollup-plugin-import-css": "^3.4.0",
     "rollup-plugin-userscript": "^0.3.0",
     "tslib": "^2.6.2",
     "typescript": "^5.3.3"
@@ -54,7 +55,6 @@
     "packages/script/zenza-watch",
     "packages/script/mylist-pocket",
     "packages/script/advanced-settings",
-    "packages/script/hls-support",
     "packages/script/blog-parts-button",
     "packages/script/heat-sync",
     "packages/script/cap-tube",

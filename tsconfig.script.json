@@ -4,6 +4,8 @@
   "include": ["src/**/*.ts"],
   "compilerOptions": {
     "noEmit": true,
-    "outDir": "dist"
+    "baseUrl": ".",
+    "outDir": "dist",
+    "paths": {"@/*": ["src/*"]}
   }
 }

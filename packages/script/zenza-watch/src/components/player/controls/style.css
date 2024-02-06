@@ -1,0 +1,241 @@
+:host {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+
+  background: rgb(25 25 25 / 0.5);
+}
+
+div.seekbar {
+  margin: auto;
+  padding-inline: 6px;
+
+  width: calc(100% - 12px);
+  height: 8px;
+  border-block: 1px solid rgb(36 36 36);
+
+  position: relative;
+  cursor: pointer;
+
+  transition: height 0.1s linear 0s;
+
+  &:hover {
+    height: 18px;
+  }
+
+  &::before {
+    content: "";
+    background: rgb(156 156 86 / 0.5);
+
+    position: absolute;
+    top: 0;
+    left: calc(var(--buffered-start, 0) / var(--total-duration, 0) * 100%);
+    bottom: 0;
+    width: calc(
+      (var(--buffered-end, 0) - var(--buffered-start, 0)) /
+        var(--total-duration, 0) * 100%
+    );
+
+    transition: 0.2s linear 0s;
+    transition-property: left, width;
+  }
+
+  &::after {
+    content: "";
+    display: block;
+    background: #ddd;
+    width: 12px;
+    height: 100%;
+
+    translate: -50%;
+
+    margin-left: calc(var(--position, 0) / var(--total-duration, 0) * 100%);
+  }
+
+  &.seeking::after {
+    margin-left: calc(
+      var(--seek-position, 0) / var(--total-duration, 0) * 100%
+    );
+  }
+}
+
+div.controlbar {
+  position: relative;
+  left: 0;
+  right: 0;
+  margin-top: 1ex;
+
+  line-height: 1;
+  --height: calc(1em + 2ex);
+  height: var(--height);
+
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+
+  > div {
+    color: #ddd;
+    margin: 0;
+    padding: 1ex;
+    height: 1em;
+
+    display: flex;
+    gap: 1ex;
+
+    &.left {
+      justify-self: start;
+
+      span.version {
+        display: inline-block;
+      }
+    }
+
+    &.center {
+      justify-self: center;
+
+      background: rgb(25 25 25 / 0.8);
+      gap: 1em;
+
+      div.controls {
+        display: flex;
+        gap: 1ex;
+
+        div.playControl {
+          --play-control-height: calc(
+            1em / var(--sqrt3, 1.732050807568877) * 2
+          );
+          width: 1em;
+          height: var(--play-control-height);
+          margin-block: calc((var(--play-control-height) - 1em) / -2);
+
+          svg {
+            width: 100%;
+            height: 100%;
+          }
+        }
+
+        div.playbackRate {
+          width: 3.5em;
+
+          p.current {
+            margin: 0;
+            text-align: center;
+
+            height: 1em;
+            margin-block: -0.8ex;
+            padding-block: 0.8ex;
+          }
+
+          > datalist {
+            display: none;
+
+            position: absolute;
+            bottom: 0;
+            translate: calc(-50% + 1.75em) calc(var(--height) * -1);
+
+            list-style: none;
+            margin-bottom: 1ex;
+            padding: 0;
+            border: 1px solid rgb(125 125 125);
+
+            > div {
+              font-size: calc(1em / 0.8);
+              padding: 1ex;
+              background: rgb(25 25 25);
+              position: relative;
+
+              &[selected] {
+                background: rgba(88 88 50);
+              }
+            }
+
+            &::before {
+              content: "";
+              display: block;
+              width: calc(2ex / var(--sqrt2, 1.4142135623730951));
+              height: calc(2ex / var(--sqrt2, 1.4142135623730951));
+              border: 1px solid rgb(125 125 125);
+              background: rgb(25 25 25);
+
+              position: absolute;
+              left: 50%;
+              bottom: 0;
+              transform: translate(-50%, 49%) rotate(45deg);
+            }
+          }
+
+          &[open] {
+            p.current {
+              background: rgb(255 255 255 / 0.2);
+            }
+
+            > datalist {
+              display: block;
+            }
+
+            &::before {
+              content: "";
+              display: block;
+              position: fixed;
+              inset: 0;
+              background: rgb(0 0 0 / 0.2);
+            }
+          }
+        }
+      }
+
+      div.sound {
+        display: flex;
+        gap: 1ex;
+
+        div.mute {
+          --mute-height: calc(var(--height) - 0.5ex);
+          width: calc(
+            var(--mute-height) * var(--speaker-aspect, 0.9182211123289434)
+          );
+          height: var(--mute-height);
+          margin-block: calc((var(--mute-height) - 1em) / -2);
+
+          svg {
+            width: 100%;
+            height: 100%;
+          }
+        }
+
+        div.soundbar {
+          position: relative;
+
+          margin-block: 0.5ex;
+          background: #252525;
+          width: 5em;
+          height: calc(1em - 1ex);
+
+          &::before {
+            content: "";
+            display: block;
+            background: currentColor;
+            width: calc(var(--current-volume) * 1%);
+            height: 100%;
+          }
+
+          &.changing,
+          &:hover {
+            &::after {
+              content: attr(data-value);
+              display: block;
+              position: absolute;
+              top: 0;
+              left: 50%;
+              translate: -50% -100%;
+              font-size: 1.5ex;
+            }
+          }
+        }
+      }
+    }
+
+    &.right {
+      justify-self: end;
+    }
+  }
+}

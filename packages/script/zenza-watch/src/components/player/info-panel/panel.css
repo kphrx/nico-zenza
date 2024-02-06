@@ -1,0 +1,29 @@
+:host(:not([hidden])) {
+  display: block;
+}
+
+:host {
+  color: #eee;
+  background: #252525;
+  width: 100%;
+  height: 100%;
+}
+
+div.panel-header {
+  background: #252525;
+
+  position: sticky;
+  top: 0;
+
+  height: var(--panel-header-height, 0px);
+  box-sizing: border-box;
+}
+
+.scrollable-body {
+  display: block;
+  height: calc(100% - var(--panel-header-height, 0px));
+  box-sizing: border-box;
+
+  overflow: scroll;
+  overscroll-behavior: contain;
+}
