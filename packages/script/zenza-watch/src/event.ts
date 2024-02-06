@@ -14,10 +14,11 @@ declare global {
     "zenzawatch:playing": CustomEvent<void>;
     "zenzawatch:pausing": CustomEvent<void>;
 
+    "zenzawatch:changePlaybackRate": CustomEvent<number>;
+
     "zenzawatch:mute": CustomEvent<void>;
     "zenzawatch:unmute": CustomEvent<void>;
-
-    "zenzawatch:changePlaybackRate": CustomEvent<number>;
+    "zenzawatch:changeVolume": CustomEvent<number>;
   }
 }
 

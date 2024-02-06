@@ -72,6 +72,12 @@ export class PlayerControls extends LitElement {
   @state()
   accessor muted: boolean = false;
 
+  @state()
+  accessor changingVolume = false;
+
+  @state()
+  accessor currentVolume = 100;
+
   #updateTotalDuration = (
     ev: GlobalEventHandlersEventMap["zenzawatch:updateTotalDuration"],
   ) => {
@@ -118,12 +124,11 @@ export class PlayerControls extends LitElement {
     const rectPosition =
       Math.min(Math.max(ev.clientX, left) - left, width) / width;
 
-    const vpos =
+    this.seekPosition =
       rectPosition *
       Math.max(this.totalDuration, this.watchData?.video.duration ?? 0);
-    this.seekPosition = vpos;
     window.dispatchEvent(
-      createCustomEvent("zenzawatch:seeking", {detail: vpos}),
+      createCustomEvent("zenzawatch:seeking", {detail: this.seekPosition}),
     );
 
     if (end) {
@@ -208,6 +213,47 @@ export class PlayerControls extends LitElement {
     window.dispatchEvent(
       createCustomEvent(`zenzawatch:${this.muted ? "mute" : "unmute"}`),
     );
+  };
+
+  #changeVolume = (ev: PointerEvent) => {
+    const target = ev.target as HTMLDivElement | null;
+    if (target == null) {
+      return;
+    }
+    const {left, width} = target.getBoundingClientRect();
+    const rectPosition =
+      Math.min(Math.max(ev.clientX, left) - left, width) / width;
+
+    this.currentVolume = Math.floor(rectPosition * 100);
+    window.dispatchEvent(
+      createCustomEvent("zenzawatch:changeVolume", {
+        detail: this.currentVolume,
+      }),
+    );
+  };
+
+  #startChangingVolume = (ev: PointerEvent) => {
+    const target = ev.target as HTMLDivElement | null;
+    if (target == null || ev.button !== 0) {
+      return;
+    }
+
+    target.addEventListener("pointermove", this.#changeVolume);
+    target.setPointerCapture(ev.pointerId);
+    this.#changeVolume(ev);
+    this.changingVolume = true;
+  };
+
+  #endChangingVolume = (ev: PointerEvent) => {
+    const target = ev.target as HTMLDivElement | null;
+    if (target == null || ev.button !== 0) {
+      return;
+    }
+
+    target.removeEventListener("pointermove", this.#changeVolume);
+    target.releasePointerCapture(ev.pointerId);
+    this.#changeVolume(ev);
+    this.changingVolume = false;
   };
 
   override connectedCallback() {
@@ -330,7 +376,15 @@ export class PlayerControls extends LitElement {
                   : nothing}
               </svg>
             </div>
-            <div class="soundbar"></div>
+            <div
+              @pointerdown=${this.#startChangingVolume}
+              @pointerup=${this.#endChangingVolume}
+              class=${classMap({
+                soundbar: true,
+                changing: this.changingVolume,
+              })}
+              data-value=${this.currentVolume}
+              style=${styleMap({"--current-volume": this.currentVolume})}></div>
           </div>
         </div>
 

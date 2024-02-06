@@ -190,6 +190,12 @@ export class PlayerVideo extends LitElement {
     this.video.muted = false;
   };
 
+  #changeVolume = (
+    ev: GlobalEventHandlersEventMap["zenzawatch:changeVolume"],
+  ) => {
+    this.video.volume = ev.detail / 100;
+  };
+
   #changeRate = (
     ev: GlobalEventHandlersEventMap["zenzawatch:changePlaybackRate"],
   ) => {
@@ -210,6 +216,7 @@ export class PlayerVideo extends LitElement {
     window.addEventListener("zenzawatch:pause", this.#pause);
     window.addEventListener("zenzawatch:mute", this.#mute);
     window.addEventListener("zenzawatch:unmute", this.#unmute);
+    window.addEventListener("zenzawatch:changeVolume", this.#changeVolume);
     window.addEventListener("zenzawatch:changePlaybackRate", this.#changeRate);
   }
 
@@ -220,6 +227,7 @@ export class PlayerVideo extends LitElement {
     window.removeEventListener("zenzawatch:pause", this.#pause);
     window.removeEventListener("zenzawatch:mute", this.#mute);
     window.removeEventListener("zenzawatch:unmute", this.#unmute);
+    window.removeEventListener("zenzawatch:changeVolume", this.#changeVolume);
     window.removeEventListener(
       "zenzawatch:changePlaybackRate",
       this.#changeRate,
