@@ -9,6 +9,99 @@ import type {WatchDataContext} from "@/contexts/watch-data-context";
 import {durationToTimestamp} from "@/utils";
 import {createCustomEvent} from "@/event";
 
+/**
+ * # compute svg image
+ *
+ * ## `playButton` and `pauseButton`
+ *
+ * ```ts
+ * import {html} from "lit";
+ * import {SQRT_3, playButton, pauseButton} from "./controls/svg";
+ *
+ * // ...
+ *
+ * html`<div
+ *   @click=${this.#playOrPause}
+ *   class="playControl"
+ *   style=${styleMap({"--sqrt3": SQRT_3})}>
+ *   ${this.paused
+ *     ? playButton
+ *     : pauseButton}
+ * </div>`
+ * ```
+ *
+ * instead of:
+ *
+ * ```ts
+ * import {html, svg} from "lit";
+ *
+ * // ...
+ *
+ * html`<div
+ *   @click=${this.#playOrPause}
+ *   class="playControl"
+ *   style=${styleMap({"--sqrt3": 1.732050807568877})}>
+ *   <svg
+ *     xmlns="http://www.w3.org/2000/svg"
+ *     viewBox="0 0 17.32050807568877 20">
+ *     ${this.paused
+ *       ? svg`<path fill="currentColor" d="M0,0 V20 L17.32050807568877,10 Z"></path>`
+ *       : [
+ *           svg`<path fill="currentColor" d="M0,0 V20 H5.773502691896257 V0 Z"></path>`,
+ *           svg`<path fill="currentColor" d="M17.32050807568877,0 V20 H11.547005383792513 V0 Z"></path>`,
+ *         ]}
+ *   </svg>
+ * </div>`
+ * ```
+ *
+ * ## `speakerButton`
+ *
+ * ```ts
+ * import {html} from "lit";
+ * import {SPEAKER_BUTTON_ASPECT, speakerButton} from "./controls/svg";
+ *
+ * // ...
+ *
+ * html`<div
+ *   @click=${this.#mute}
+ *   class="mute"
+ *   style=${styleMap({"--speaker-aspect": SPEAKER_BUTTON_ASPECT})}>
+ *   ${speakerButton(Math.min(Math.floor(this.currentVolume / 25), 3), this.muted)}
+ * </div>`
+ * ```
+ *
+ * instead of:
+ *
+ * ```ts
+ * import {html, nothing, svg} from "lit";
+ *
+ * // ...
+ *
+ * html`<div
+ *   @click=${this.#mute}
+ *   class="mute"
+ *   style=${styleMap({"--speaker-aspect": 0.9515544456622768})}>
+ *   <svg
+ *     xmlns="http://www.w3.org/2000/svg"
+ *     viewBox="0 0 28.546633369868303 30">
+ *     ${svg`<path fill="currentColor" d="M0,11.5 H6.06217782649107 L12,8.07179676972449 V21.92820323027551 L6.06217782649107,18.5 H0 Z"></path>`}
+ *     ${this.muted || this.currentVolume >= 25
+ *       ? svg`<path fill="transparent" stroke="currentColor" stroke-width=2 d="M14.237604307034013,11.5 Q17.26869322027955,15 14.237604307034013,18.5"></path>`
+ *       : nothing}
+ *     ${this.muted || this.currentVolume >= 50
+ *       ? svg`<path fill="transparent" stroke="currentColor" stroke-width=2 d="M18.118802153517006,8 Q24.180979980008075,15 18.118802153517006,22"></path>`
+ *       : nothing}
+ *     ${this.muted || this.currentVolume >= 75
+ *       ? svg`<path fill="transparent" stroke="currentColor" stroke-width=2 d="M22,4.5 Q31.093266739736606,15 22,25.5"></path>`
+ *       : nothing}
+ *     ${this.muted
+ *       ? svg`<path fill="transparent" stroke="currentColor" stroke-width=2 d="M1,3.453366630131697 L27.546633369868303,27.546633369868303"></path>`
+ *       : nothing}
+ *   </svg>
+ * </div>`
+ * ```
+ */
+
 import sheet from "./controls.css" with {type: "css"};
 
 type PlaybackRate = `${number}.${number}` | `${number}`;
