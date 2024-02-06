@@ -11,6 +11,6 @@
     {"path": "packages/script/game-pad"},
     {"path": "packages/script/uquery"},
     {"path": "packages/script/mylist-filter"},
-    {"path": "packages/build-util"},
-  ],
+    {"path": "packages/build-util"}
+  ]
 }
