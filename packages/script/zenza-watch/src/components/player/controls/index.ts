@@ -9,6 +9,8 @@ import type {WatchDataContext} from "@/contexts/watch-data-context";
 import {durationToTimestamp} from "@/utils";
 import {createCustomEvent} from "@/event";
 
+import sheet from "./style.css" with {type: "css"};
+
 /**
  * # compute svg image
  *
@@ -16,7 +18,7 @@ import {createCustomEvent} from "@/event";
  *
  * ```ts
  * import {html} from "lit";
- * import {SQRT_3, playButton, pauseButton} from "./controls/svg";
+ * import {SQRT_3, playButton, pauseButton} from "./svg";
  *
  * // ...
  *
@@ -58,7 +60,7 @@ import {createCustomEvent} from "@/event";
  *
  * ```ts
  * import {html} from "lit";
- * import {SPEAKER_BUTTON_ASPECT, speakerButton} from "./controls/svg";
+ * import {SPEAKER_BUTTON_ASPECT, speakerButton} from "./svg";
  *
  * // ...
  *
@@ -101,8 +103,6 @@ import {createCustomEvent} from "@/event";
  * </div>`
  * ```
  */
-
-import sheet from "./controls.css" with {type: "css"};
 
 type PlaybackRate = `${number}.${number}` | `${number}`;
 const PLAYBACK_RATE = [

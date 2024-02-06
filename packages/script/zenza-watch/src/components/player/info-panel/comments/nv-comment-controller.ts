@@ -7,11 +7,11 @@ import type {NVAPIResponse} from "@/nvapi-response";
 import type {WatchV3Response} from "@/watch-data";
 import type {Threads, FlattedComment} from "@/comment-list";
 
-import type {PlayerInfoPanelCommentsTab} from "./comments";
+import type {PlayerInfoPanelCommentsTab} from "./";
 
 type ReactiveControllerHost = PlayerInfoPanelCommentsTab;
 
-export class CommentsController implements ReactiveController {
+export class NVCommentController implements ReactiveController {
   #host: ReactiveControllerHost;
   #task: Task<[WatchV3Response | undefined], FlattedComment[]>;
 

@@ -1,6 +1,6 @@
 import type {ReactiveController} from "lit";
 
-import type {LeftHoverMenu, RightHoverMenu} from "./index";
+import type {LeftHoverMenu, RightHoverMenu} from "./";
 
 type ReactiveControllerHost = LeftHoverMenu | RightHoverMenu;
 

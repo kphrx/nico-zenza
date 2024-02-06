@@ -8,10 +8,10 @@ import type {WatchDataContext} from "@/contexts/watch-data-context";
 import type {SeriesVideo} from "@/watch-data";
 import {createCustomEvent} from "@/event";
 
-import {PlayerInfoPanelVideoCard} from "./video-info/card";
+import {PlayerInfoPanelVideoCard} from "./card";
 
-import base from "./panel.css" with {type: "css"};
-import sheet from "./video-info.css" with {type: "css"};
+import base from "../panel.css" with {type: "css"};
+import sheet from "./style.css" with {type: "css"};
 
 const TAG_NAME = "zenza-watch-player-info-panel-video-info-tab";
 

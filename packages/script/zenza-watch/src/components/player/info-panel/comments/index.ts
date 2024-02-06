@@ -10,16 +10,16 @@ import type {WatchDataContext} from "@/contexts/watch-data-context";
 import type {CommentContext} from "@/contexts/comment-context";
 import type {PlayerMessageContext} from "@/contexts/player-message-context";
 
-import {CommentsController} from "./comments-controller";
+import {NVCommentController} from "./nv-comment-controller";
 import {
   ORDER_TYPES,
   isOrderType,
   EMPTY_ARRAY,
   PlayerInfoPanelCommentsList,
-} from "./comments/list";
+} from "./list";
 
-import base from "./panel.css" with {type: "css"};
-import sheet from "./comments.css" with {type: "css"};
+import base from "../panel.css" with {type: "css"};
+import sheet from "./style.css" with {type: "css"};
 
 const TAG_NAME = "zenza-watch-player-info-panel-comments-tab";
 
@@ -33,7 +33,7 @@ declare global {
 export class PlayerInfoPanelCommentsTab extends LitElement {
   static styles = [base, sheet];
 
-  #comments = new CommentsController(this);
+  #nvComment = new NVCommentController(this);
 
   #commentList = new PlayerInfoPanelCommentsList();
 
@@ -110,7 +110,7 @@ export class PlayerInfoPanelCommentsTab extends LitElement {
   }
 
   render() {
-    return this.#comments.render({
+    return this.#nvComment.render({
       initial: () => {
         this.comments = EMPTY_ARRAY;
 
