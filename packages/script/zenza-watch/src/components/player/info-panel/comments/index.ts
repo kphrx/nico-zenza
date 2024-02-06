@@ -84,11 +84,11 @@ export class PlayerInfoPanelCommentsTab extends LitElement {
   #updateCurrentPosition = (
     ev: GlobalEventHandlersEventMap["zenzawatch:updateCurrentPosition"],
   ) => {
-    if (!this.autoScroll || this.order !== "vpos:asc") {
+    if (!this.autoScroll) {
       return;
     }
 
-    this.#commentList.scrolInto(Math.floor(ev.detail * 1000));
+    this.#commentList.scrollInto(Math.floor(ev.detail * 1000));
   };
 
   override connectedCallback() {

@@ -76,6 +76,8 @@ export class PlayerInfoPanelCommentsList extends LitElement {
   @property({reflect: true})
   accessor order: CommentsOrderTypes = "vpos:asc";
 
+  #currentScrolledId: string | undefined;
+
   #task = new Task<[CommentContext, CommentsOrderTypes], FlattedComment[]>(
     this,
     async (
@@ -105,18 +107,28 @@ export class PlayerInfoPanelCommentsList extends LitElement {
     return this.#task.value ?? EMPTY_ARRAY;
   }
 
-  scrolInto(vposMs: number) {
-    const comment = this.#sortedComments.find((comment) => {
-      return comment.vposMs > vposMs;
-    });
+  get #reversedSortedComments() {
+    return this.#sortedComments.toReversed();
+  }
 
-    if (comment == null) {
+  scrollInto(vposMs: number) {
+    if (this.order !== "vpos:asc") {
       return;
     }
 
+    const {id} =
+      this.#reversedSortedComments.find((comment) => {
+        return comment.vposMs <= vposMs;
+      }) ?? {};
+
+    if (id == null || id === this.#currentScrolledId) {
+      return;
+    }
+
+    this.#currentScrolledId = id;
     this.renderRoot
-      .querySelector(`div.comment[data-id="${comment.id}"]`)
-      ?.previousElementSibling?.scrollIntoView();
+      .querySelector(`div.comment[data-id="${id}"]`)
+      ?.scrollIntoView(false);
   }
 
   render() {
