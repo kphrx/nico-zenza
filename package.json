@@ -7,12 +7,13 @@
     "compile": "tsc --build",
     "lint": "eslint --ignore-path .gitignore --ext .ts,.js . && prettier --ignore-path .gitignore -cu .",
     "lint:fix": "eslint --ignore-path .gitignore --fix --ext .ts,.js . && prettier --ignore-path .gitignore -wu .",
-    "build:dev": "NODE_ENV=development npm run build",
-    "build:prod": "NODE_ENV=production npm run build",
-    "test": "NODE_ENV=test npm run test --workspaces --if-present --",
-    "postinstall": "husky install",
-    "prebuild": "npm run compile",
-    "build": "node build.js"
+    "build:lib": "npm run build:lib --workspaces --if-present",
+    "prebuild:script": "npm run build:lib",
+    "build:script": "node build.js",
+    "build:dev": "NODE_ENV=development npm run build:script",
+    "build:prod": "NODE_ENV=production npm run build:script",
+    "test": "NODE_ENV=test npm test --workspaces --if-present",
+    "postinstall": "husky install"
   },
   "repository": {
     "type": "git",

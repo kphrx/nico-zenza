@@ -4,7 +4,7 @@
   "description": "ZenzaWatchをゲームパッドで操作",
   "main": "dist/main.js",
   "scripts": {
-    "build": "rollup --config rollup.config.ts --configPlugin typescript"
+    "build:script": "rollup --config rollup.config.ts --configPlugin typescript"
   },
   "repository": {
     "type": "git",

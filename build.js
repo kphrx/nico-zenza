@@ -26,7 +26,7 @@ const pkgs = JSON.parse(queryStdout);
 const padding = Math.max(...pkgs.map((x) => x.name.length));
 
 const builds = pkgs.map(async ({name, version, location}) => {
-  const build = spawn("npm", ["run", "build", "-w", name]);
+  const build = spawn("npm", ["run", "build:script", "-w", name]);
 
   build.stdout.on("data", (x) => stdout.write(x.toString().trimStart()));
 
