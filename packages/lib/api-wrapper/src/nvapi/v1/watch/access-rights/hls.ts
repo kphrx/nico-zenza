@@ -1,3 +1,4 @@
+import {mergeHeaders} from "../../../../utils";
 import {NvapiEndpoint} from "../../../types";
 import type {AccessRights, AccessRightsOptions} from "./types";
 
@@ -19,16 +20,9 @@ export class Hls extends NvapiEndpoint<AccessRights, HlsOptions> {
   async post(options: HlsOptions, fetchInit?: RequestInit) {
     const init = {...fetchInit, method: "POST"};
 
-    if (init.headers instanceof Headers) {
-      init.headers.set("X-Access-Right-Key", options.accessRightKey);
-    } else if (init.headers instanceof Array) {
-      init.headers.push(["X-Access-Right-Key", options.accessRightKey]);
-    } else {
-      init.headers = {
-        ...init.headers,
-        "X-Access-Right-Key": options.accessRightKey,
-      };
-    }
+    init.headers = mergeHeaders(init.headers, {
+      "X-Access-Right-Key": options.accessRightKey,
+    });
 
     init.body = JSON.stringify({
       outputs: options.videos.flatMap((video) =>

@@ -1,3 +1,4 @@
+import {mergeHeaders} from "../../../utils";
 import {NvapiEndpoint} from "../../types";
 import type {Playlist} from "./types";
 
@@ -19,16 +20,10 @@ export class WatchLater extends NvapiEndpoint<Playlist, WatchLaterOptions> {
   async get(options: WatchLaterOptions, fetchInit?: RequestInit) {
     const init = {...fetchInit, method: "GET"};
 
-    if (options.language == null) {
-      return await this.request(options, init);
-    }
-
-    if (init.headers instanceof Headers) {
-      init.headers.set("X-Niconico-Language", options.language);
-    } else if (init.headers instanceof Array) {
-      init.headers.push(["X-Niconico-Language", options.language]);
-    } else {
-      init.headers = {...init.headers, "X-Niconico-Language": options.language};
+    if (options.language != null) {
+      init.headers = mergeHeaders(init.headers, {
+        "X-Niconico-Language": options.language,
+      });
     }
 
     return await this.request(options, init);

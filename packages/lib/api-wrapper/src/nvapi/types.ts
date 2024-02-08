@@ -1,3 +1,5 @@
+import {mergeHeaders} from "../utils";
+
 interface ErrorResponse {
   meta: {status: number; errorCode: string};
   data?: {reasonCode: string};
@@ -51,21 +53,10 @@ export class NvapiEndpoint<
       return;
     }
 
-    if (fetchInit.headers instanceof Headers) {
-      fetchInit.headers.set(HEADER.FRONTEND_ID, "6");
-      fetchInit.headers.set(HEADER.FRONTEND_VERSION, "0");
-    } else if (fetchInit.headers instanceof Array) {
-      fetchInit.headers.push(
-        [HEADER.FRONTEND_ID, "6"],
-        [HEADER.FRONTEND_VERSION, "0"],
-      );
-    } else {
-      fetchInit.headers = {
-        ...fetchInit.headers,
-        [HEADER.FRONTEND_ID]: "6",
-        [HEADER.FRONTEND_VERSION]: "0",
-      };
-    }
+    fetchInit.headers = mergeHeaders(fetchInit.headers, {
+      [HEADER.FRONTEND_ID]: "6",
+      [HEADER.FRONTEND_VERSION]: "0",
+    });
     this.defaultInit = fetchInit;
   }
 
@@ -87,29 +78,11 @@ export class NvapiEndpoint<
       throw new Error("not expected default header undefined");
     }
 
-    if (fetchHeaders == null) {
-      const res = await fetch(url, {
-        ...defaultInit,
-        ...init,
-        headers: defaultHeaders,
-      });
-      return (await res.json()) as NvapiResponse<T>;
-    }
-
-    const headers = new Headers(defaultHeaders);
-    if (fetchHeaders instanceof Headers) {
-      fetchHeaders.forEach((v, k) => {
-        headers.set(k, v);
-      });
-    } else {
-      for (const [k, v] of fetchHeaders instanceof Array
-        ? fetchHeaders
-        : Object.entries(fetchHeaders)) {
-        headers.set(k, v);
-      }
-    }
-
-    const res = await fetch(url, {...defaultInit, ...init, headers});
+    const res = await fetch(url, {
+      ...defaultInit,
+      ...init,
+      headers: mergeHeaders(defaultHeaders, fetchHeaders),
+    });
     return (await res.json()) as NvapiResponse<T>;
   }
 }
