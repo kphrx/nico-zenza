@@ -1,41 +1,36 @@
 import {NvapiEndpoint} from "../../types";
 import type {Playlist} from "./types";
 
-type WatchLaterParams = {
-  sortKey?: string;
-  sortOrder?: "asc" | "desc";
-  pageSize?: `${number}`;
-  page?: `${number}`;
-};
+interface WatchLaterOptions {
+  params: {
+    sortKey?: string;
+    sortOrder?: "asc" | "desc";
+    pageSize?: `${number}`;
+    page?: `${number}`;
+  };
+  language?: "ja-jp" | "en-us" | "zh-tw";
+}
 
-export class WatchLater extends NvapiEndpoint<Playlist, WatchLaterParams> {
+export class WatchLater extends NvapiEndpoint<Playlist, WatchLaterOptions> {
   constructor(baseURL: URL | string) {
-    super("watch-later", baseURL, {
-      headers: {
-        "X-Frontend-Id": "6",
-        "X-Frontend-Version": "0",
-      },
-    });
+    super("watch-later", baseURL);
   }
 
-  async get(
-    params: WatchLaterParams & {language?: "ja-jp" | "en-us" | "zh-tw"},
-    fetchInit?: RequestInit,
-  ) {
+  async get(options: WatchLaterOptions, fetchInit?: RequestInit) {
     const init = {...fetchInit, method: "GET"};
 
-    if (params.language == null) {
-      return await this.request(params, init);
+    if (options.language == null) {
+      return await this.request(options, init);
     }
 
     if (init.headers instanceof Headers) {
-      init.headers.set("X-Niconico-Language", params.language);
+      init.headers.set("X-Niconico-Language", options.language);
+    } else if (init.headers instanceof Array) {
+      init.headers.push(["X-Niconico-Language", options.language]);
     } else {
-      init.headers = {...init.headers, "X-Niconico-Language": params.language};
+      init.headers = {...init.headers, "X-Niconico-Language": options.language};
     }
 
-    delete params.language;
-
-    return await this.request(params, init);
+    return await this.request(options, init);
   }
 }
