@@ -2,7 +2,7 @@ import type {ReactiveController} from "lit";
 import type {StatusRenderer} from "@lit/task";
 import {initialState, Task} from "@lit/task";
 
-import {isErrorResponse} from "@nico-zenza/api-wrapper";
+import {isErrorResponse, WwwApi} from "@nico-zenza/api-wrapper";
 import type {
   ApiResponseWithStatus,
   VideoId,
@@ -41,11 +41,10 @@ export class WatchDataController implements ReactiveController {
 
         this.#host.playerMessage.info("動画情報読み込み中", videoId);
 
-        const json = await this.#fetchWatchV3API(
+        const json = await this.#fetchWatchV3API({
           videoId,
-          WatchDataController.#trackId(),
           signal,
-        ).catch((e) => {
+        }).catch((e) => {
           this.#host.playerMessage.failure(e, videoId);
 
           throw e;
@@ -72,25 +71,25 @@ export class WatchDataController implements ReactiveController {
     this.#host.addController(this);
   }
 
-  #fetchWatchV3API = async (
-    videoId: VideoId | `${number}`,
-    trackId: string,
-    signal: AbortSignal,
-  ): Promise<ApiResponseWithStatus<WatchData>> => {
-    const url = new URL(
-      `https://www.nicovideo.jp/api/watch/${this.#isLoggedIn ? "v3" : "v3_guest"}/${videoId}`,
-    );
-
-    url.searchParams.set("actionTrackId", trackId);
-    url.searchParams.set("additionals", "series");
+  #fetchWatchV3API = async ({
+    videoId,
+    actionTrackId = WatchDataController.#trackId(),
+    signal,
+  }: {
+    videoId: VideoId | `${number}`;
+    actionTrackId?: string;
+    signal: AbortSignal;
+  }): Promise<ApiResponseWithStatus<WatchData>> => {
+    const watchApiWrapper = new WwwApi().watch;
+    const client = this.#isLoggedIn
+      ? watchApiWrapper.v3(videoId)
+      : watchApiWrapper.v3Guest(videoId);
 
     try {
-      const res = await fetch(url, {
-        headers: {"X-Frontend-Id": "6", "X-Frontend-Version": "0"},
-        credentials: this.#isLoggedIn ? "include" : "omit",
-        signal,
-      });
-      const json = (await res.json()) as ApiResponseWithStatus<WatchData>;
+      const json = await client.get(
+        {params: {actionTrackId, additionals: "series"}},
+        {signal},
+      );
 
       if (
         !isErrorResponse(json) ||
@@ -103,11 +102,10 @@ export class WatchDataController implements ReactiveController {
 
       this.#isLoggedIn = false;
 
-      return await this.#fetchWatchV3API(
+      return await this.#fetchWatchV3API({
         videoId,
-        WatchDataController.#trackId(),
         signal,
-      );
+      });
     } catch (e) {
       console.error(e);
       throw new Error("Failed to fetch");
