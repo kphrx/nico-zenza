@@ -1,5 +1,4 @@
-type VideoId = `${"so" | "sm" | "nm"}${number}`;
-type ChannelId = `ch${number}`;
+import type {VideoId, ChannelId} from "../../../types";
 
 export interface VideoListItemOwner<T = string, I = string> {
   ownerType: T;
