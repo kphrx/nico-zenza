@@ -2,8 +2,8 @@ import type {ReactiveController} from "lit";
 import type {StatusRenderer} from "@lit/task";
 import {initialState, Task} from "@lit/task";
 
-import {isErrorResponse} from "@/nvapi-response";
-import type {NVAPIResponse} from "@/nvapi-response";
+import {isErrorResponse} from "@nico-zenza/api-wrapper";
+import type {NvapiResponse} from "@nico-zenza/api-wrapper";
 import type {WatchV3Response} from "@/watch-data";
 
 import type {PlayerDialog} from "./dialog";
@@ -73,7 +73,7 @@ export class WatchDataController implements ReactiveController {
     videoId: string,
     trackId: string,
     signal: AbortSignal,
-  ): Promise<NVAPIResponse<WatchV3Response>> => {
+  ): Promise<NvapiResponse<WatchV3Response>> => {
     const url = new URL(
       `https://www.nicovideo.jp/api/watch/${this.#isLoggedIn ? "v3" : "v3_guest"}/${videoId}`,
     );
@@ -87,7 +87,7 @@ export class WatchDataController implements ReactiveController {
         credentials: this.#isLoggedIn ? "include" : "omit",
         signal,
       });
-      const json = (await res.json()) as NVAPIResponse<WatchV3Response>;
+      const json = (await res.json()) as NvapiResponse<WatchV3Response>;
 
       if (
         !isErrorResponse(json) ||

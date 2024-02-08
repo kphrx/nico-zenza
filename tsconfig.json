@@ -1,6 +1,7 @@
 {
   "files": [],
   "references": [
+    {"path": "packages/lib/api-wrapper"},
     {"path": "packages/script/zenza-watch"},
     {"path": "packages/script/mylist-pocket"},
     {"path": "packages/script/advanced-settings"},
@@ -11,7 +12,6 @@
     {"path": "packages/script/game-pad"},
     {"path": "packages/script/uquery"},
     {"path": "packages/script/mylist-filter"},
-    {"path": "packages/lib/api-wrapper"},
     {"path": "packages/build-util"}
   ]
 }
