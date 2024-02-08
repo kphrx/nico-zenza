@@ -1,8 +1,8 @@
-import type {INvapiEndpoints} from "../types";
+import type {ApiEndpoints} from "../../types";
 import {Playlist} from "./playlist";
 import {Watch} from "./watch";
 
-export class V1 implements INvapiEndpoints {
+export class V1 implements ApiEndpoints {
   endpoint: URL;
 
   playlist: Playlist;

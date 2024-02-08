@@ -1,4 +1,5 @@
 import {mergeHeaders} from "../utils";
+import type {ApiEndpoints} from "../types";
 
 interface ErrorResponse {
   meta: {status: number; errorCode: string};
@@ -13,14 +14,10 @@ export const isErrorResponse = <T>(
   res: NvapiResponse<T>,
 ): res is ErrorResponse => res.meta.status < 200 || 300 <= res.meta.status;
 
-export interface INvapiEndpoints {
-  endpoint: URL;
-}
-
 export interface INvapiEndpoint<
   T,
   O extends {params: {[key: string]: string | undefined}},
-> extends INvapiEndpoints {
+> extends ApiEndpoints {
   defaultInit: RequestInit;
 
   request(params: O, fetchInit?: RequestInit): Promise<NvapiResponse<T>>;

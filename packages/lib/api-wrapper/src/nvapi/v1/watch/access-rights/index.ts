@@ -1,7 +1,7 @@
-import type {INvapiEndpoints} from "../../../types";
+import type {ApiEndpoints} from "../../../../types";
 import {Hls} from "./hls";
 
-export class AccessRights implements INvapiEndpoints {
+export class AccessRights implements ApiEndpoints {
   endpoint: URL;
 
   hls: Hls;

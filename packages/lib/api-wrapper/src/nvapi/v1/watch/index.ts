@@ -1,8 +1,8 @@
-import type {INvapiEndpoints} from "../../types";
+import type {ApiEndpoints} from "../../../types";
 import type {VideoId} from "../../../types";
 import {AccessRights} from "./access-rights";
 
-export class Watch implements INvapiEndpoints {
+export class Watch implements ApiEndpoints {
   endpoint: URL;
 
   constructor(baseURL: URL | string) {

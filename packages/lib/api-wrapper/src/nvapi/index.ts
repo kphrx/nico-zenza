@@ -1,7 +1,7 @@
-import type {INvapiEndpoints} from "./types";
+import type {ApiEndpoints} from "../types";
 import {V1} from "./v1";
 
-export class Nvapi implements INvapiEndpoints {
+export class Nvapi implements ApiEndpoints {
   endpoint: URL;
 
   v1: V1;
