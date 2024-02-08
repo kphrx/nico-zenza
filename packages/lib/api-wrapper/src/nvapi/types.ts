@@ -1,18 +1,5 @@
 import {mergeHeaders} from "../utils";
-import type {ApiEndpoints} from "../types";
-
-interface ErrorResponse {
-  meta: {status: number; errorCode: string};
-  data?: {reasonCode: string};
-}
-interface OkResponse<T> {
-  meta: {status: number};
-  data: T;
-}
-export type NvapiResponse<T> = OkResponse<T> | ErrorResponse;
-export const isErrorResponse = <T>(
-  res: NvapiResponse<T>,
-): res is ErrorResponse => res.meta.status < 200 || 300 <= res.meta.status;
+import type {ApiEndpoints, ApiResponseWithStatus} from "../types";
 
 export interface INvapiEndpoint<
   T,
@@ -20,7 +7,10 @@ export interface INvapiEndpoint<
 > extends ApiEndpoints {
   defaultInit: RequestInit;
 
-  request(params: O, fetchInit?: RequestInit): Promise<NvapiResponse<T>>;
+  request(
+    params: O,
+    fetchInit?: RequestInit,
+  ): Promise<ApiResponseWithStatus<T>>;
 }
 
 export const HEADER = {
@@ -60,7 +50,7 @@ export class NvapiEndpoint<
   async request(
     options: O,
     fetchInit?: RequestInit,
-  ): Promise<NvapiResponse<T>> {
+  ): Promise<ApiResponseWithStatus<T>> {
     const url = new URL(this.endpoint);
     url.search = new URLSearchParams(
       Object.entries(options.params).filter(
@@ -80,6 +70,6 @@ export class NvapiEndpoint<
       ...init,
       headers: mergeHeaders(defaultHeaders, fetchHeaders),
     });
-    return (await res.json()) as NvapiResponse<T>;
+    return (await res.json()) as ApiResponseWithStatus<T>;
   }
 }

@@ -12,6 +12,3 @@ export class Nvapi implements ApiEndpoints {
     this.v1 = new V1(this.endpoint);
   }
 }
-
-export {isErrorResponse} from "./types";
-export type {NvapiResponse} from "./types";

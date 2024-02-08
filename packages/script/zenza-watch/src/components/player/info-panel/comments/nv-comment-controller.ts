@@ -3,8 +3,7 @@ import {initialState, Task} from "@lit/task";
 import type {StatusRenderer} from "@lit/task";
 
 import {isErrorResponse} from "@nico-zenza/api-wrapper";
-import type {NvapiResponse} from "@nico-zenza/api-wrapper";
-import type {WatchV3Response} from "@/watch-data";
+import type {ApiResponseWithStatus, WatchData} from "@nico-zenza/api-wrapper";
 import type {Threads, FlattedComment} from "@/comment-list";
 
 import type {PlayerInfoPanelCommentsTab} from "./";
@@ -13,12 +12,12 @@ type ReactiveControllerHost = PlayerInfoPanelCommentsTab;
 
 export class NVCommentController implements ReactiveController {
   #host: ReactiveControllerHost;
-  #task: Task<[WatchV3Response | undefined], FlattedComment[]>;
+  #task: Task<[WatchData | undefined], FlattedComment[]>;
 
   constructor(host: ReactiveControllerHost) {
     this.#host = host;
 
-    this.#task = new Task<[WatchV3Response | undefined], FlattedComment[]>(
+    this.#task = new Task<[WatchData | undefined], FlattedComment[]>(
       this.#host,
       async ([watchData], {signal}) => {
         if (watchData == null) {
@@ -29,7 +28,7 @@ export class NVCommentController implements ReactiveController {
 
         this.#host.playerMessage.info("コメント読み込み中", watchData.video.id);
 
-        let json: NvapiResponse<Threads>;
+        let json: ApiResponseWithStatus<Threads>;
         try {
           const res = await fetch(new URL("/v1/threads", nvComment.server), {
             method: "POST",

@@ -3,8 +3,7 @@ import {initialState, Task} from "@lit/task";
 import type {StatusRenderer} from "@lit/task";
 
 import {isErrorResponse, Nvapi} from "@nico-zenza/api-wrapper";
-import type {NvapiResponse} from "@nico-zenza/api-wrapper";
-import type {WatchV3Response} from "@/watch-data";
+import type {WatchData, ApiResponseWithStatus} from "@nico-zenza/api-wrapper";
 
 import type {PlayerVideo} from "./video";
 
@@ -19,12 +18,12 @@ const nvapi = new Nvapi();
 
 export class SessionController implements ReactiveController {
   #host: ReactiveControllerHost;
-  #task: Task<[WatchV3Response | undefined], AccessRights>;
+  #task: Task<[WatchData | undefined], AccessRights>;
 
   constructor(host: ReactiveControllerHost) {
     this.#host = host;
 
-    this.#task = new Task<[WatchV3Response | undefined], AccessRights>(
+    this.#task = new Task<[WatchData | undefined], AccessRights>(
       this.#host,
       async ([watchData], {signal}) => {
         if (watchData == null) {
@@ -47,7 +46,7 @@ export class SessionController implements ReactiveController {
         const client = nvapi.v1.watch.accessRights(
           watchData.client.watchId,
         ).hls;
-        let json: NvapiResponse<AccessRights>;
+        let json: ApiResponseWithStatus<AccessRights>;
         try {
           json = await client.post(
             {

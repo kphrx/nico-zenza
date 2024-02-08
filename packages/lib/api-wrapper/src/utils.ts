@@ -1,3 +1,5 @@
+import type {ApiResponseWithStatus, ErrorResponse} from "./types";
+
 export const mergeHeaders = (
   aHeaders: HeadersInit | undefined,
   bHeaders: HeadersInit | undefined,
@@ -21,3 +23,7 @@ export const mergeHeaders = (
 
   return headers;
 };
+
+export const isErrorResponse = <T>(
+  res: ApiResponseWithStatus<T>,
+): res is ErrorResponse => res.meta.status < 200 || 300 <= res.meta.status;

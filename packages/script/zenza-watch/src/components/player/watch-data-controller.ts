@@ -3,8 +3,11 @@ import type {StatusRenderer} from "@lit/task";
 import {initialState, Task} from "@lit/task";
 
 import {isErrorResponse} from "@nico-zenza/api-wrapper";
-import type {NvapiResponse, VideoId} from "@nico-zenza/api-wrapper";
-import type {WatchV3Response} from "@/watch-data";
+import type {
+  ApiResponseWithStatus,
+  VideoId,
+  WatchData,
+} from "@nico-zenza/api-wrapper";
 
 import type {PlayerDialog} from "./dialog";
 
@@ -25,11 +28,11 @@ export class WatchDataController implements ReactiveController {
 
   #isLoggedIn = true;
   #host: ReactiveControllerHost;
-  #task: Task<[VideoId | `${number}` | undefined], WatchV3Response>;
+  #task: Task<[VideoId | `${number}` | undefined], WatchData>;
 
   constructor(host: ReactiveControllerHost) {
     this.#host = host;
-    this.#task = new Task<[VideoId | `${number}` | undefined], WatchV3Response>(
+    this.#task = new Task<[VideoId | `${number}` | undefined], WatchData>(
       host,
       async ([videoId], {signal}) => {
         if (videoId == null) {
@@ -73,7 +76,7 @@ export class WatchDataController implements ReactiveController {
     videoId: VideoId | `${number}`,
     trackId: string,
     signal: AbortSignal,
-  ): Promise<NvapiResponse<WatchV3Response>> => {
+  ): Promise<ApiResponseWithStatus<WatchData>> => {
     const url = new URL(
       `https://www.nicovideo.jp/api/watch/${this.#isLoggedIn ? "v3" : "v3_guest"}/${videoId}`,
     );
@@ -87,7 +90,7 @@ export class WatchDataController implements ReactiveController {
         credentials: this.#isLoggedIn ? "include" : "omit",
         signal,
       });
-      const json = (await res.json()) as NvapiResponse<WatchV3Response>;
+      const json = (await res.json()) as ApiResponseWithStatus<WatchData>;
 
       if (
         !isErrorResponse(json) ||
@@ -113,7 +116,7 @@ export class WatchDataController implements ReactiveController {
 
   hostUpdate() {}
 
-  render(renderFunctions: StatusRenderer<WatchV3Response>) {
+  render(renderFunctions: StatusRenderer<WatchData>) {
     return this.#task.render(renderFunctions);
   }
 }

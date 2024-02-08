@@ -1,49 +1,11 @@
-type VideoId = `${"so" | "sm" | "nm"}${number}`;
-type ChannelId = `ch${number}`;
+import type {
+  VideoId,
+  ChannelId,
+  VideoListItem as SeriesVideo,
+  VideoInfo,
+} from "./video-info";
+
 type CommunityId = `co${number}`;
-
-interface SeriesVideoOwner<T = string, I = string> {
-  ownerType: T;
-  type: T;
-  visibility: string;
-  id: I;
-  name: string;
-  iconUrl: string;
-}
-
-export interface SeriesVideo {
-  type: string;
-  id: VideoId;
-  title: string;
-  registeredAt: string;
-  count: {
-    view: number;
-    comment: number;
-    mylist: number;
-    like: number;
-  };
-  thumbnail: {
-    url: string;
-    middleUrl: string;
-    largeUrl: string;
-    listingUrl: string;
-    nHdUrl: string;
-  };
-  duration: number;
-  shortDescription: string;
-  latestCommentSummary: string;
-  isChannelVideo: boolean;
-  isPaymentRequired: boolean;
-  playbackPosition: unknown;
-  owner:
-    | SeriesVideoOwner<"user", `${number}`>
-    | SeriesVideoOwner<"channel", ChannelId>;
-  requireSensitiveMasking: boolean;
-  videoLive: unknown;
-  isMuted: boolean;
-  "9d091f87": boolean;
-  acf68865: boolean;
-}
 
 export interface SeriesInfo {
   id: number;
@@ -89,46 +51,6 @@ export interface NVComment {
   };
 }
 
-export interface VideoInfo {
-  id: VideoId;
-  title: string;
-  description: string;
-  count: {
-    view: number;
-    comment: number;
-    mylist: number;
-    like: number;
-  };
-  duration: number;
-  thumbnail: {
-    url: string;
-    middleUrl: string;
-    largeUrl: string;
-    player: string;
-    ogp: string;
-  };
-  rating: {
-    isAdult: boolean;
-  };
-  registeredAt: string;
-  isPrivate: boolean;
-  isDeleted: boolean;
-  isNoBanner: boolean;
-  isAuthenticationRequired: boolean;
-  isEmbedPlayerAllowed: boolean;
-  isGiftAllowed: boolean;
-  viewer: {
-    isOwner: boolean;
-    like: {
-      isLiked: boolean;
-      count: unknown;
-    };
-  };
-  watchableUserTypeForPayment: string;
-  commentableUserTypeForPayment: string;
-  "9d091f87": boolean;
-}
-
 export interface OwnerInfo {
   id: number;
   nickname: string;
@@ -166,7 +88,7 @@ export interface ChannelInfo {
   };
 }
 
-export interface WatchV3Response {
+export interface WatchData {
   ads: null;
   category: null;
   channel: ChannelInfo | null;

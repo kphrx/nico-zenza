@@ -2,11 +2,10 @@ import {LitElement, html, nothing} from "lit";
 import {customElement} from "lit/decorators";
 import {consume} from "@lit/context";
 
-import type {VideoId} from "@nico-zenza/api-wrapper";
+import type {VideoId, VideoListItem} from "@nico-zenza/api-wrapper";
 import {ICON, THUMBNAIL} from "@/constants";
 import {watchDataContext} from "@/contexts/watch-data-context";
 import type {WatchDataContext} from "@/contexts/watch-data-context";
-import type {SeriesVideo} from "@/watch-data";
 import {createCustomEvent} from "@/event";
 
 import {PlayerInfoPanelVideoCard} from "./card";
@@ -153,7 +152,7 @@ export class PlayerInfoPanelVideoInfoTab extends LitElement {
     return html`<p class="description">${this.#desc ?? nothing}</p>`;
   }
 
-  #seriesVideo = (info: SeriesVideo, isPrev: boolean) => {
+  #seriesVideo = (info: VideoListItem, isPrev: boolean) => {
     const id = info.id;
 
     return html`<div class="${isPrev ? "prev" : "next"}">
