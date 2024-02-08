@@ -80,10 +80,7 @@ export class PlayerInfoPanelCommentsList extends LitElement {
 
   #task = new Task<[CommentContext, CommentsOrderTypes], FlattedComment[]>(
     this,
-    async (
-      [comments, order]: [CommentContext, CommentsOrderTypes],
-      {signal},
-    ) => {
+    async ([comments, order], {signal}) => {
       if (comments.length === 0) {
         return EMPTY_ARRAY;
       }

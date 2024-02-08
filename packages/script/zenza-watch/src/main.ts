@@ -18,7 +18,7 @@ export default function main() {
     .appendChild(new LeftHoverMenu())
     .appendChild(
       new HoverMenuButton("Zen", (_, videoId) => {
-        if (videoId === "") {
+        if (videoId == null) {
           return;
         }
 

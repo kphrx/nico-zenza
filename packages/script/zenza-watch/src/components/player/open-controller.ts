@@ -1,5 +1,7 @@
 import type {ReactiveController} from "lit";
 
+import type {VideoId} from "@nico-zenza/api-wrapper";
+
 import type {PlayerDialog} from "./dialog";
 
 type ReactiveControllerHost = PlayerDialog;
@@ -17,7 +19,7 @@ export class OpenController implements ReactiveController {
     this.#onOpen();
   };
 
-  videoId = "";
+  videoId?: VideoId | `${number}`;
 
   constructor(host: ReactiveControllerHost, onOpen: () => void) {
     this.#host = host;

@@ -1,4 +1,4 @@
-import {ApiEndpoints, VideoId} from "../../types";
+import type {ApiEndpoints, VideoId} from "../../types";
 import {V3} from "./v3";
 
 export class Watch implements ApiEndpoints {
@@ -8,11 +8,11 @@ export class Watch implements ApiEndpoints {
     this.endpoint = new URL("watch/", baseURL);
   }
 
-  v3(watchId: VideoId): V3 {
+  v3(watchId: VideoId | `${number}`): V3 {
     return new V3(false, watchId, this.endpoint);
   }
 
-  v3Guest(watchId: VideoId): V3 {
+  v3Guest(watchId: VideoId | `${number}`): V3 {
     return new V3(true, watchId, this.endpoint);
   }
 }

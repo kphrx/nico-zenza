@@ -1,6 +1,8 @@
+import type {VideoId} from "@nico-zenza/api-wrapper";
+
 declare global {
   interface GlobalEventHandlersEventMap {
-    "zenzawatch:playeropen": CustomEvent<{videoId: string}>;
+    "zenzawatch:playeropen": CustomEvent<{videoId: VideoId | `${number}`}>;
 
     "zenzawatch:updateTotalDuration": CustomEvent<number>;
     "zenzawatch:updateCurrentPosition": CustomEvent<number>;

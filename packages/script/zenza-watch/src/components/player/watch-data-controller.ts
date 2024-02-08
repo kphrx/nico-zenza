@@ -3,7 +3,7 @@ import type {StatusRenderer} from "@lit/task";
 import {initialState, Task} from "@lit/task";
 
 import {isErrorResponse} from "@nico-zenza/api-wrapper";
-import type {NvapiResponse} from "@nico-zenza/api-wrapper";
+import type {NvapiResponse, VideoId} from "@nico-zenza/api-wrapper";
 import type {WatchV3Response} from "@/watch-data";
 
 import type {PlayerDialog} from "./dialog";
@@ -25,14 +25,14 @@ export class WatchDataController implements ReactiveController {
 
   #isLoggedIn = true;
   #host: ReactiveControllerHost;
-  #task: Task<[string], WatchV3Response>;
+  #task: Task<[VideoId | `${number}` | undefined], WatchV3Response>;
 
   constructor(host: ReactiveControllerHost) {
     this.#host = host;
-    this.#task = new Task<[string], WatchV3Response>(
+    this.#task = new Task<[VideoId | `${number}` | undefined], WatchV3Response>(
       host,
-      async ([videoId]: [string], {signal}) => {
-        if (videoId?.trim() === "") {
+      async ([videoId], {signal}) => {
+        if (videoId == null) {
           return initialState;
         }
 
@@ -70,7 +70,7 @@ export class WatchDataController implements ReactiveController {
   }
 
   #fetchWatchV3API = async (
-    videoId: string,
+    videoId: VideoId | `${number}`,
     trackId: string,
     signal: AbortSignal,
   ): Promise<NvapiResponse<WatchV3Response>> => {

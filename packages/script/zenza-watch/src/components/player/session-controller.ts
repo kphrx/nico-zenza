@@ -26,7 +26,7 @@ export class SessionController implements ReactiveController {
 
     this.#task = new Task<[WatchV3Response | undefined], AccessRights>(
       this.#host,
-      async ([watchData]: [WatchV3Response | undefined], {signal}) => {
+      async ([watchData], {signal}) => {
         if (watchData == null) {
           return initialState;
         }

@@ -41,7 +41,7 @@ export class PlayerDialog extends LitElement {
   #close = html`<button
     class="close"
     @click=${() => {
-      this.videoId = "";
+      this.videoId = undefined;
       this.watchData = undefined;
       this.open = false;
     }}>
