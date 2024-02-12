@@ -7,62 +7,100 @@ import nodeResolve from "@rollup/plugin-node-resolve";
 import importCss from "rollup-plugin-import-css";
 import userscript from "rollup-plugin-userscript";
 
-function addSuffix(filename?: string, version?: string) {
+function addSuffix(filename: string, version: string) {
   if (env.NODE_ENV !== "production") {
     const now = new Date().getTime();
 
     return {
-      name: `${filename}+dev`,
-      ver:
+      filename: `${filename}+dev`,
+      version:
         version?.indexOf("-") !== -1
           ? `${version}.dev.${now}`
           : `${version}-dev.${now}`,
     };
   }
 
+  return {filename, version};
+}
+
+interface ESModule {
+  name: string;
+  objectName?: string;
+  url: string;
+}
+
+function bannerAndFooter(esmodules: ESModule[] = []) {
+  let banner: string, objects: {[key: string]: string} | undefined;
+
+  if (esmodules.length > 0) {
+    const esms = esmodules.map((m) => ({
+      ...m,
+      objectName: m.objectName ?? m.name.replaceAll(/@|\/|-|\./g, "_"),
+    }));
+    banner = `(async () => {
+const [${esms.map((m) => m.objectName).join(", ")}] = await Promise.all([
+  ${esms.map((m) => `import("${m.url}")`).join(",\n  ")}
+]);`;
+    objects = Object.fromEntries(esms.map((m) => [m.name, m.objectName]));
+  } else {
+    banner = "(async () => {";
+  }
+
   return {
-    name: filename,
-    ver: version,
+    banner,
+    footer: "})();",
+    objects,
   };
 }
 
 interface Options {
   filename: string;
   version: string;
-  description: string;
-  license: string;
-  author: string;
-  tracker: string;
-  homepage: string;
-  useDecorator: boolean;
-  externals: {[key: string]: string};
+  description?: string;
+  license?: string;
+  author?: string;
+  tracker?: string;
+  homepage?: string;
+  useDecorator?: boolean;
+  externals?: {
+    objects?: {[key: string]: string};
+    esmodules?: ESModule[];
+  };
 }
 
 export function rollupConfig({
-  filename,
-  version,
+  filename: name,
+  version: ver,
   description,
   license,
   author,
   tracker,
   homepage,
   useDecorator = false,
-  externals = {},
-}: Partial<Options> = {}) {
-  const {name, ver} = addSuffix(filename, version);
-  const external = Object.keys(externals);
+  externals,
+}: Options) {
   const extensions = [".ts", ".tsx", ".mjs", ".js", ".jsx"];
+  const {filename, version} = addSuffix(name, ver);
+
+  const {banner, footer, objects} = bannerAndFooter(externals?.esmodules);
+
+  let globals: {[key: string]: string} | undefined;
+  if (externals?.objects != null || objects != null) {
+    globals = {...externals?.objects, ...objects};
+  }
+
+  const external = Object.keys(globals ?? {});
 
   return defineConfig({
     input: "src/index.ts",
     output: {
-      file: `dist/${name}.user.js`,
+      file: `dist/${filename}.user.js`,
       format: "iife",
-      banner: `(async () => {`,
-      footer: `})();`,
+      banner,
+      footer,
       indent: false,
       sourcemap: false,
-      globals: externals,
+      globals,
     },
     external,
     plugins: [
@@ -99,7 +137,7 @@ export function rollupConfig({
       importCss({modules: true, minify: true}),
       userscript((meta) => {
         return meta
-          .replace("{{version}}", ver ?? "-")
+          .replace("{{version}}", version)
           .replace("{{description}}", description ?? "-")
           .replace("{{license}}", license ?? "-")
           .replace("{{author}}", author ?? "-")
