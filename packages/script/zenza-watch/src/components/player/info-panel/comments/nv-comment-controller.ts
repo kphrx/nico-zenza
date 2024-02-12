@@ -2,9 +2,9 @@ import type {ReactiveController} from "lit";
 import {initialState, Task} from "@lit/task";
 import type {StatusRenderer} from "@lit/task";
 
-import {isErrorResponse} from "@nico-zenza/api-wrapper";
-import type {ApiResponseWithStatus, WatchData} from "@nico-zenza/api-wrapper";
-import type {Threads, FlattedComment} from "@/comment-list";
+import {isErrorResponse, NvComment} from "@nico-zenza/api-wrapper";
+import type {WatchData} from "@nico-zenza/api-wrapper";
+import type {FlattedComment} from "@/comment-list";
 
 import type {PlayerInfoPanelCommentsTab} from "./";
 
@@ -28,27 +28,27 @@ export class NVCommentController implements ReactiveController {
 
         this.#host.playerMessage.info("コメント読み込み中", watchData.video.id);
 
-        let json: ApiResponseWithStatus<Threads>;
-        try {
-          const res = await fetch(new URL("/v1/threads", nvComment.server), {
-            method: "POST",
-            body: JSON.stringify({
-              additionals: {},
-              params: nvComment.params,
-              threadKey: nvComment.threadKey,
-            }),
-            headers: {"X-Frontend-Id": "6", "X-Frontend-Version": "0"},
-            signal,
-          });
-          json = (await res.json()) as typeof json;
-        } catch {
-          const error = new Error(
-            `Failed to fetch comments [${nvComment.params.targets[0]?.id ?? "unknown"}]`,
-          );
-          this.#host.playerMessage.failure(error, watchData.video.id);
+        const nvCommentClient = new NvComment(nvComment.server);
 
-          throw error;
-        }
+        const json = await nvCommentClient.v1.threads
+          .post(
+            {
+              body: {
+                additionals: {},
+                params: nvComment.params,
+                threadKey: nvComment.threadKey,
+              },
+            },
+            {signal},
+          )
+          .catch(() => {
+            const error = new Error(
+              `Failed to fetch comments [${nvComment.params.targets[0]?.id ?? "unknown"}]`,
+            );
+            this.#host.playerMessage.failure(error, watchData.video.id);
+
+            throw error;
+          });
 
         if (isErrorResponse(json)) {
           const {meta, data} = json;
