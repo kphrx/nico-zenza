@@ -28,9 +28,7 @@ export class NVCommentController implements ReactiveController {
 
         this.#host.playerMessage.info("コメント読み込み中", watchData.video.id);
 
-        const nvCommentClient = new NvComment(nvComment.server);
-
-        const json = await nvCommentClient.v1.threads
+        const json = await new NvComment(nvComment.server).v1.threads
           .post(
             {
               body: {

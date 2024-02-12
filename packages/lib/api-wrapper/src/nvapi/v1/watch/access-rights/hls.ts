@@ -1,6 +1,7 @@
 import {mergeHeaders} from "../../../../utils";
 import {NvapiEndpoint} from "../../../types";
-import type {AccessRights, AccessRightsOptions} from "./types";
+import type {AccessRights} from "../../../../types";
+import type {AccessRightsOptions} from "./types";
 
 interface HlsOptions extends AccessRightsOptions {
   videos: string[];

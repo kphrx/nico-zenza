@@ -3,16 +3,11 @@ import {initialState, Task} from "@lit/task";
 import type {StatusRenderer} from "@lit/task";
 
 import {isErrorResponse, Nvapi} from "@nico-zenza/api-wrapper";
-import type {WatchData, ApiResponseWithStatus} from "@nico-zenza/api-wrapper";
+import type {WatchData, AccessRights} from "@nico-zenza/api-wrapper";
 
 import type {PlayerVideo} from "./video";
 
 type ReactiveControllerHost = PlayerVideo;
-interface AccessRights {
-  contentUrl: string;
-  createTime: string;
-  expireTime: string;
-}
 
 const nvapi = new Nvapi();
 
@@ -43,12 +38,9 @@ export class SessionController implements ReactiveController {
           throw error;
         }
 
-        const client = nvapi.v1.watch.accessRights(
-          watchData.client.watchId,
-        ).hls;
-        let json: ApiResponseWithStatus<AccessRights>;
-        try {
-          json = await client.post(
+        const json = await nvapi.v1.watch
+          .accessRights(watchData.client.watchId)
+          .hls.post(
             {
               accessRightKey: domand.accessRightKey,
               videos: domand.videos
@@ -63,13 +55,13 @@ export class SessionController implements ReactiveController {
               credentials: "include",
               signal,
             },
-          );
-        } catch {
-          const error = new Error(`Failed to fetch comments`);
-          this.#host.playerMessage.failure(error, watchData.video.id);
+          )
+          .catch(() => {
+            const error = new Error(`Failed to fetch comments`);
+            this.#host.playerMessage.failure(error, watchData.video.id);
 
-          throw error;
-        }
+            throw error;
+          });
 
         if (isErrorResponse(json)) {
           const {meta, data} = json;

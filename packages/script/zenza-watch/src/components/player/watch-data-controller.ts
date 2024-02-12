@@ -41,14 +41,13 @@ export class WatchDataController implements ReactiveController {
 
         this.#host.playerMessage.info("動画情報読み込み中", videoId);
 
-        const json = await this.#fetchWatchV3API({
-          videoId,
-          signal,
-        }).catch((e) => {
-          this.#host.playerMessage.failure(e, videoId);
+        const json = await this.#fetchWatchV3API({videoId, signal}).catch(
+          (e) => {
+            this.#host.playerMessage.failure(e, videoId);
 
-          throw e;
-        });
+            throw e;
+          },
+        );
 
         if (isErrorResponse(json)) {
           const {meta, data} = json;
