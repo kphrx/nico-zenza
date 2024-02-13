@@ -6,8 +6,8 @@ export class NvComment implements ApiEndpoints {
 
   v1: V1;
 
-  constructor(baseURL?: string) {
-    this.endpoint = new URL(baseURL ?? "https://nvcomment.nicovideo.jp");
+  constructor(baseURL: string) {
+    this.endpoint = new URL(baseURL);
 
     this.v1 = new V1(this.endpoint);
   }
