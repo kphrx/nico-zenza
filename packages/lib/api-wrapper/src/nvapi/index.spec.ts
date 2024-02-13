@@ -27,9 +27,13 @@ await describe("nvapi v1", async () => {
           (...args: Parameters<typeof fetch>): ReturnType<typeof fetch> => {
             const [input] = args;
 
+            if (input instanceof Request) {
+              throw assert.fail("not expected");
+            }
+
             assert.equal(
               "https://nvapi.nicovideo.jp/v1/playlist/series/74",
-              input instanceof Request ? input.url : input.toString(),
+              input.toString(),
             );
 
             return Promise.resolve(Response.json(res));
@@ -62,9 +66,13 @@ await describe("nvapi v1", async () => {
           (...args: Parameters<typeof fetch>): ReturnType<typeof fetch> => {
             const [input] = args;
 
+            if (input instanceof Request) {
+              throw assert.fail("not expected");
+            }
+
             assert.equal(
               "https://nvapi.nicovideo.jp/v1/playlist/channel-uploaded/ch1?sortKey=registeredAt&sortOrder=asc",
-              input instanceof Request ? input.url : input.toString(),
+              input.toString(),
             );
 
             return Promise.resolve(Response.json(res));
@@ -101,9 +109,13 @@ await describe("nvapi v1", async () => {
           (...args: Parameters<typeof fetch>): ReturnType<typeof fetch> => {
             const [input] = args;
 
+            if (input instanceof Request) {
+              throw assert.fail("not expected");
+            }
+
             assert.equal(
               "https://nvapi.nicovideo.jp/v1/playlist/user-uploaded/1",
-              input instanceof Request ? input.url : input.toString(),
+              input.toString(),
             );
 
             return Promise.resolve(Response.json(res));
@@ -137,9 +149,13 @@ await describe("nvapi v1", async () => {
           (...args: Parameters<typeof fetch>): ReturnType<typeof fetch> => {
             const [input] = args;
 
+            if (input instanceof Request) {
+              throw assert.fail("not expected");
+            }
+
             assert.equal(
               "https://nvapi.nicovideo.jp/v1/playlist/mylist/26",
-              input instanceof Request ? input.url : input.toString(),
+              input.toString(),
             );
 
             return Promise.resolve(Response.json(res));
@@ -187,9 +203,13 @@ await describe("nvapi v1", async () => {
           (...args: Parameters<typeof fetch>): ReturnType<typeof fetch> => {
             const [input] = args;
 
+            if (input instanceof Request) {
+              throw assert.fail("not expected");
+            }
+
             assert.equal(
               "https://nvapi.nicovideo.jp/v1/watch/sm9/access-rights/hls?actionTrackId=0_0",
-              input instanceof Request ? input.url : input.toString(),
+              input.toString(),
             );
 
             return Promise.resolve(Response.json(res));

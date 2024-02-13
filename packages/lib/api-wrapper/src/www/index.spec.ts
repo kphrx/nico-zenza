@@ -37,9 +37,13 @@ await describe("watch api", async () => {
         (...args: Parameters<typeof fetch>): ReturnType<typeof fetch> => {
           const [input] = args;
 
+          if (input instanceof Request) {
+            throw assert.fail("not expected");
+          }
+
           assert.equal(
             "https://www.nicovideo.jp/api/watch/v3_guest/sm9?actionTrackId=0_0",
-            input instanceof Request ? input.url : input.toString(),
+            input.toString(),
           );
 
           return Promise.resolve(Response.json(res));
