@@ -176,6 +176,43 @@ await describe("nvapi v1", async () => {
           nvapi.playlist.watchLater.endpoint.toString(),
         );
       });
+
+      await it("request url", async () => {
+        const res: ErrorResponse = {
+          meta: {status: 404, errorCode: "NOT_FOUND"},
+        };
+
+        mock.method(
+          globalThis,
+          "fetch",
+          (...args: Parameters<typeof fetch>): ReturnType<typeof fetch> => {
+            const [input, init] = args;
+
+            if (input instanceof Request) {
+              throw assert.fail("not expected");
+            }
+
+            assert.equal(
+              "https://nvapi.nicovideo.jp/v1/playlist/watch-later",
+              input.toString(),
+            );
+
+            const headers = new Headers(init?.headers);
+
+            assert.equal("6", headers.get("X-Frontend-Id"));
+            assert.equal("0", headers.get("X-Frontend-Version"));
+            assert.equal("ja-jp", headers.get("X-Niconico-Language"));
+
+            return Promise.resolve(Response.json(res));
+          },
+        );
+
+        assert.equal(
+          404,
+          (await nvapi.playlist.watchLater.get({params: {}, language: "ja-jp"}))
+            .meta.status,
+        );
+      });
     });
   });
 
@@ -201,7 +238,7 @@ await describe("nvapi v1", async () => {
           globalThis,
           "fetch",
           (...args: Parameters<typeof fetch>): ReturnType<typeof fetch> => {
-            const [input] = args;
+            const [input, init] = args;
 
             if (input instanceof Request) {
               throw assert.fail("not expected");
@@ -210,6 +247,17 @@ await describe("nvapi v1", async () => {
             assert.equal(
               "https://nvapi.nicovideo.jp/v1/watch/sm9/access-rights/hls?actionTrackId=0_0",
               input.toString(),
+            );
+
+            const headers = new Headers(init?.headers);
+
+            assert.equal("6", headers.get("X-Frontend-Id"));
+            assert.equal("0", headers.get("X-Frontend-Version"));
+            assert.equal("accessRightKey", headers.get("X-Access-Right-Key"));
+
+            assert.equal(
+              JSON.stringify({outputs: [["1080p", "192kbps"]]}),
+              init?.body,
             );
 
             return Promise.resolve(Response.json(res));
@@ -222,8 +270,8 @@ await describe("nvapi v1", async () => {
             await accessRights.hls.post({
               params: {actionTrackId: "0_0"},
               accessRightKey: "accessRightKey",
-              videos: [],
-              audios: [],
+              videos: ["1080p"],
+              audios: ["192kbps"],
             })
           ).meta.status,
         );
