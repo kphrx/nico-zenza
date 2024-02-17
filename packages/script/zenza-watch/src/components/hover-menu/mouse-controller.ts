@@ -1,6 +1,7 @@
 import type {ReactiveController} from "lit";
 
 import type {LeftHoverMenu, RightHoverMenu} from "./";
+import {VideoId} from "@nico-zenza/api-wrapper";
 
 type ReactiveControllerHost = LeftHoverMenu | RightHoverMenu;
 
@@ -67,15 +68,20 @@ export class MouseController implements ReactiveController {
     this.#target = hoverLink;
 
     if (this.#target === null) {
-      this.#host.videoId = "";
+      this.#host.videoId = undefined;
       return;
     }
 
     const link = new URL(this.#target.href);
     const reg =
-      link.host === "nico.ms" ? /^\/([a-z0-9]+)/ : /^\/watch\/([a-z0-9]+)/;
+      link.host === "nico.ms"
+        ? /^\/((sm|so|nm)?([0-9]+))/
+        : /^\/watch\/((sm|so|nm)?([0-9]+))/;
 
-    this.#host.videoId = reg.exec(link.pathname)?.[1] ?? "";
+    this.#host.videoId = reg.exec(link.pathname)?.[1] as
+      | VideoId
+      | `${number}`
+      | undefined;
   };
 
   constructor(host: ReactiveControllerHost) {

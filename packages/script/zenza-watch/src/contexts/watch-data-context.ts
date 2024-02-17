@@ -1,5 +1,5 @@
 import {createContext} from "@lit/context";
-import type {WatchV3Response} from "@/watch-data";
+import type {WatchData} from "@nico-zenza/api-wrapper";
 
-export type WatchDataContext = WatchV3Response | undefined;
+export type WatchDataContext = WatchData | undefined;
 export const watchDataContext = createContext<WatchDataContext>("watch-data");

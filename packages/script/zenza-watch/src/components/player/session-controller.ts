@@ -2,29 +2,25 @@ import type {ReactiveController} from "lit";
 import {initialState, Task} from "@lit/task";
 import type {StatusRenderer} from "@lit/task";
 
-import {isErrorResponse} from "@/nvapi-response";
-import type {NVAPIResponse} from "@/nvapi-response";
-import type {WatchV3Response} from "@/watch-data";
+import {isErrorResponse, Nvapi} from "@nico-zenza/api-wrapper";
+import type {WatchData, AccessRights} from "@nico-zenza/api-wrapper";
 
 import type {PlayerVideo} from "./video";
 
 type ReactiveControllerHost = PlayerVideo;
-interface AccessRights {
-  contentUrl: string;
-  createTime: string;
-  expireTime: string;
-}
+
+const nvapi = new Nvapi();
 
 export class SessionController implements ReactiveController {
   #host: ReactiveControllerHost;
-  #task: Task<[WatchV3Response | undefined], AccessRights>;
+  #task: Task<[WatchData | undefined], AccessRights>;
 
   constructor(host: ReactiveControllerHost) {
     this.#host = host;
 
-    this.#task = new Task<[WatchV3Response | undefined], AccessRights>(
+    this.#task = new Task<[WatchData | undefined], AccessRights>(
       this.#host,
-      async ([watchData]: [WatchV3Response | undefined], {signal}) => {
+      async ([watchData], {signal}) => {
         if (watchData == null) {
           return initialState;
         }
@@ -42,40 +38,30 @@ export class SessionController implements ReactiveController {
           throw error;
         }
 
-        let json: NVAPIResponse<AccessRights>;
-        try {
-          const url = new URL(
-            `/v1/watch/${watchData.client.watchId}/access-rights/hls`,
-            "https://nvapi.nicovideo.jp/",
-          );
-          url.searchParams.set("actionTrackId", watchData.client.watchTrackId);
-          const res = await fetch(url, {
-            method: "POST",
-            body: JSON.stringify({
-              outputs: domand.videos
-                .filter((video) => video.isAvailable)
-                .map((video) => [
-                  video.id,
-                  domand.audios.filter((audio) => audio.isAvailable)[0].id,
-                ]),
-            }),
-            headers: {
-              "X-Frontend-Id": "6",
-              "X-Frontend-Version": "0",
-              "X-Request-With": "https://www.nicovideo.jp",
-              "Content-Type": "application/json",
-              "X-Access-Right-Key": domand.accessRightKey,
+        const json = await nvapi.v1.watch
+          .accessRights(watchData.client.watchId)
+          .hls.post(
+            {
+              accessRightKey: domand.accessRightKey,
+              videos: domand.videos
+                .filter((x) => x.isAvailable)
+                .map((x) => x.id),
+              audios: domand.audios
+                .filter((x) => x.isAvailable)
+                .map((x) => x.id),
+              params: {actionTrackId: watchData.client.watchTrackId},
             },
-            credentials: "include",
-            signal,
-          });
-          json = (await res.json()) as typeof json;
-        } catch {
-          const error = new Error(`Failed to fetch comments`);
-          this.#host.playerMessage.failure(error, watchData.video.id);
+            {
+              credentials: "include",
+              signal,
+            },
+          )
+          .catch(() => {
+            const error = new Error(`Failed to fetch comments`);
+            this.#host.playerMessage.failure(error, watchData.video.id);
 
-          throw error;
-        }
+            throw error;
+          });
 
         if (isErrorResponse(json)) {
           const {meta, data} = json;

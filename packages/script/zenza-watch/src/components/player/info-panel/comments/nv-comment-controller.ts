@@ -2,10 +2,9 @@ import type {ReactiveController} from "lit";
 import {initialState, Task} from "@lit/task";
 import type {StatusRenderer} from "@lit/task";
 
-import {isErrorResponse} from "@/nvapi-response";
-import type {NVAPIResponse} from "@/nvapi-response";
-import type {WatchV3Response} from "@/watch-data";
-import type {Threads, FlattedComment} from "@/comment-list";
+import {isErrorResponse, NvComment} from "@nico-zenza/api-wrapper";
+import type {WatchData} from "@nico-zenza/api-wrapper";
+import type {FlattedComment} from "@/comment-list";
 
 import type {PlayerInfoPanelCommentsTab} from "./";
 
@@ -13,14 +12,14 @@ type ReactiveControllerHost = PlayerInfoPanelCommentsTab;
 
 export class NVCommentController implements ReactiveController {
   #host: ReactiveControllerHost;
-  #task: Task<[WatchV3Response | undefined], FlattedComment[]>;
+  #task: Task<[WatchData | undefined], FlattedComment[]>;
 
   constructor(host: ReactiveControllerHost) {
     this.#host = host;
 
-    this.#task = new Task<[WatchV3Response | undefined], FlattedComment[]>(
+    this.#task = new Task<[WatchData | undefined], FlattedComment[]>(
       this.#host,
-      async ([watchData]: [WatchV3Response | undefined], {signal}) => {
+      async ([watchData], {signal}) => {
         if (watchData == null) {
           return initialState;
         }
@@ -29,27 +28,25 @@ export class NVCommentController implements ReactiveController {
 
         this.#host.playerMessage.info("コメント読み込み中", watchData.video.id);
 
-        let json: NVAPIResponse<Threads>;
-        try {
-          const res = await fetch(new URL("/v1/threads", nvComment.server), {
-            method: "POST",
-            body: JSON.stringify({
-              additionals: {},
-              params: nvComment.params,
-              threadKey: nvComment.threadKey,
-            }),
-            headers: {"X-Frontend-Id": "6", "X-Frontend-Version": "0"},
-            signal,
-          });
-          json = (await res.json()) as typeof json;
-        } catch {
-          const error = new Error(
-            `Failed to fetch comments [${nvComment.params.targets[0]?.id ?? "unknown"}]`,
-          );
-          this.#host.playerMessage.failure(error, watchData.video.id);
+        const json = await new NvComment(nvComment.server).v1.threads
+          .post(
+            {
+              body: {
+                additionals: {},
+                params: nvComment.params,
+                threadKey: nvComment.threadKey,
+              },
+            },
+            {signal},
+          )
+          .catch(() => {
+            const error = new Error(
+              `Failed to fetch comments [${nvComment.params.targets[0]?.id ?? "unknown"}]`,
+            );
+            this.#host.playerMessage.failure(error, watchData.video.id);
 
-          throw error;
-        }
+            throw error;
+          });
 
         if (isErrorResponse(json)) {
           const {meta, data} = json;

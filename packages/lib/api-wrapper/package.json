@@ -1,0 +1,21 @@
+{
+  "name": "@nico-zenza/api-wrapper",
+  "version": "0.1.0",
+  "description": "nicovideo.jp の API ラッパー",
+  "main": "dist/index.js",
+  "scripts": {
+    "test": "NODE_ENV=test node --import tsx/esm --test src/**/*.spec.ts",
+    "build:lib": "tsc --build"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kphrx/nico-zenza.git"
+  },
+  "author": "kphrx",
+  "license": "WTFPL",
+  "bugs": {
+    "url": "https://github.com/kphrx/nico-zenza/issues"
+  },
+  "homepage": "https://github.com/kphrx/nico-zenza#readme",
+  "type": "module"
+}

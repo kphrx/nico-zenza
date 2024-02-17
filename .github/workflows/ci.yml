@@ -37,6 +37,7 @@ jobs:
           check-latest: true
           cache: npm
       - run: npm ci
+      - run: npm run build:lib
       - run: npm run lint
 
   test:
@@ -51,6 +52,7 @@ jobs:
           check-latest: true
           cache: npm
       - run: npm ci
+      - run: npm run build:lib
       - run: npm test
 
   pack:

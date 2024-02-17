@@ -1,7 +1,7 @@
 :host {
   display: none;
 }
-:host(:not([data-video-id=""])) {
+:host([data-video-id]) {
   display: block;
 }
 

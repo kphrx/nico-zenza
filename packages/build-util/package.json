@@ -3,7 +3,9 @@
   "version": "0.1.0",
   "description": "build utilities",
   "main": "dist/index.js",
-  "scripts": {},
+  "scripts": {
+    "build:lib": "tsc --build"
+  },
   "author": "kPherox <kphrx@kpherox.dev>",
   "license": "WTFPL",
   "type": "module",

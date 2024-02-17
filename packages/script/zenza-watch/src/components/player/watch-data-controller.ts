@@ -2,9 +2,12 @@ import type {ReactiveController} from "lit";
 import type {StatusRenderer} from "@lit/task";
 import {initialState, Task} from "@lit/task";
 
-import {isErrorResponse} from "@/nvapi-response";
-import type {NVAPIResponse} from "@/nvapi-response";
-import type {WatchV3Response} from "@/watch-data";
+import {isErrorResponse, WwwApi} from "@nico-zenza/api-wrapper";
+import type {
+  ApiResponseWithStatus,
+  VideoId,
+  WatchData,
+} from "@nico-zenza/api-wrapper";
 
 import type {PlayerDialog} from "./dialog";
 
@@ -25,28 +28,26 @@ export class WatchDataController implements ReactiveController {
 
   #isLoggedIn = true;
   #host: ReactiveControllerHost;
-  #task: Task<[string], WatchV3Response>;
+  #task: Task<[VideoId | `${number}` | undefined], WatchData>;
 
   constructor(host: ReactiveControllerHost) {
     this.#host = host;
-    this.#task = new Task<[string], WatchV3Response>(
+    this.#task = new Task<[VideoId | `${number}` | undefined], WatchData>(
       host,
-      async ([videoId]: [string], {signal}) => {
-        if (videoId?.trim() === "") {
+      async ([videoId], {signal}) => {
+        if (videoId == null) {
           return initialState;
         }
 
         this.#host.playerMessage.info("動画情報読み込み中", videoId);
 
-        const json = await this.#fetchWatchV3API(
-          videoId,
-          WatchDataController.#trackId(),
-          signal,
-        ).catch((e) => {
-          this.#host.playerMessage.failure(e, videoId);
+        const json = await this.#fetchWatchV3API({videoId, signal}).catch(
+          (e) => {
+            this.#host.playerMessage.failure(e, videoId);
 
-          throw e;
-        });
+            throw e;
+          },
+        );
 
         if (isErrorResponse(json)) {
           const {meta, data} = json;
@@ -69,25 +70,25 @@ export class WatchDataController implements ReactiveController {
     this.#host.addController(this);
   }
 
-  #fetchWatchV3API = async (
-    videoId: string,
-    trackId: string,
-    signal: AbortSignal,
-  ): Promise<NVAPIResponse<WatchV3Response>> => {
-    const url = new URL(
-      `https://www.nicovideo.jp/api/watch/${this.#isLoggedIn ? "v3" : "v3_guest"}/${videoId}`,
-    );
-
-    url.searchParams.set("actionTrackId", trackId);
-    url.searchParams.set("additionals", "series");
+  #fetchWatchV3API = async ({
+    videoId,
+    actionTrackId = WatchDataController.#trackId(),
+    signal,
+  }: {
+    videoId: VideoId | `${number}`;
+    actionTrackId?: string;
+    signal: AbortSignal;
+  }): Promise<ApiResponseWithStatus<WatchData>> => {
+    const watchApiWrapper = new WwwApi().watch;
+    const client = this.#isLoggedIn
+      ? watchApiWrapper.v3(videoId)
+      : watchApiWrapper.v3Guest(videoId);
 
     try {
-      const res = await fetch(url, {
-        headers: {"X-Frontend-Id": "6", "X-Frontend-Version": "0"},
-        credentials: this.#isLoggedIn ? "include" : "omit",
-        signal,
-      });
-      const json = (await res.json()) as NVAPIResponse<WatchV3Response>;
+      const json = await client.get(
+        {params: {actionTrackId, additionals: "series"}},
+        {signal},
+      );
 
       if (
         !isErrorResponse(json) ||
@@ -100,11 +101,10 @@ export class WatchDataController implements ReactiveController {
 
       this.#isLoggedIn = false;
 
-      return await this.#fetchWatchV3API(
+      return await this.#fetchWatchV3API({
         videoId,
-        WatchDataController.#trackId(),
         signal,
-      );
+      });
     } catch (e) {
       console.error(e);
       throw new Error("Failed to fetch");
@@ -113,7 +113,7 @@ export class WatchDataController implements ReactiveController {
 
   hostUpdate() {}
 
-  render(renderFunctions: StatusRenderer<WatchV3Response>) {
+  render(renderFunctions: StatusRenderer<WatchData>) {
     return this.#task.render(renderFunctions);
   }
 }

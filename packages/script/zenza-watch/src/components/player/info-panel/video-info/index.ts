@@ -2,10 +2,10 @@ import {LitElement, html, nothing} from "lit";
 import {customElement} from "lit/decorators";
 import {consume} from "@lit/context";
 
+import type {VideoId, VideoListItem} from "@nico-zenza/api-wrapper";
 import {ICON, THUMBNAIL} from "@/constants";
 import {watchDataContext} from "@/contexts/watch-data-context";
 import type {WatchDataContext} from "@/contexts/watch-data-context";
-import type {SeriesVideo} from "@/watch-data";
 import {createCustomEvent} from "@/event";
 
 import {PlayerInfoPanelVideoCard} from "./card";
@@ -115,7 +115,7 @@ export class PlayerInfoPanelVideoInfoTab extends LitElement {
       "text/html",
     ).body;
 
-    const regex = /^\/watch\/([a-z0-9]+)/;
+    const regex = /^\/watch\/((sm|so|nm)?([0-9]+))/;
     return Array.from(desc.childNodes).reduce<ChildNode[]>((acc, cur) => {
       acc.push(cur);
       if (!(cur instanceof HTMLAnchorElement) || cur.className !== "watch") {
@@ -130,7 +130,10 @@ export class PlayerInfoPanelVideoInfoTab extends LitElement {
         return acc;
       }
 
-      const id = regex.exec(new URL(cur.href).pathname)?.[1];
+      const id = regex.exec(new URL(cur.href).pathname)?.[1] as
+        | VideoId
+        | `${number}`
+        | undefined;
       if (id == null) {
         return acc;
       }
@@ -149,7 +152,7 @@ export class PlayerInfoPanelVideoInfoTab extends LitElement {
     return html`<p class="description">${this.#desc ?? nothing}</p>`;
   }
 
-  #seriesVideo = (info: SeriesVideo, isPrev: boolean) => {
+  #seriesVideo = (info: VideoListItem, isPrev: boolean) => {
     const id = info.id;
 
     return html`<div class="${isPrev ? "prev" : "next"}">
@@ -199,7 +202,7 @@ export class PlayerInfoPanelVideoInfoTab extends LitElement {
     </div>`;
   }
 
-  #clickVideo(videoId: string) {
+  #clickVideo(videoId: VideoId | `${number}`) {
     return (ev: MouseEvent) => {
       ev.preventDefault();
 

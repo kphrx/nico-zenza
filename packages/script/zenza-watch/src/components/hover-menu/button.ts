@@ -1,17 +1,22 @@
 import {LitElement, html} from "lit";
 import {customElement, property} from "lit/decorators";
 
+import type {VideoId} from "@nico-zenza/api-wrapper";
+
 import sheet from "./button.css" with {type: "css"};
 
 type ClickEvent = GlobalEventHandlersEventMap["click"];
-type OnClickButton = (event: ClickEvent, videoId: string) => void;
+type OnClickButton = (
+  event: ClickEvent,
+  videoId: VideoId | `${number}`,
+) => void;
 
 @customElement("zenza-hover-menu-button")
 export class HoverMenuButton extends LitElement {
   static styles = sheet;
 
   @property({attribute: "data-video-id", reflect: true})
-  accessor videoId: string = "";
+  accessor videoId: VideoId | `${number}` | undefined;
 
   #label: string;
   #onClickButton: OnClickButton;
@@ -30,6 +35,8 @@ export class HoverMenuButton extends LitElement {
   }
 
   #onClick(ev: ClickEvent) {
-    this.#onClickButton(ev, this.videoId);
+    if (this.videoId != null) {
+      this.#onClickButton(ev, this.videoId);
+    }
   }
 }

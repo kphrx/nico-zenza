@@ -2,6 +2,8 @@ import {LitElement, html, css} from "lit";
 import {customElement, property} from "lit/decorators";
 import {styleMap} from "lit/directives/style-map";
 
+import type {VideoId} from "@nico-zenza/api-wrapper";
+
 import {MouseController} from "./mouse-controller";
 import type {HoverMenuButton} from "./button";
 
@@ -29,7 +31,7 @@ export class RightHoverMenu extends LitElement {
   #mouse = new MouseController(this);
 
   @property({attribute: "data-video-id", reflect: true})
-  accessor videoId = "";
+  accessor videoId: VideoId | `${number}` | undefined;
 
   get #menuSlot(): HTMLSlotElement | null {
     return this.shadowRoot?.querySelector('slot[name="menu"]') ?? null;

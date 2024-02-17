@@ -1,13 +1,14 @@
 import {LitElement, html, nothing} from "lit";
 import {customElement, property} from "lit/decorators";
 
+import type {VideoId} from "@nico-zenza/api-wrapper";
 import {THUMBNAIL} from "@/constants";
 import {durationToTimestamp} from "@/utils";
 
 import sheet from "./card.css" with {type: "css"};
 
 type ConstructorOption<
-  T = {info: ThumbnailInfo} | {videoId: string},
+  T = {info: ThumbnailInfo} | {videoId: VideoId | `${number}`},
   A = {onclick?: (ev: MouseEvent) => void},
 > = A | (A & T);
 
@@ -43,7 +44,7 @@ export class PlayerInfoPanelVideoCard extends LitElement {
 
   // TODO: create task to get thumbnail info from video id
   @property()
-  accessor videoId: string | undefined;
+  accessor videoId: VideoId | `${number}` | undefined;
 
   @property({attribute: false})
   accessor info: ThumbnailInfo | undefined;
