@@ -228,15 +228,13 @@ export class PlayerControls extends LitElement {
       rectPosition *
       Math.max(this.totalDuration, this.watchData?.video.duration ?? 0);
     window.dispatchEvent(
-      createCustomEvent("zenzawatch:seeking", {detail: this.seekPosition}),
+      createCustomEvent("zenzawatch:seeking", this.seekPosition),
     );
 
     if (end) {
       this.currentPosition = this.seekPosition;
       window.dispatchEvent(
-        createCustomEvent("zenzawatch:seeked", {
-          detail: {playing: !this.paused},
-        }),
+        createCustomEvent("zenzawatch:seeked", {playing: !this.paused}),
       );
     }
   };
@@ -312,9 +310,10 @@ export class PlayerControls extends LitElement {
         | PlaybackRate
         | undefined) ?? "1";
     window.dispatchEvent(
-      createCustomEvent("zenzawatch:changePlaybackRate", {
-        detail: parseFloat(this.playbackRate),
-      }),
+      createCustomEvent(
+        "zenzawatch:changePlaybackRate",
+        parseFloat(this.playbackRate),
+      ),
     );
   };
 
@@ -344,9 +343,7 @@ export class PlayerControls extends LitElement {
     this.currentVolume = Math.floor(rectPosition * 100);
     this.muted = this.currentVolume === 0;
     window.dispatchEvent(
-      createCustomEvent("zenzawatch:changeVolume", {
-        detail: this.currentVolume,
-      }),
+      createCustomEvent("zenzawatch:changeVolume", this.currentVolume),
     );
   };
 
@@ -379,9 +376,7 @@ export class PlayerControls extends LitElement {
     } else {
       window.dispatchEvent(createCustomEvent("zenzawatch:mute"));
       window.dispatchEvent(
-        createCustomEvent("zenzawatch:changeVolume", {
-          detail: this.#beforeVolume,
-        }),
+        createCustomEvent("zenzawatch:changeVolume", this.#beforeVolume),
       );
     }
     setTimeout(() => {

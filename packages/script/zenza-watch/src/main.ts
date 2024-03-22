@@ -22,9 +22,7 @@ export default function main() {
           return;
         }
 
-        dispatchEvent(
-          createCustomEvent("zenzawatch:playeropen", {detail: {videoId}}),
-        );
+        dispatchEvent(createCustomEvent("zenzawatch:playeropen", {videoId}));
       }),
     )
     .setAttribute("slot", "menu");
