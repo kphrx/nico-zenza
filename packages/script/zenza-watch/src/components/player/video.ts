@@ -66,16 +66,18 @@ export class PlayerVideo extends LitElement {
     this.video.autoplay = true;
     this.video.addEventListener("timeupdate", () => {
       window.dispatchEvent(
-        createCustomEvent("zenzawatch:updateCurrentPosition", {
-          detail: this.video.currentTime,
-        }),
+        createCustomEvent(
+          "zenzawatch:updateCurrentPosition",
+          this.video.currentTime,
+        ),
       );
     });
     this.video.addEventListener("progress", () => {
       window.dispatchEvent(
-        createCustomEvent("zenzawatch:updateBuffered", {
-          detail: timeRangesToIterable(this.video.buffered),
-        }),
+        createCustomEvent(
+          "zenzawatch:updateBuffered",
+          timeRangesToIterable(this.video.buffered),
+        ),
       );
     });
     this.video.addEventListener("play", () => {
@@ -127,9 +129,10 @@ export class PlayerVideo extends LitElement {
 
     this.hls.on(Events.LEVEL_LOADED, (_eventName, data) => {
       window.dispatchEvent(
-        createCustomEvent("zenzawatch:updateTotalDuration", {
-          detail: data.details.totalduration,
-        }),
+        createCustomEvent(
+          "zenzawatch:updateTotalDuration",
+          data.details.totalduration,
+        ),
       );
     });
 

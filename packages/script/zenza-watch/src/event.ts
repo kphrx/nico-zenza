@@ -48,7 +48,10 @@ export const createCustomEvent = <
     : never,
 >(
   type: K,
-  ...eventInitDict: T extends undefined | void
-    ? [CustomEventInit<T>?]
-    : [Omit<CustomEventInit, "detail"> & {detail: T}]
-) => new CustomEvent(type, ...eventInitDict);
+  ...options: T extends undefined | void
+    ? [T?, CustomEventInit<T>?]
+    : [T, CustomEventInit<T>?]
+) => {
+  const [detail, eventInitDict] = options;
+  return new CustomEvent(type, {...eventInitDict, detail});
+};

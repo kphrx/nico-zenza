@@ -207,7 +207,7 @@ export class PlayerInfoPanelVideoInfoTab extends LitElement {
       ev.preventDefault();
 
       window.dispatchEvent(
-        createCustomEvent("zenzawatch:playeropen", {detail: {videoId}}),
+        createCustomEvent("zenzawatch:playeropen", {videoId}),
       );
     };
   }
