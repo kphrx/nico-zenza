@@ -17,8 +17,8 @@ export const ORDER_TYPES = [
 ] as const;
 export type CommentsOrderTypes =
   `${(typeof ORDER_TYPES)[number][0]}:${(typeof ORDER_TYPES)[number][1]}`;
-const toOrder = (orderType: (typeof ORDER_TYPES)[number]) =>
-  `${orderType[0]}:${orderType[1]}` as CommentsOrderTypes;
+const toOrder = (orderType: (typeof ORDER_TYPES)[number]): CommentsOrderTypes =>
+  `${orderType[0]}:${orderType[1]}`;
 const ORDERS = ORDER_TYPES.map(toOrder);
 export const isOrderType = (tag: string): tag is CommentsOrderTypes => {
   return (ORDERS as readonly string[]).includes(tag);
