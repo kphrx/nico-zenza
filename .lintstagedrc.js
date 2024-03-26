@@ -1,6 +1,6 @@
 export default {
   "*.{ts,js}": [
-    "eslint --ignore-path .gitignore --fix",
+    "eslint --fix",
     "prettier --ignore-path .gitignore --write --ignore-unknown",
   ],
   "!*.{ts,js}": "prettier --ignore-path .gitignore --write --ignore-unknown",
