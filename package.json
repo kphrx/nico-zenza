@@ -13,7 +13,7 @@
     "build:dev": "NODE_ENV=development npm run build:script",
     "build:prod": "NODE_ENV=production npm run build:script",
     "test": "NODE_ENV=test npm test --workspaces --if-present",
-    "postinstall": "husky install"
+    "prepare": "husky"
   },
   "repository": {
     "type": "git",
