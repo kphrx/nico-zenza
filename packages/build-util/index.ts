@@ -116,7 +116,7 @@ export function rollupConfig({
               shippedProposals: true,
             },
           ],
-          "@babel/typescript",
+          ["@babel/typescript", {allowDeclareFields: true}],
         ],
         plugins: [
           useDecorator && ["@babel/proposal-decorators", {version: "2023-05"}],
