@@ -119,7 +119,7 @@ export function rollupConfig({
           ["@babel/typescript", {allowDeclareFields: true}],
         ],
         plugins: [
-          useDecorator && ["@babel/proposal-decorators", {version: "2023-05"}],
+          useDecorator && ["@babel/proposal-decorators", {version: "2023-11"}],
           [
             "babel-plugin-tsconfig-paths",
             {
