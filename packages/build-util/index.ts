@@ -89,7 +89,7 @@ export function rollupConfig({
     globals = {...externals?.objects, ...objects};
   }
 
-  const external = Object.keys(globals ?? {});
+  const external = [...Object.keys(globals ?? {}), /node_modules/];
 
   return defineConfig({
     input: "src/index.ts",

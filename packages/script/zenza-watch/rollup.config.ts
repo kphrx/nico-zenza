@@ -42,6 +42,7 @@ export default rollupConfig({
         url: "https://esm.run/lit@^3.1.1/directives/repeat",
       },
       {name: "@lit/task", url: "https://esm.run/@lit/task@^1.0.0"},
+      {name: "@lit/context", url: "https://esm.run/@lit/context@^1.1.0"},
     ],
   },
 });
