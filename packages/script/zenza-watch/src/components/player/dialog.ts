@@ -57,7 +57,7 @@ export class PlayerDialog extends LitElement {
   #video = new PlayerVideo();
 
   @provide({context: playerMessageContext})
-  accessor playerMessage = new PlayerMessage();
+  accessor playerMessage!: PlayerMessage;
 
   set videoId(value) {
     this.#open.videoId = value;
@@ -80,6 +80,7 @@ export class PlayerDialog extends LitElement {
     }
 
     super();
+    this.playerMessage = new PlayerMessage();
   }
 
   #timeoutId?: number;
