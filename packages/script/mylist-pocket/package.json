@@ -1,5 +1,5 @@
 {
-  "name": "@nico-zenza-script/mylist-pocket",
+  "name": "@nico-zenza/mylist-pocket",
   "version": "0.6.0-alpha.0",
   "description": "動画をあとで見る ＋ 簡易NG機能。 ZenzaWatchとの連携も可能。",
   "main": "dist/main.js",
@@ -19,5 +19,8 @@
     "url": "https://github.com/kphrx/nico-zenza/issues"
   },
   "homepage": "https://github.com/kphrx/nico-zenza/tree/master/packages/mylist-pocket#readme",
-  "type": "module"
+  "type": "module",
+  "keywords": [
+    "script"
+  ]
 }

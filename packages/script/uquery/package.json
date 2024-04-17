@@ -1,5 +1,5 @@
 {
-  "name": "@nico-zenza-script/uquery",
+  "name": "@nico-zenza/uquery",
   "version": "0.1.0-alpha.0",
   "description": "コンソールのデバッグ補助ツール(開発者用)",
   "main": "dist/main.js",
@@ -19,5 +19,8 @@
     "url": "https://github.com/kphrx/nico-zenza/issues"
   },
   "homepage": "https://github.com/kphrx/nico-zenza/tree/master/packages/uquery#readme",
-  "type": "module"
+  "type": "module",
+  "keywords": [
+    "script"
+  ]
 }

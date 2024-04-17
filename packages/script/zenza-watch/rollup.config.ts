@@ -1,4 +1,4 @@
-import {rollupConfig} from "build-util";
+import {rollupConfig} from "@nico-zenza/build-util";
 import pkg from "./package.json" with {type: "json"};
 
 const {

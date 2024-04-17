@@ -1,5 +1,5 @@
 {
-  "name": "@nico-zenza-script/cap-tube",
+  "name": "@nico-zenza/cap-tube",
   "version": "0.1.0-alpha.0",
   "description": "`S`キーでYouTubeのスクリーンショット保存",
   "main": "dist/main.js",
@@ -16,5 +16,8 @@
     "url": "https://github.com/kphrx/nico-zenza/issues"
   },
   "homepage": "https://github.com/kphrx/nico-zenza/tree/master/packages/cap-tube#readme",
-  "type": "module"
+  "type": "module",
+  "keywords": [
+    "script"
+  ]
 }

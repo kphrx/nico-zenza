@@ -20,7 +20,7 @@ const {stdout: queryStdout} = await promisify(execFile)("npm", [
   "--loglevel",
   env.npm_config_loglevel,
   "query",
-  '.workspace[name^="@nico-zenza-script/"]',
+  ".workspace:attr([keywords=script])",
 ]);
 const pkgs = JSON.parse(queryStdout);
 const padding = Math.max(...pkgs.map((x) => x.name.length));

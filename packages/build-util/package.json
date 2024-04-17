@@ -1,5 +1,5 @@
 {
-  "name": "build-util",
+  "name": "@nico-zenza/build-util",
   "version": "0.1.0",
   "description": "build utilities",
   "main": "dist/index.js",
@@ -9,5 +9,8 @@
   "author": "kPherox <kphrx@kpherox.dev>",
   "license": "WTFPL",
   "type": "module",
-  "types": "dist/index.d.ts"
+  "types": "dist/index.d.ts",
+  "keywords": [
+    "build"
+  ]
 }
