@@ -95,19 +95,12 @@ export function rollupConfig({
   useDecorator = false,
   externals,
 }: Partial<{
-  filename: string;
-  version: string;
-  description: string;
-  license: string;
-  author: string;
-  tracker: string;
-  homepage: string;
   useDecorator: boolean;
   externals: Partial<{
     cjsModules: RequiredKey<Dependency, "variableName">[];
     esModules: Dependency[];
   }>;
-}>) {
+}> = {}) {
   const {
     filename: baseFilename,
     version: baseVersion,
