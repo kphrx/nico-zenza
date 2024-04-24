@@ -1,5 +1,5 @@
 import {LitElement, html} from "lit";
-import {customElement, state} from "lit/decorators";
+import {customElement, state} from "lit/decorators.js";
 
 import sheet from "./switcher.css" with {type: "css"};
 

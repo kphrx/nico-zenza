@@ -1,12 +1,6 @@
 // ==UserScript==
 // @name          ZenzaWatch
 // @namespace     https://kpherox.dev/
-// @version       {{version}}
-// @description   {{description}}
-// @license       {{license}}
-// @author        {{author}}
-// @supportURL    {{tracker}}
-// @homepageURL   {{homepage}}
 // @match         *://*.nicovideo.jp/*
 ///@match         *://www.nicovideo.jp/*
 ///@match         *://ext.nicovideo.jp/
@@ -36,6 +30,5 @@
 // @exclude-match *://dic.nicovideo.jp/p/*
 // @exclude-match *://ext.nicovideo.jp/thumb/*
 // @exclude-match *://ext.nicovideo.jp/thumb_channel/*
-// @require       https://cdn.jsdelivr.net/npm/hls.js@^1.5.3
 // @run-at        document-body
 // ==/UserScript==

@@ -1,8 +1,8 @@
 import {LitElement, html, nothing, svg} from "lit";
-import {customElement, state} from "lit/decorators";
+import {customElement, state} from "lit/decorators.js";
 import {consume} from "@lit/context";
-import {classMap} from "lit/directives/class-map";
-import {styleMap} from "lit/directives/style-map";
+import {classMap} from "lit/directives/class-map.js";
+import {styleMap} from "lit/directives/style-map.js";
 
 import {watchDataContext} from "@/contexts/watch-data-context";
 import type {WatchDataContext} from "@/contexts/watch-data-context";
