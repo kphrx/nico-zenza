@@ -1,7 +1,7 @@
 import {LitElement, html} from "lit";
-import {customElement, state} from "lit/decorators";
-import {repeat} from "lit/directives/repeat";
-import {classMap} from "lit/directives/class-map";
+import {customElement, state} from "lit/decorators.js";
+import {repeat} from "lit/directives/repeat.js";
+import {classMap} from "lit/directives/class-map.js";
 
 import sheet from "./message.css" with {type: "css"};
 

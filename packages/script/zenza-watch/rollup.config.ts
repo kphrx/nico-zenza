@@ -28,18 +28,21 @@ export default rollupConfig({
     },
     esmodules: [
       {name: "lit", url: "https://esm.run/lit@^3.1.1"},
-      {name: "lit/decorators", url: "https://esm.run/lit@^3.1.1/decorators"},
       {
-        name: "lit/directives/class-map",
-        url: "https://esm.run/lit@^3.1.1/directives/class-map",
+        name: "lit/decorators.js",
+        url: "https://esm.run/lit@^3.1.1/decorators.js",
       },
       {
-        name: "lit/directives/style-map",
-        url: "https://esm.run/lit@^3.1.1/directives/style-map",
+        name: "lit/directives/class-map.js",
+        url: "https://esm.run/lit@^3.1.1/directives/class-map.js",
       },
       {
-        name: "lit/directives/repeat",
-        url: "https://esm.run/lit@^3.1.1/directives/repeat",
+        name: "lit/directives/style-map.js",
+        url: "https://esm.run/lit@^3.1.1/directives/style-map.js",
+      },
+      {
+        name: "lit/directives/repeat.js",
+        url: "https://esm.run/lit@^3.1.1/directives/repeat.js",
       },
       {name: "@lit/task", url: "https://esm.run/@lit/task@^1.0.0"},
       {name: "@lit/context", url: "https://esm.run/@lit/context@^1.1.0"},

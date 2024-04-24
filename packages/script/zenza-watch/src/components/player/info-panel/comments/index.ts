@@ -1,7 +1,7 @@
 import {LitElement, html} from "lit";
-import {customElement, state} from "lit/decorators";
+import {customElement, state} from "lit/decorators.js";
 import {consume, provide} from "@lit/context";
-import {classMap} from "lit/directives/class-map";
+import {classMap} from "lit/directives/class-map.js";
 
 import {watchDataContext} from "@/contexts/watch-data-context";
 import {commentContext} from "@/contexts/comment-context";

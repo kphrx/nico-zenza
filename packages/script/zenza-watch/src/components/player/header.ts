@@ -1,6 +1,6 @@
 import {LitElement, html, nothing} from "lit";
-import {customElement} from "lit/decorators";
-import {classMap} from "lit/directives/class-map";
+import {customElement} from "lit/decorators.js";
+import {classMap} from "lit/directives/class-map.js";
 import {consume} from "@lit/context";
 
 import {watchDataContext} from "@/contexts/watch-data-context";

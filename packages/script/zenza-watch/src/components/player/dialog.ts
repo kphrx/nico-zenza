@@ -1,5 +1,5 @@
 import {LitElement, html} from "lit";
-import {customElement, property} from "lit/decorators";
+import {customElement, property} from "lit/decorators.js";
 import {provide} from "@lit/context";
 
 import {watchDataContext} from "@/contexts/watch-data-context";

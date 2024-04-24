@@ -1,5 +1,5 @@
 import {LitElement, nothing} from "lit";
-import {customElement, property} from "lit/decorators";
+import {customElement, property} from "lit/decorators.js";
 import {consume} from "@lit/context";
 import {default as Hls, Events, ErrorTypes} from "hls.js";
 

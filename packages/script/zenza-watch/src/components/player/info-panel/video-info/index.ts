@@ -1,5 +1,5 @@
 import {LitElement, html, nothing} from "lit";
-import {customElement} from "lit/decorators";
+import {customElement} from "lit/decorators.js";
 import {consume} from "@lit/context";
 
 import type {VideoId, VideoListItem} from "@nico-zenza/api-wrapper";
