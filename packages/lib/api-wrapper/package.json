@@ -17,5 +17,8 @@
     "url": "https://github.com/kphrx/nico-zenza/issues"
   },
   "homepage": "https://github.com/kphrx/nico-zenza#readme",
-  "type": "module"
+  "type": "module",
+  "keywords": [
+    "lib"
+  ]
 }

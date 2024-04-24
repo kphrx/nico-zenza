@@ -1,5 +1,5 @@
 {
-  "name": "@nico-zenza-script/blog-parts-button",
+  "name": "@nico-zenza/blog-parts-button",
   "version": "0.1.0-alpha.0",
   "description": "ニコニコ動画のブログパーツにZenzaWatch起動用ボタンを追加",
   "main": "dist/main.js",
@@ -19,5 +19,8 @@
     "url": "https://github.com/kphrx/nico-zenza/issues"
   },
   "homepage": "https://github.com/kphrx/nico-zenza/tree/master/packages/blog-parts-button#readme",
-  "type": "module"
+  "type": "module",
+  "keywords": [
+    "script"
+  ]
 }

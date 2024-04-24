@@ -1,5 +1,5 @@
 {
-  "name": "@nico-zenza-script/heat-sync",
+  "name": "@nico-zenza/heat-sync",
   "version": "0.1.0-alpha.0",
   "description": "コメントの少ないところだけ自動で早送りする、忙しい人のためのZenzaWatch拡張",
   "main": "dist/main.js",
@@ -19,5 +19,8 @@
     "url": "https://github.com/kphrx/nico-zenza/issues"
   },
   "homepage": "https://github.com/kphrx/nico-zenza/tree/master/packages/heat-sync#readme",
-  "type": "module"
+  "type": "module",
+  "keywords": [
+    "script"
+  ]
 }

@@ -1,5 +1,5 @@
 {
-  "name": "@nico-zenza-script/game-pad",
+  "name": "@nico-zenza/game-pad",
   "version": "2.0.0-alpha.0",
   "description": "ZenzaWatchをゲームパッドで操作",
   "main": "dist/main.js",
@@ -19,5 +19,8 @@
     "url": "https://github.com/kphrx/nico-zenza/issues"
   },
   "homepage": "https://github.com/kphrx/nico-zenza/tree/master/packages/game-pad#readme",
-  "type": "module"
+  "type": "module",
+  "keywords": [
+    "script"
+  ]
 }

@@ -1,5 +1,5 @@
 {
-  "name": "@nico-zenza-script/zenza-watch",
+  "name": "@nico-zenza/zenza-watch",
   "version": "3.0.0-alpha.0",
   "description": "ニコニコ動画の速くて軽い動画プレイヤー",
   "main": "dist/main.js",
@@ -20,6 +20,9 @@
   },
   "homepage": "https://github.com/kphrx/nico-zenza/tree/master/packages/zenza-watch#readme",
   "type": "module",
+  "keywords": [
+    "script"
+  ],
   "dependencies": {
     "@lit/context": "^1.1.1",
     "@lit/task": "^1.0.0",

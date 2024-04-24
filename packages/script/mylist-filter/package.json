@@ -1,5 +1,5 @@
 {
-  "name": "@nico-zenza-script/mylist-filter",
+  "name": "@nico-zenza/mylist-filter",
   "version": "0.1.0-alpha.0",
   "description": "視聴不可能な動画だけ表示して一括削除とかできるやつ",
   "main": "dist/main.js",
@@ -19,5 +19,8 @@
     "url": "https://github.com/kphrx/nico-zenza/issues"
   },
   "homepage": "https://github.com/kphrx/nico-zenza/tree/master/packages/mylist-filter#readme",
-  "type": "module"
+  "type": "module",
+  "keywords": [
+    "script"
+  ]
 }

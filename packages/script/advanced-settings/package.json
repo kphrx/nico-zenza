@@ -1,5 +1,5 @@
 {
-  "name": "@nico-zenza-script/advanced-settings",
+  "name": "@nico-zenza/advanced-settings",
   "version": "0.4.0-alpha.0",
   "description": "ZenzaWatchの上級者向け設定。変更する時だけ有効にすればOK",
   "main": "dist/main.js",
@@ -19,5 +19,8 @@
     "url": "https://github.com/kphrx/nico-zenza/issues"
   },
   "homepage": "https://github.com/kphrx/nico-zenza/tree/master/packages/advanced-settings#readme",
-  "type": "module"
+  "type": "module",
+  "keywords": [
+    "script"
+  ]
 }
