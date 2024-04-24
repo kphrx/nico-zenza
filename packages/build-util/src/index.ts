@@ -7,20 +7,21 @@ import nodeResolve from "@rollup/plugin-node-resolve";
 import importCss from "rollup-plugin-import-css";
 import userscript from "rollup-plugin-userscript";
 
-function addSuffix(filename: string, version: string) {
-  if (env.NODE_ENV !== "production") {
-    const now = new Date().getTime();
+import {getPackageMetadata} from "./utils/packageMetadata.js";
+import {getScriptMetadata} from "./utils/scriptMetadata.js";
 
-    return {
-      filename: `${filename}+dev`,
-      version:
-        version?.indexOf("-") !== -1
-          ? `${version}.dev.${now}`
-          : `${version}-dev.${now}`,
-    };
+function addSuffix(filename: string, version: string) {
+  const now = new Date().getTime();
+
+  if (env.NODE_ENV === "production") {
+    return {filename, version};
   }
 
-  return {filename, version};
+  const separator = version.indexOf("-") !== -1 ? `.` : `-`;
+  return {
+    filename: `${filename}+dev`,
+    version: `${version}${separator}dev.${now}`,
+  };
 }
 
 interface ESModule {
@@ -53,34 +54,34 @@ const [${esms.map((m) => m.objectName).join(", ")}] = await Promise.all([
   };
 }
 
-interface Options {
-  filename: string;
-  version: string;
-  description?: string;
-  license?: string;
-  author?: string;
-  tracker?: string;
-  homepage?: string;
-  useDecorator?: boolean;
-  externals?: {
-    objects?: {[key: string]: string};
-    esmodules?: ESModule[];
-  };
-}
-
 export function rollupConfig({
-  filename: name,
-  version: ver,
-  description,
-  license,
-  author,
-  tracker,
-  homepage,
   useDecorator = false,
   externals,
-}: Options) {
+}: Partial<{
+  filename: string;
+  version: string;
+  description: string;
+  license: string;
+  author: string;
+  tracker: string;
+  homepage: string;
+  useDecorator: boolean;
+  externals: Partial<{
+    objects: {[key: string]: string};
+    esmodules: ESModule[];
+  }>;
+}>) {
+  const {
+    filename: baseFilename,
+    version: baseVersion,
+    description,
+    license,
+    author,
+    tracker,
+    homepage,
+  } = getPackageMetadata();
   const extensions = [".ts", ".tsx", ".mjs", ".js", ".jsx"];
-  const {filename, version} = addSuffix(name, ver);
+  const {filename, version} = addSuffix(baseFilename, baseVersion);
 
   const {banner, footer, objects} = bannerAndFooter(externals?.esmodules);
 
@@ -136,13 +137,14 @@ export function rollupConfig({
       nodeResolve({browser: false, extensions}),
       importCss({modules: true, minify: true}),
       userscript((meta) => {
-        return meta
-          .replace("{{version}}", version)
-          .replace("{{description}}", description ?? "-")
-          .replace("{{license}}", license ?? "-")
-          .replace("{{author}}", author ?? "-")
-          .replace("{{tracker}}", tracker ?? "-")
-          .replace("{{homepage}}", homepage ?? "-");
+        return getScriptMetadata(meta, {
+          version,
+          description,
+          license,
+          author: author.toString(),
+          supportURL: tracker,
+          homepageURL: homepage,
+        });
       }),
     ],
   });
