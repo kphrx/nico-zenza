@@ -24,35 +24,72 @@ function addSuffix(filename: string, version: string) {
   };
 }
 
-interface ESModule {
-  name: string;
-  objectName?: string;
-  url: string;
+interface Dependency {
+  moduleName: string;
+  packageName?: string;
+  variableName?: string;
 }
 
-function bannerAndFooter(esmodules: ESModule[] = []) {
-  let banner: string, objects: {[key: string]: string} | undefined;
+function getPackageName(dep: Dependency) {
+  return (
+    dep.packageName ?? dep.moduleName.match(/^(@[^/@]+\/)?[^/@]+/)?.[0] ?? ""
+  );
+}
 
-  if (esmodules.length > 0) {
-    const esms = esmodules.map((m) => ({
-      ...m,
-      objectName: m.objectName ?? m.name.replaceAll(/@|\/|-|\./g, "_"),
-    }));
-    banner = `(async () => {
-const [${esms.map((m) => m.objectName).join(", ")}] = await Promise.all([
-  ${esms.map((m) => `import("${m.url}")`).join(",\n  ")}
+function getVariableName(dep: Dependency) {
+  return (
+    dep.variableName ??
+    dep.moduleName
+      .replaceAll(/^@[^/@]+\//g, "")
+      .replaceAll(/-(\w)/g, (_, c: string) => c.toUpperCase())
+      .replaceAll(/[^\w]/g, "_")
+  );
+}
+
+function getExportPath(dep: Dependency) {
+  return dep.moduleName.slice(getPackageName(dep).length).trim();
+}
+
+function getRequireSet(
+  cjsModules: Dependency[],
+  deps: {[key: string]: string} = {},
+) {
+  const requireSet = new Set<string>();
+  for (const cjsDep of cjsModules) {
+    const pkgName = getPackageName(cjsDep);
+    requireSet.add(
+      `https://cdn.jsdelivr.net/npm/${pkgName}@${deps[pkgName]}${getExportPath(cjsDep)}`,
+    );
+  }
+
+  return requireSet;
+}
+
+function getEsmImporter(
+  esModules: Dependency[],
+  deps: {[key: string]: string} = {},
+) {
+  let banner = "(async () => {";
+
+  if (esModules.length > 0) {
+    banner += `
+const [${esModules.map(getVariableName).join(", ")}] = await Promise.all([
+  ${esModules
+    .map((m) => {
+      const pkgName = getPackageName(m);
+      return `import("https://esm.run/${pkgName}@${deps[pkgName]}${getExportPath(m)}")`;
+    })
+    .join(",\n  ")}
 ]);`;
-    objects = Object.fromEntries(esms.map((m) => [m.name, m.objectName]));
-  } else {
-    banner = "(async () => {";
   }
 
   return {
     banner,
     footer: "})();",
-    objects,
   };
 }
+
+type RequiredKey<T, K extends keyof T> = T & Required<Pick<T, K>>;
 
 export function rollupConfig({
   useDecorator = false,
@@ -67,8 +104,8 @@ export function rollupConfig({
   homepage: string;
   useDecorator: boolean;
   externals: Partial<{
-    objects: {[key: string]: string};
-    esmodules: ESModule[];
+    cjsModules: RequiredKey<Dependency, "variableName">[];
+    esModules: Dependency[];
   }>;
 }>) {
   const {
@@ -79,16 +116,21 @@ export function rollupConfig({
     author,
     tracker,
     homepage,
+    dependencies,
   } = getPackageMetadata();
   const extensions = [".ts", ".tsx", ".mjs", ".js", ".jsx"];
   const {filename, version} = addSuffix(baseFilename, baseVersion);
 
-  const {banner, footer, objects} = bannerAndFooter(externals?.esmodules);
+  const cjsModules = externals?.cjsModules ?? [];
+  const esModules = externals?.esModules ?? [];
+  const deps = [...cjsModules, ...esModules];
 
-  let globals: {[key: string]: string} | undefined;
-  if (externals?.objects != null || objects != null) {
-    globals = {...externals?.objects, ...objects};
-  }
+  const requireSet = getRequireSet(cjsModules, dependencies);
+  const {banner, footer} = getEsmImporter(esModules, dependencies);
+
+  const globals = Object.fromEntries(
+    deps.map((dep) => [dep.moduleName, getVariableName(dep)]),
+  );
 
   return defineConfig({
     input: "src/index.ts",
@@ -135,14 +177,18 @@ export function rollupConfig({
       nodeResolve({browser: false, extensions}),
       importCss({modules: true, minify: true}),
       userscript((meta) => {
-        return getScriptMetadata(meta, {
-          version,
-          description,
-          license,
-          author: author.toString(),
-          supportURL: tracker,
-          homepageURL: homepage,
-        });
+        return getScriptMetadata(
+          meta,
+          {
+            version,
+            description,
+            license,
+            author: author.toString(),
+            supportURL: tracker,
+            homepageURL: homepage,
+          },
+          requireSet,
+        );
       }),
     ],
   });
