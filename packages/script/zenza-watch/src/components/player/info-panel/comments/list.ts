@@ -89,10 +89,10 @@ export class PlayerInfoPanelCommentsList extends LitElement {
 
       const result = await new Promise<FlattedComment[]>((resolve, reject) => {
         signal.addEventListener("abort", () => {
-          reject(signal.reason);
+          reject(new Error(String(signal.reason)));
         });
 
-        return resolve(comments.toSorted(compares[order]));
+        resolve(comments.toSorted(compares[order]));
       });
 
       return result;

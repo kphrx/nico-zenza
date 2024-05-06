@@ -65,8 +65,8 @@ export class RightHoverMenu extends LitElement {
   render() {
     return html`<slot
       style=${styleMap({
-        top: `${this.#mouse.position?.top ?? 0}px`,
-        right: `${this.#mouse.position?.right ?? 0}px`,
+        top: `${String(this.#mouse.position?.top ?? 0)}px`,
+        right: `${String(this.#mouse.position?.right ?? 0)}px`,
       })}
       name="menu"
       @slotchange=${this.#onSlotchange.bind(this)}></slot>`;

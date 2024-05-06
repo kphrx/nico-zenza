@@ -115,18 +115,12 @@ export function getScriptMetadata(
   if (license != null) overrideMap.set("@license", license);
   if (supportURL != null) overrideMap.set("@supportURL", supportURL);
   if (homepageURL != null) overrideMap.set("@homepageURL", homepageURL);
-  const overrideEntries: [string, string][] = [
-    overrideMap.has("@author") && ["@author", overrideMap.get("@author")!],
-    overrideMap.has("@license") && ["@license", overrideMap.get("@license")!],
-    overrideMap.has("@supportURL") && [
-      "@supportURL",
-      overrideMap.get("@supportURL")!,
-    ],
-    overrideMap.has("@homepageURL") && [
-      "@homepageURL",
-      overrideMap.get("@homepageURL")!,
-    ],
-  ].filter((e): e is [string, string] => !!e);
+  const overrideEntries = [
+    ["@author", overrideMap.get("@author")],
+    ["@license", overrideMap.get("@license")],
+    ["@supportURL", overrideMap.get("@supportURL")],
+    ["@homepageURL", overrideMap.get("@homepageURL")],
+  ].filter((e): e is [string, string] => e[1] != null);
 
   const nameEntries: [string, string][] = [];
   for (const [lang, value] of Array.from(nameMap.entries()).toSorted(
@@ -151,10 +145,10 @@ export function getScriptMetadata(
   }
 
   entries.unshift(
-    ["@name", nameMap.get("und")!],
+    ["@name", nameMap.get("und") ?? "New Script"],
     ...nameEntries,
     ["@namespace", scriptNS ?? "http://example.com"],
-    ["@version", version ?? overrideMap.get("@version")!],
+    ["@version", version ?? overrideMap.get("@version") ?? "0.1.0"],
     ...descEntries,
     ...overrideEntries,
   );

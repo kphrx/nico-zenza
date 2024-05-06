@@ -29,7 +29,7 @@ export class PlayerVideo extends LitElement {
 
   video: HTMLVideoElement;
 
-  #src: string = "";
+  #src = "";
   #session = new SessionController(this);
 
   @consume({context: watchDataContext, subscribe: true})
@@ -118,11 +118,12 @@ export class PlayerVideo extends LitElement {
       this.playerMessage.success("動画読み込み完了", this.watchData?.video.id);
 
       console.info(
-        `manifest loaded, found ${data.levels.length} quality level`,
+        `manifest loaded, found ${data.levels.length.toString()} quality level`,
       );
       for (const level of data.levels) {
         console.debug(
-          `resolution: ${level.width}x${level.height}, fps: ${Math.floor(level.frameRate)}`,
+          `resolution: ${level.width.toString()}x${level.height.toString()},`,
+          `fps: ${Math.floor(level.frameRate).toString()}`,
         );
       }
     });
@@ -169,15 +170,15 @@ export class PlayerVideo extends LitElement {
 
   #seeked = (ev: GlobalEventHandlersEventMap["zenzawatch:seeked"]) => {
     if (ev.detail.playing) {
-      this.video.play().catch((e) => {
-        throw e;
+      this.video.play().catch((e: unknown) => {
+        console.error(e);
       });
     }
   };
 
   #play = () => {
-    this.video.play().catch((e) => {
-      throw e;
+    this.video.play().catch((e: unknown) => {
+      console.error(e);
     });
   };
 

@@ -10,7 +10,7 @@ export default tseslint.config(
     ignores: ["**/rollup.config.ts", "**/dist/", "**/.rollup.cache/"],
   },
   eslint.configs.recommended,
-  ...tseslint.configs.recommendedTypeChecked,
+  ...tseslint.configs.strictTypeChecked,
   {
     languageOptions: {
       globals: {
@@ -27,6 +27,6 @@ export default tseslint.config(
   },
   {
     files: ["**/*.js"],
-    ...tseslint.configs.disableTypeChecked,
+    extends: [tseslint.configs.disableTypeChecked],
   },
 );

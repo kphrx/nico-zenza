@@ -30,19 +30,23 @@ export const durationMsToTimestamp = (() => {
       acc[cur.type] = cur.value;
       return acc;
     }, {});
-    const days = Number(p.day ?? 1) - 1;
-    const hours = Number(p.hour ?? 0) + 24 * days;
+    p.day ??= "01";
+    p.hour ??= "00";
+    p.minute ??= "00";
+    p.second ??= "00";
 
-    if (isThumbnail && hours > 0) {
-      return `${hours}:${p.minute}:${p.second}`;
+    const days = Number(p.day) - 1;
+    const hours = Number(p.hour) + 24 * days;
+    const minutes = Number(p.minute);
+
+    if (!isThumbnail) {
+      return `${(minutes + 60 * hours).toString().padStart(2, "0")}:${p.second}`;
     }
 
-    if (isThumbnail) {
-      return `${Number(p.minute ?? 0)}:${p.second}`;
+    if (hours > 0) {
+      return `${hours.toString()}:${p.minute}:${p.second}`;
     }
-
-    const minutes = Number(p.minute ?? 0) + 60 * hours;
-    return `${String(minutes).padStart(2, "0")}:${p.second}`;
+    return `${minutes.toString()}:${p.second}`;
   };
 })();
 
@@ -73,7 +77,13 @@ export const dateFormatter = (() => {
       acc[cur.type] = cur.value;
       return acc;
     }, {});
+    p.year ??= "0";
+    p.month ??= "01";
+    p.day ??= "01";
+    p.hour ??= "00";
+    p.minute ??= "00";
+    p.second ??= "00";
 
-    return `${p.year}/${p.month}/${p.day} ${p.month}:${p.minute}:${p.second}`;
+    return `${p.year}/${p.month}/${p.day} ${p.hour}:${p.minute}:${p.second}`;
   };
 })();

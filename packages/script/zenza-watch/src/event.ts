@@ -48,7 +48,7 @@ export const createCustomEvent = <
     : never,
 >(
   type: K,
-  ...options: T extends undefined | void
+  ...options: T extends undefined
     ? [T?, CustomEventInit<T>?]
     : [T, CustomEventInit<T>?]
 ) => {

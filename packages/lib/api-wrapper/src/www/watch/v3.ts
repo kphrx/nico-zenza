@@ -33,11 +33,7 @@ export class V3 implements ApiEndpoints {
     const {headers: fetchHeaders, ...init} = {...fetchInit, method: "GET"};
 
     const url = new URL(this.endpoint);
-    url.search = new URLSearchParams(
-      Object.entries(options.params).filter(
-        (param): param is [string, string] => param[1] != null,
-      ),
-    ).toString();
+    url.search = new URLSearchParams(Object.entries(options.params)).toString();
 
     const {headers: defaultHeaders, ...defaultInit} = this.defaultInit;
 

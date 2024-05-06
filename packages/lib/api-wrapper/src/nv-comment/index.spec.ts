@@ -29,7 +29,7 @@ await describe("nv-comment v1", async () => {
           const [input, init] = args;
 
           if (input instanceof Request) {
-            throw assert.fail("not expected");
+            assert.fail("not expected");
           }
 
           assert.equal(

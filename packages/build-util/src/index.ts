@@ -11,13 +11,13 @@ import {getPackageMetadata} from "./utils/packageMetadata.js";
 import {getScriptMetadata} from "./utils/scriptMetadata.js";
 
 function addSuffix(filename: string, version: string) {
-  const now = new Date().getTime();
+  const now = new Date().getTime().toString();
 
   if (env.NODE_ENV === "production") {
     return {filename, version};
   }
 
-  const separator = version.indexOf("-") !== -1 ? `.` : `-`;
+  const separator = version.includes("-") ? `.` : `-`;
   return {
     filename: `${filename}+dev`,
     version: `${version}${separator}dev.${now}`,

@@ -23,7 +23,7 @@ export class WatchDataController implements ReactiveController {
       {length: 10},
       () => alnum[Math.floor(Math.random() * alnum.length)],
     ).join("");
-    return id + "_" + Date.now();
+    return `${id}_${Date.now().toString()}`;
   }
 
   #isLoggedIn = true;
@@ -42,7 +42,7 @@ export class WatchDataController implements ReactiveController {
         this.#host.playerMessage.info("動画情報読み込み中", videoId);
 
         const json = await this.#fetchWatchV3API({videoId, signal}).catch(
-          (e) => {
+          (e: unknown) => {
             this.#host.playerMessage.failure(e, videoId);
 
             throw e;
@@ -111,6 +111,7 @@ export class WatchDataController implements ReactiveController {
     }
   };
 
+  // eslint-disable-next-line @typescript-eslint/no-empty-function
   hostUpdate() {}
 
   render(renderFunctions: StatusRenderer<WatchData>) {

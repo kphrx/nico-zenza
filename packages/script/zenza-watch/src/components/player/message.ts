@@ -70,8 +70,8 @@ export class PlayerMessage extends LitElement {
         hide: true,
       },
       showMs,
-    ).catch((e) => {
-      throw e;
+    ).catch((e: unknown) => {
+      console.error(e);
     });
   }
 

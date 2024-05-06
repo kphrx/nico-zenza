@@ -3,7 +3,7 @@ import {customElement} from "lit/decorators.js";
 import {consume} from "@lit/context";
 
 import type {VideoId, VideoListItem} from "@nico-zenza/api-wrapper";
-import {ICON, THUMBNAIL} from "@/constants";
+import {ICON /* THUMBNAIL */} from "@/constants";
 import {watchDataContext} from "@/contexts/watch-data-context";
 import type {WatchDataContext} from "@/contexts/watch-data-context";
 import {createCustomEvent} from "@/event";
@@ -50,7 +50,7 @@ export class PlayerInfoPanelVideoInfoTab extends LitElement {
     }
 
     if (this.#ownerInfo != null) {
-      return `https://www.nicovideo.jp/user/${this.#ownerInfo.id}`;
+      return `https://www.nicovideo.jp/user/${this.#ownerInfo.id.toString()}`;
     }
 
     return "#";
@@ -64,7 +64,7 @@ export class PlayerInfoPanelVideoInfoTab extends LitElement {
 
   get #iconUrl() {
     if (this.#channelInfo != null) {
-      return this.#channelInfo.thumbnail?.url ?? ICON.CHANNEL;
+      return this.#channelInfo.thumbnail.url; // ICON.CHANNEL;
     }
 
     return this.#ownerInfo?.iconUrl ?? ICON.USER;
@@ -84,7 +84,7 @@ export class PlayerInfoPanelVideoInfoTab extends LitElement {
       return "#";
     }
 
-    return `https://www.nicovideo.jp/series/${this.#seriesInfo.id}`;
+    return `https://www.nicovideo.jp/series/${this.#seriesInfo.id.toString()}`;
   }
 
   get #series() {
@@ -94,7 +94,7 @@ export class PlayerInfoPanelVideoInfoTab extends LitElement {
 
     return html`<div class="series">
       <img
-        src=${this.#seriesInfo.thumbnailUrl ?? THUMBNAIL.SERIES}
+        src=${this.#seriesInfo.thumbnailUrl /* THUMBNAIL.SERIES */}
         alt="thumbnail" />
       <p class="name">
         <a href=${this.#seriesLink} rel="noopener" target="_blank">

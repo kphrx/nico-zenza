@@ -87,6 +87,7 @@ export class SessionController implements ReactiveController {
     this.#host.addController(this);
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-empty-function
   hostUpdate() {}
 
   render(renderFunctions: StatusRenderer<AccessRights>) {
