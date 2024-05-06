@@ -89,7 +89,7 @@ export function getPackageMetadata(): PackageMetadata {
     readFileSync(join(cwd(), "package.json"), "utf8"),
   ) as PackageJSON;
 
-  const filename = name.split("/").findLast(() => true)!;
+  const filename = name.split("/").toReversed()[0];
   const author = new Author(authorModel);
   const tracker = typeof bugs === "string" ? bugs : bugs?.url;
 
