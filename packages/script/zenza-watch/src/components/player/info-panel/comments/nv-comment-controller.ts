@@ -59,19 +59,22 @@ export class NVCommentController implements ReactiveController {
           throw error;
         }
 
-        const data = json.data.threads.reduce((prev, thread) => {
-          prev.push(
-            ...thread.comments.map((comment) => {
-              return {
-                ...comment,
-                postedAt: new Date(comment.postedAt).getTime(),
-                fork: thread.fork,
-                threadId: thread.id,
-              };
-            }),
-          );
-          return prev;
-        }, [] as FlattedComment[]);
+        const data = json.data.threads.reduce<FlattedComment[]>(
+          (prev, thread) => {
+            prev.push(
+              ...thread.comments.map((comment) => {
+                return {
+                  ...comment,
+                  postedAt: new Date(comment.postedAt).getTime(),
+                  fork: thread.fork,
+                  threadId: thread.id,
+                };
+              }),
+            );
+            return prev;
+          },
+          [],
+        );
 
         this.#host.playerMessage.success(
           "コメント読み込み完了",
@@ -86,6 +89,7 @@ export class NVCommentController implements ReactiveController {
     this.#host.addController(this);
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-empty-function
   hostUpdate() {}
 
   render(renderFunctions: StatusRenderer<FlattedComment[]>) {
