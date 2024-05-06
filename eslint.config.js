@@ -7,7 +7,7 @@ import prettier from "eslint-config-prettier";
 
 export default tseslint.config(
   {
-    ignores: ["dist/", "**/.rollup.cache/"],
+    ignores: ["**/rollup.config.ts", "**/dist/", "**/.rollup.cache/"],
   },
   eslint.configs.recommended,
   ...tseslint.configs.recommendedTypeChecked,
@@ -18,7 +18,7 @@ export default tseslint.config(
       },
       parserOptions: {
         project: true,
-        EXPERIMENTAL_useProjectService: true,
+        //EXPERIMENTAL_useProjectService: true,
       },
     },
     rules: {
@@ -28,13 +28,5 @@ export default tseslint.config(
   {
     files: ["**/*.js"],
     ...tseslint.configs.disableTypeChecked,
-  },
-  {
-    files: ["**/rollup.config.ts"],
-    rules: {
-      "@typescript-eslint/no-unsafe-assignment": "off",
-      "@typescript-eslint/no-unsafe-call": "off",
-      "@typescript-eslint/no-unsafe-member-access": "off",
-    },
   },
 );
