@@ -40,6 +40,18 @@ export class PlayerHeader extends LitElement {
     return this.watchData?.tag;
   }
 
+  get #labelOfRegisteredAt() {
+    if (this.#isUser) {
+      return "投稿日時";
+    }
+
+    if (this.#isChannel) {
+      return "配信日時";
+    }
+
+    return nothing;
+  }
+
   get #registeredAt() {
     return new Date(this.#videoInfo?.registeredAt ?? 0);
   }
@@ -50,10 +62,7 @@ export class PlayerHeader extends LitElement {
         ${this.#videoInfo?.title ?? nothing}
       </h2>
       <p class="date">
-        ${(this.#isUser && "投稿日時") ||
-        (this.#isChannel && "配信日時") ||
-        nothing}:
-        ${dateFormatter(this.#registeredAt)}
+        ${this.#labelOfRegisteredAt}: ${dateFormatter(this.#registeredAt)}
       </p>
       <ul class="count">
         <li>

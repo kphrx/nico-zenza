@@ -18,10 +18,6 @@ export default function main() {
     .appendChild(new LeftHoverMenu())
     .appendChild(
       new HoverMenuButton("Zen", (_, videoId) => {
-        if (videoId == null) {
-          return;
-        }
-
         dispatchEvent(createCustomEvent("zenzawatch:playeropen", {videoId}));
       }),
     )
