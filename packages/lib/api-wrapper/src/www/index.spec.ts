@@ -38,7 +38,7 @@ await describe("watch api", async () => {
           const [input] = args;
 
           if (input instanceof Request) {
-            throw assert.fail("not expected");
+            assert.fail("not expected");
           }
 
           assert.equal(

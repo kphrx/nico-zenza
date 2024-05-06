@@ -28,7 +28,7 @@ await describe("nvapi v1", async () => {
             const [input] = args;
 
             if (input instanceof Request) {
-              throw assert.fail("not expected");
+              assert.fail("not expected");
             }
 
             assert.equal(
@@ -67,7 +67,7 @@ await describe("nvapi v1", async () => {
             const [input] = args;
 
             if (input instanceof Request) {
-              throw assert.fail("not expected");
+              assert.fail("not expected");
             }
 
             assert.equal(
@@ -110,7 +110,7 @@ await describe("nvapi v1", async () => {
             const [input] = args;
 
             if (input instanceof Request) {
-              throw assert.fail("not expected");
+              assert.fail("not expected");
             }
 
             assert.equal(
@@ -150,7 +150,7 @@ await describe("nvapi v1", async () => {
             const [input] = args;
 
             if (input instanceof Request) {
-              throw assert.fail("not expected");
+              assert.fail("not expected");
             }
 
             assert.equal(
@@ -189,7 +189,7 @@ await describe("nvapi v1", async () => {
             const [input, init] = args;
 
             if (input instanceof Request) {
-              throw assert.fail("not expected");
+              assert.fail("not expected");
             }
 
             assert.equal(
@@ -241,7 +241,7 @@ await describe("nvapi v1", async () => {
             const [input, init] = args;
 
             if (input instanceof Request) {
-              throw assert.fail("not expected");
+              assert.fail("not expected");
             }
 
             assert.equal(
