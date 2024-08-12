@@ -26,7 +26,7 @@
   "dependencies": {
     "@lit/context": "^1.1.2",
     "@lit/task": "^1.0.1",
-    "hls.js": "^1.5.13",
-    "lit": "^3.1.4"
+    "hls.js": "^1.5.14",
+    "lit": "^3.2.0"
   }
 }
