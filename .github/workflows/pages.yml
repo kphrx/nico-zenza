@@ -14,6 +14,9 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
+      - name: Setup Pages
+        id: pages
+        uses: actions/configure-pages@v5
       - uses: actions/setup-node@v4
         with:
           node-version: lts/*
@@ -21,6 +24,8 @@ jobs:
           cache: npm
       - run: npm ci
       - name: Build
+        env:
+          DOWNLOAD_BASE_URL: ${{ steps.pages.outputs.base_url }}/scripts
         run: npm run build:dev
       - uses: actions/upload-artifact@v4
         with:
