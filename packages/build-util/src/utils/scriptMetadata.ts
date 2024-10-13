@@ -28,11 +28,21 @@ export function getScriptMetadata(
     author: string;
     supportURL: string;
     homepageURL: string;
+    downloadURL: string;
+    updateURL: string;
   }>,
   additionalRequireList = new Set<string>(),
 ) {
-  const {version, description, license, author, supportURL, homepageURL} =
-    overrideMetadata;
+  const {
+    version,
+    description,
+    license,
+    author,
+    supportURL,
+    homepageURL,
+    downloadURL,
+    updateURL,
+  } = overrideMetadata;
   const lines = meta.split("\n").map((line) => line.trim());
   const start = lines.indexOf(META_START);
   const end = lines.indexOf(META_END);
@@ -61,6 +71,8 @@ export function getScriptMetadata(
           "@author",
           "@supportURL",
           "@homepageURL",
+          "@downloadURL",
+          "@updateURL",
         ].includes(key)
       ) {
         overrideMap.set(key, value);
@@ -115,11 +127,15 @@ export function getScriptMetadata(
   if (license != null) overrideMap.set("@license", license);
   if (supportURL != null) overrideMap.set("@supportURL", supportURL);
   if (homepageURL != null) overrideMap.set("@homepageURL", homepageURL);
+  if (downloadURL != null) overrideMap.set("@downloadURL", downloadURL);
+  if (updateURL != null) overrideMap.set("@updateURL", updateURL);
   const overrideEntries = [
     ["@author", overrideMap.get("@author")],
     ["@license", overrideMap.get("@license")],
     ["@supportURL", overrideMap.get("@supportURL")],
     ["@homepageURL", overrideMap.get("@homepageURL")],
+    ["@downloadURL", overrideMap.get("@downloadURL")],
+    ["@updateURL", overrideMap.get("@updateURL")],
   ].filter((e): e is [string, string] => e[1] != null);
 
   const nameEntries: [string, string][] = [];

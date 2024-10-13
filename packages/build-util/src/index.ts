@@ -174,14 +174,23 @@ export function rollupConfig({
       userscript((meta) => {
         metadata = getScriptMetadata(
           meta,
-          {
-            version,
-            description,
-            license,
-            author: author.toString(),
-            supportURL: tracker,
-            homepageURL: homepage,
-          },
+          Object.assign(
+            {},
+            {
+              version,
+              description,
+              license,
+              author: author.toString(),
+              supportURL: tracker,
+              homepageURL: homepage,
+            },
+            env.DOWNLOAD_BASE_URL
+              ? {
+                  downloadURL: `${env.DOWNLOAD_BASE_URL}/${filename}.user.js`,
+                  updateURL: `${env.DOWNLOAD_BASE_URL}/${filename}.meta.js`,
+                }
+              : {},
+          ),
           requireSet,
         );
         return metadata;
