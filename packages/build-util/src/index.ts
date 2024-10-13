@@ -125,6 +125,8 @@ export function rollupConfig({
     deps.map((dep) => [dep.moduleName, getVariableName(dep)]),
   );
 
+  let metadata = "";
+
   return defineConfig({
     input: "src/index.ts",
     output: {
@@ -170,7 +172,7 @@ export function rollupConfig({
       nodeResolve({browser: false, extensions}),
       importCss({modules: true, minify: true}),
       userscript((meta) => {
-        return getScriptMetadata(
+        metadata = getScriptMetadata(
           meta,
           {
             version,
@@ -182,7 +184,18 @@ export function rollupConfig({
           },
           requireSet,
         );
+        return metadata;
       }),
+      {
+        name: "generate meta.js",
+        generateBundle() {
+          this.emitFile({
+            type: "prebuilt-chunk",
+            fileName: `${filename}.meta.js`,
+            code: `${metadata}\n`,
+          });
+        },
+      },
     ],
   });
 }
