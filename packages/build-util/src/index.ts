@@ -4,16 +4,19 @@ import {env} from "node:process";
 import {defineConfig} from "rollup";
 import babel from "@rollup/plugin-babel";
 import nodeResolve from "@rollup/plugin-node-resolve";
+import strip from "@rollup/plugin-strip";
 import importCss from "rollup-plugin-import-css";
 import userscript from "rollup-plugin-userscript";
 
 import {getPackageMetadata} from "./utils/packageMetadata.js";
 import {getScriptMetadata} from "./utils/scriptMetadata.js";
 
+const isDev = env.NODE_ENV !== "production";
+
 function addSuffix(filename: string, version: string) {
   const now = new Date().getTime().toString();
 
-  if (env.NODE_ENV === "production") {
+  if (!isDev) {
     return {filename, version};
   }
 
@@ -171,6 +174,12 @@ export function rollupConfig({
       }),
       nodeResolve({browser: false, extensions}),
       importCss({modules: true, minify: true}),
+      strip({
+        include: "**/*.ts",
+        functions: isDev
+          ? []
+          : ["console.debug", "console.time", "console.timeEnd"],
+      }),
       userscript((meta) => {
         metadata = getScriptMetadata(
           meta,
