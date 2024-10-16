@@ -5,7 +5,12 @@ import {ErrorResponse} from "../types";
 import {NvComment} from "./";
 
 await describe("nv-comment v1", async () => {
-  const nvComment = new NvComment("https://nv-comment.nicovideo.jp").v1;
+  const nvComment = new NvComment(
+    "https://nv-comment.nicovideo.jp",
+    (...args) => {
+      return fetch(...args);
+    },
+  ).v1;
 
   await describe("threads", async () => {
     const threads = nvComment.threads;

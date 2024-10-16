@@ -1,4 +1,10 @@
+export type FetchFunc = (
+  input: RequestInfo | URL,
+  init?: RequestInit,
+) => Promise<Response>;
+
 export interface ApiEndpoints {
+  fetch: FetchFunc;
   endpoint: URL;
 }
 

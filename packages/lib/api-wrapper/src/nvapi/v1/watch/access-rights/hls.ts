@@ -1,6 +1,6 @@
 import {mergeHeaders} from "../../../../utils";
 import {NvapiEndpoint} from "../../../types";
-import type {AccessRights} from "../../../../types";
+import type {AccessRights, FetchFunc} from "../../../../types";
 import type {AccessRightsOptions} from "./types";
 
 interface HlsOptions extends AccessRightsOptions {
@@ -9,13 +9,18 @@ interface HlsOptions extends AccessRightsOptions {
 }
 
 export class Hls extends NvapiEndpoint<AccessRights, HlsOptions> {
-  constructor(baseURL: URL | string) {
-    super("hls", baseURL, {
-      headers: {
-        "X-Request-With": "https://www.nicovideo.jp",
-        "Content-Type": "application/json",
+  constructor(baseURL: URL | string, customFetch?: FetchFunc) {
+    super(
+      "hls",
+      baseURL,
+      {
+        headers: {
+          "X-Request-With": "https://www.nicovideo.jp",
+          "Content-Type": "application/json",
+        },
       },
-    });
+      customFetch,
+    );
   }
 
   async post(options: HlsOptions, fetchInit?: RequestInit) {

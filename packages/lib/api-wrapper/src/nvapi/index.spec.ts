@@ -5,7 +5,9 @@ import {Nvapi} from "./";
 import type {ErrorResponse} from "../types";
 
 await describe("nvapi v1", async () => {
-  const nvapi = new Nvapi().v1;
+  const nvapi = new Nvapi(undefined, (...args) => {
+    return fetch(...args);
+  }).v1;
 
   await describe("playlist", async () => {
     await describe("series", async () => {
