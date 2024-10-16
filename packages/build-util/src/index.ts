@@ -32,7 +32,7 @@ interface Dependency {
 
 function getPackageName(dep: Dependency) {
   return (
-    dep.packageName ?? dep.moduleName.match(/^(@[^/@]+\/)?[^/@]+/)?.[0] ?? ""
+    dep.packageName ?? /^(@[^/@]+\/)?[^/@]+/.exec(dep.moduleName)?.[0] ?? ""
   );
 }
 
@@ -52,7 +52,7 @@ function getExportPath(dep: Dependency) {
 
 function getRequireSet(
   cjsModules: Dependency[],
-  deps: {[key: string]: string} = {},
+  deps: Record<string, string> = {},
 ) {
   const requireSet = new Set<string>();
   for (const cjsDep of cjsModules) {
@@ -67,7 +67,7 @@ function getRequireSet(
 
 function getEsmImporter(
   esModules: Dependency[],
-  deps: {[key: string]: string} = {},
+  deps: Record<string, string> = {},
 ) {
   let banner = "(async () => {";
 

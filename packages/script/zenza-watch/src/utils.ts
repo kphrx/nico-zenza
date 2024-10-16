@@ -21,7 +21,7 @@ export const durationMsToTimestamp = (() => {
     second: "2-digit",
   });
 
-  return (durationMs: number, isThumbnail: boolean = false) => {
+  return (durationMs: number, isThumbnail = false) => {
     const p = dateTimeFormat.formatToParts(new Date(durationMs)).reduce<
       Partial<{
         [key in Intl.DateTimeFormatPartTypes]: Intl.DateTimeFormatPart["value"];
@@ -50,10 +50,7 @@ export const durationMsToTimestamp = (() => {
   };
 })();
 
-export const durationToTimestamp = (
-  duration: number,
-  isThumbnail: boolean = false,
-) => {
+export const durationToTimestamp = (duration: number, isThumbnail = false) => {
   return durationMsToTimestamp(duration * 1000, isThumbnail);
 };
 

@@ -3,7 +3,7 @@ import type {ApiEndpoints, ApiResponseWithStatus} from "../types";
 
 export interface INvapiEndpoint<
   T,
-  O extends {params: {[key: string]: string | undefined}},
+  O extends {params: Record<string, string | undefined>},
 > extends ApiEndpoints {
   defaultInit: RequestInit;
 
@@ -20,7 +20,7 @@ export const HEADER = {
 
 export class NvapiEndpoint<
   T,
-  O extends {params: {[key: string]: string | undefined}},
+  O extends {params: Record<string, string | undefined>},
 > implements INvapiEndpoint<T, O>
 {
   endpoint: URL;

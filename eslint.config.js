@@ -11,14 +11,15 @@ export default tseslint.config(
   },
   eslint.configs.recommended,
   ...tseslint.configs.strictTypeChecked,
+  ...tseslint.configs.stylisticTypeChecked,
   {
     languageOptions: {
       globals: {
         ...globals.browser,
       },
       parserOptions: {
-        project: true,
-        //EXPERIMENTAL_useProjectService: true,
+        projectService: true,
+        tsconfigRootDir: import.meta.dirname,
       },
     },
     rules: {

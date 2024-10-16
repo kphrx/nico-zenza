@@ -67,7 +67,9 @@ const builds = pkgs.map(async ({name, version, location}) => {
 });
 
 const dest = join(import.meta.dirname, "dist");
-await rm(dest, {recursive: true}).catch(() => {});
+await rm(dest, {recursive: true}).catch((err) =>
+  console.warn(err.message ?? err),
+);
 await mkdir(dest);
 
 const scripts = await Promise.all(

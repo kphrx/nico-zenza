@@ -61,7 +61,7 @@ interface PackageJSON {
       }
     | string;
   homepage?: string;
-  dependencies?: {[key: string]: string};
+  dependencies?: Record<string, string>;
 }
 
 interface PackageMetadata {
@@ -72,7 +72,7 @@ interface PackageMetadata {
   author: Author;
   tracker?: string;
   homepage?: string;
-  dependencies?: {[key: string]: string};
+  dependencies?: Record<string, string>;
 }
 
 export function getPackageMetadata(): PackageMetadata {
