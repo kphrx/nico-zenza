@@ -13,8 +13,8 @@ const {bold, dim} = createColors({
 
 const userScriptReg =
   env.NODE_ENV != "production"
-    ? /^.*\+dev\.user\.js$/
-    : /^(?!.*\+dev\.user.js$).*\.user.js$/;
+    ? /^.*\+dev\.(user|meta)\.js$/
+    : /^(?!.*\+dev\.(user|meta).js$).*\.(user|meta).js$/;
 
 const {stdout: queryStdout} = await promisify(execFile)("npm", [
   "--loglevel",
@@ -25,46 +25,48 @@ const {stdout: queryStdout} = await promisify(execFile)("npm", [
 const pkgs = JSON.parse(queryStdout);
 const padding = Math.max(...pkgs.map((x) => x.name.length));
 
-const builds = pkgs.map(async ({name, version, location}) => {
-  const build = spawn("npm", ["run", "build:script", "-w", name]);
+const builds = await Promise.all(
+  pkgs.map(async ({name, version, location}) => {
+    const build = spawn("npm", ["run", "build:script", "-w", name]);
 
-  build.stdout.on("data", (x) => stdout.write(x.toString().trimStart()));
+    build.stdout.on("data", (x) => stdout.write(x.toString().trimStart()));
 
-  const wait = new Promise((resolve) => {
-    build.on("close", () => resolve());
-  });
+    const wait = new Promise((resolve) => {
+      build.on("close", () => resolve());
+    });
 
-  const [scope, pkgName] = name.padEnd(padding).split("/");
-  const prefixName = dim(`${scope}/`) + pkgName;
+    const [scope, pkgName] = name.padEnd(padding).split("/");
+    const prefixName = dim(`${scope}/`) + pkgName;
 
-  const readline = createInterface({input: build.stderr});
-  for await (const line of readline) {
-    stderr.write(bold(prefixName));
-    stderr.write(`\t${line}\n`);
-  }
+    const readline = createInterface({input: build.stderr});
+    for await (const line of readline) {
+      stderr.write(bold(prefixName));
+      stderr.write(`\t${line}\n`);
+    }
 
-  await wait;
+    await wait;
 
-  if (build.exitCode !== 0) {
-    throw {
-      name,
-      version,
-      code: build.exitCode,
-    };
-  }
-
-  const dest = join(import.meta.dirname, location, "dist");
-  for (const filename of await readdir(dest)) {
-    if (userScriptReg.test(filename)) {
-      return {
+    if (build.exitCode !== 0) {
+      throw {
         name,
         version,
-        filename,
-        path: join(dest, filename),
+        code: build.exitCode,
       };
     }
-  }
-});
+
+    const dest = join(import.meta.dirname, location, "dist");
+    return (await readdir(dest))
+      .filter((filename) => userScriptReg.test(filename))
+      .map((filename) => {
+        return {
+          name,
+          version,
+          filename,
+          path: join(dest, filename),
+        };
+      });
+  }),
+);
 
 const dest = join(import.meta.dirname, "dist");
 await rm(dest, {recursive: true}).catch((err) =>
@@ -73,9 +75,7 @@ await rm(dest, {recursive: true}).catch((err) =>
 await mkdir(dest);
 
 const scripts = await Promise.all(
-  builds.map(async (build) => {
-    const {path, filename, ...result} = await build;
-
+  builds.flat().map(async ({path, filename, ...result}) => {
     await rename(path, join(dest, filename));
 
     return {

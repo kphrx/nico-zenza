@@ -4,16 +4,19 @@ import {env} from "node:process";
 import {defineConfig} from "rollup";
 import babel from "@rollup/plugin-babel";
 import nodeResolve from "@rollup/plugin-node-resolve";
+import strip from "@rollup/plugin-strip";
 import importCss from "rollup-plugin-import-css";
 import userscript from "rollup-plugin-userscript";
 
 import {getPackageMetadata} from "./utils/packageMetadata.js";
 import {getScriptMetadata} from "./utils/scriptMetadata.js";
 
+const isDev = env.NODE_ENV !== "production";
+
 function addSuffix(filename: string, version: string) {
   const now = new Date().getTime().toString();
 
-  if (env.NODE_ENV === "production") {
+  if (!isDev) {
     return {filename, version};
   }
 
@@ -125,6 +128,8 @@ export function rollupConfig({
     deps.map((dep) => [dep.moduleName, getVariableName(dep)]),
   );
 
+  let metadata = "";
+
   return defineConfig({
     input: "src/index.ts",
     output: {
@@ -169,20 +174,46 @@ export function rollupConfig({
       }),
       nodeResolve({browser: false, extensions}),
       importCss({modules: true, minify: true}),
+      strip({
+        include: "**/*.ts",
+        functions: isDev
+          ? []
+          : ["console.debug", "console.time", "console.timeEnd"],
+      }),
       userscript((meta) => {
-        return getScriptMetadata(
+        metadata = getScriptMetadata(
           meta,
-          {
-            version,
-            description,
-            license,
-            author: author.toString(),
-            supportURL: tracker,
-            homepageURL: homepage,
-          },
+          Object.assign(
+            {},
+            {
+              version,
+              description,
+              license,
+              author: author.toString(),
+              supportURL: tracker,
+              homepageURL: homepage,
+            },
+            env.DOWNLOAD_BASE_URL
+              ? {
+                  downloadURL: `${env.DOWNLOAD_BASE_URL}/${filename}.user.js`,
+                  updateURL: `${env.DOWNLOAD_BASE_URL}/${filename}.meta.js`,
+                }
+              : {},
+          ),
           requireSet,
         );
+        return metadata;
       }),
+      {
+        name: "generate meta.js",
+        generateBundle() {
+          this.emitFile({
+            type: "prebuilt-chunk",
+            fileName: `${filename}.meta.js`,
+            code: `${metadata}\n`,
+          });
+        },
+      },
     ],
   });
 }
