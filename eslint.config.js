@@ -18,8 +18,8 @@ export default tseslint.config(
         ...globals.browser,
       },
       parserOptions: {
-        project: true,
-        //EXPERIMENTAL_useProjectService: true,
+        projectService: true,
+        tsconfigRootDir: import.meta.dirname,
       },
     },
     rules: {
