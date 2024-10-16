@@ -75,7 +75,7 @@ export class PlayerMessage extends LitElement {
     });
   }
 
-  info(message: string, context?: string, showMs: number = 3000) {
+  info(message: string, context?: string, showMs = 3000) {
     if (!this.isConnected) {
       return;
     }
@@ -83,7 +83,7 @@ export class PlayerMessage extends LitElement {
     this.#createMessage({type: "normal", message, showMs, context});
   }
 
-  success(message: string, context?: string, showMs: number = 4000) {
+  success(message: string, context?: string, showMs = 4000) {
     if (!this.isConnected) {
       return;
     }
@@ -91,7 +91,7 @@ export class PlayerMessage extends LitElement {
     this.#createMessage({type: "success", message, showMs, context});
   }
 
-  failure(error: unknown, context?: string, showMs: number = 6000) {
+  failure(error: unknown, context?: string, showMs = 6000) {
     if (!this.isConnected) {
       return;
     }

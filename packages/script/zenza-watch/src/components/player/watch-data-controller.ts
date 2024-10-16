@@ -111,8 +111,7 @@ export class WatchDataController implements ReactiveController {
     }
   };
 
-  // eslint-disable-next-line @typescript-eslint/no-empty-function
-  hostUpdate() {}
+  hostUpdate = undefined;
 
   render(renderFunctions: StatusRenderer<WatchData>) {
     return this.#task.render(renderFunctions);

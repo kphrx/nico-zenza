@@ -211,7 +211,7 @@ export class PlayerControls extends LitElement {
     }
   };
 
-  #seeking = (ev: PointerEvent, end: boolean = false) => {
+  #seeking = (ev: PointerEvent, end = false) => {
     const target = ev.target as HTMLDivElement | null;
     if (target == null) {
       return;

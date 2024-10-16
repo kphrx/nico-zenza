@@ -89,8 +89,7 @@ export class NVCommentController implements ReactiveController {
     this.#host.addController(this);
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-empty-function
-  hostUpdate() {}
+  hostUpdate = undefined;
 
   render(renderFunctions: StatusRenderer<FlattedComment[]>) {
     return this.#task.render(renderFunctions);

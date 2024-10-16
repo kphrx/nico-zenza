@@ -48,7 +48,7 @@ export function getScriptMetadata(
       if (!line.startsWith("// ")) return;
 
       line = line.slice(3).trim();
-      const matches = line.match(/^(\S+)(\s.*)?$/);
+      const matches = /^(\S+)(\s.*)?$/.exec(line);
 
       if (matches == null) return;
       const key = matches[1];
