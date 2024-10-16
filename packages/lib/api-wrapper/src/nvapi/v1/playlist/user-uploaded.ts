@@ -1,4 +1,4 @@
-import {ApiEndpoints} from "../../../types";
+import {ApiEndpoint, FetchFunc} from "../../../types";
 import {NvapiEndpoint} from "../../types";
 import type {Playlist} from "./types";
 
@@ -14,10 +14,12 @@ interface UserUploadedOptions {
   };
 }
 
-export class UserUploaded implements ApiEndpoints {
+export class UserUploaded implements ApiEndpoint {
+  fetch: FetchFunc;
   endpoint: URL;
 
-  constructor(baseURL: URL | string) {
+  constructor(baseURL: URL | string, customFetch: FetchFunc) {
+    this.fetch = customFetch;
     this.endpoint = new URL("user-uploaded/", baseURL);
   }
 
@@ -31,6 +33,7 @@ export class UserUploaded implements ApiEndpoints {
     const client = new NvapiEndpoint<Playlist, UserUploadedOptions>(
       userId,
       this.endpoint,
+      this.fetch,
     );
 
     return await client.request(options, init);
