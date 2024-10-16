@@ -1,26 +1,24 @@
-import type {ApiEndpoints} from "../../../types";
+import type {FetchFunc} from "../../../types";
 import {Series} from "./series";
 import {ChannelUploaded} from "./channel-uploaded";
 import {UserUploaded} from "./user-uploaded";
 import {Mylist} from "./mylist";
 import {WatchLater} from "./watch-later";
 
-export class Playlist implements ApiEndpoints {
-  endpoint: URL;
-
+export class Playlist {
   series: Series;
   channelUploaded: ChannelUploaded;
   userUploaded: UserUploaded;
   mylist: Mylist;
   watchLater: WatchLater;
 
-  constructor(baseURL: URL | string) {
-    this.endpoint = new URL("playlist/", baseURL);
+  constructor(baseURL: URL | string, customFetch: FetchFunc) {
+    const endpoint = new URL("playlist/", baseURL);
 
-    this.series = new Series(this.endpoint);
-    this.channelUploaded = new ChannelUploaded(this.endpoint);
-    this.userUploaded = new UserUploaded(this.endpoint);
-    this.mylist = new Mylist(this.endpoint);
-    this.watchLater = new WatchLater(this.endpoint);
+    this.series = new Series(endpoint, customFetch);
+    this.channelUploaded = new ChannelUploaded(endpoint, customFetch);
+    this.userUploaded = new UserUploaded(endpoint, customFetch);
+    this.mylist = new Mylist(endpoint, customFetch);
+    this.watchLater = new WatchLater(endpoint, customFetch);
   }
 }
