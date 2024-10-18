@@ -12,8 +12,8 @@ await describe("watch api", async () => {
 
     await it("endpoint url", () => {
       assert.equal(
-        "https://www.nicovideo.jp/api/watch/v3/sm9",
         v3.endpoint.toString(),
+        "https://www.nicovideo.jp/api/watch/v3/sm9",
       );
     });
   });
@@ -23,8 +23,8 @@ await describe("watch api", async () => {
 
     await it("endpoint url", () => {
       assert.equal(
-        "https://www.nicovideo.jp/api/watch/v3_guest/sm9",
         v3Guest.endpoint.toString(),
+        "https://www.nicovideo.jp/api/watch/v3_guest/sm9",
       );
     });
 
@@ -42,8 +42,8 @@ await describe("watch api", async () => {
           }
 
           assert.equal(
-            "https://www.nicovideo.jp/api/watch/v3_guest/sm9?actionTrackId=0_0",
             input.toString(),
+            "https://www.nicovideo.jp/api/watch/v3_guest/sm9?actionTrackId=0_0",
           );
 
           return Promise.resolve(Response.json(res));
@@ -51,8 +51,8 @@ await describe("watch api", async () => {
       );
 
       assert.equal(
-        404,
         (await v3Guest.get({params: {actionTrackId: "0_0"}})).meta.status,
+        404,
       );
     });
   });

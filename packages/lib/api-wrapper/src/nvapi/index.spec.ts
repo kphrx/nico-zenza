@@ -11,8 +11,8 @@ await describe("nvapi v1", async () => {
     await describe("series", async () => {
       await it("endpoint url", () => {
         assert.equal(
-          "https://nvapi.nicovideo.jp/v1/playlist/series/",
           nvapi.playlist.series.endpoint.toString(),
+          "https://nvapi.nicovideo.jp/v1/playlist/series/",
         );
       });
 
@@ -32,8 +32,8 @@ await describe("nvapi v1", async () => {
             }
 
             assert.equal(
-              "https://nvapi.nicovideo.jp/v1/playlist/series/74",
               input.toString(),
+              "https://nvapi.nicovideo.jp/v1/playlist/series/74",
             );
 
             return Promise.resolve(Response.json(res));
@@ -41,8 +41,8 @@ await describe("nvapi v1", async () => {
         );
 
         assert.equal(
-          404,
           (await nvapi.playlist.series.get("74", {params: {}})).meta.status,
+          404,
         );
       });
     });
@@ -50,8 +50,8 @@ await describe("nvapi v1", async () => {
     await describe("channel uploaded", async () => {
       await it("endpoint url", () => {
         assert.equal(
-          "https://nvapi.nicovideo.jp/v1/playlist/channel-uploaded/",
           nvapi.playlist.channelUploaded.endpoint.toString(),
+          "https://nvapi.nicovideo.jp/v1/playlist/channel-uploaded/",
         );
       });
 
@@ -71,8 +71,8 @@ await describe("nvapi v1", async () => {
             }
 
             assert.equal(
-              "https://nvapi.nicovideo.jp/v1/playlist/channel-uploaded/ch1?sortKey=registeredAt&sortOrder=asc",
               input.toString(),
+              "https://nvapi.nicovideo.jp/v1/playlist/channel-uploaded/ch1?sortKey=registeredAt&sortOrder=asc",
             );
 
             return Promise.resolve(Response.json(res));
@@ -80,12 +80,12 @@ await describe("nvapi v1", async () => {
         );
 
         assert.equal(
-          404,
           (
             await nvapi.playlist.channelUploaded.get("ch1", {
               params: {sortKey: "registeredAt", sortOrder: "asc"},
             })
           ).meta.status,
+          404,
         );
       });
     });
@@ -93,8 +93,8 @@ await describe("nvapi v1", async () => {
     await describe("user uploaded", async () => {
       await it("endpoint url", () => {
         assert.equal(
-          "https://nvapi.nicovideo.jp/v1/playlist/user-uploaded/",
           nvapi.playlist.userUploaded.endpoint.toString(),
+          "https://nvapi.nicovideo.jp/v1/playlist/user-uploaded/",
         );
       });
 
@@ -114,8 +114,8 @@ await describe("nvapi v1", async () => {
             }
 
             assert.equal(
-              "https://nvapi.nicovideo.jp/v1/playlist/user-uploaded/1",
               input.toString(),
+              "https://nvapi.nicovideo.jp/v1/playlist/user-uploaded/1",
             );
 
             return Promise.resolve(Response.json(res));
@@ -123,9 +123,9 @@ await describe("nvapi v1", async () => {
         );
 
         assert.equal(
-          404,
           (await nvapi.playlist.userUploaded.get("1", {params: {}})).meta
             .status,
+          404,
         );
       });
     });
@@ -133,8 +133,8 @@ await describe("nvapi v1", async () => {
     await describe("mylist", async () => {
       await it("endpoint url", () => {
         assert.equal(
-          "https://nvapi.nicovideo.jp/v1/playlist/mylist/",
           nvapi.playlist.mylist.endpoint.toString(),
+          "https://nvapi.nicovideo.jp/v1/playlist/mylist/",
         );
       });
 
@@ -154,8 +154,8 @@ await describe("nvapi v1", async () => {
             }
 
             assert.equal(
-              "https://nvapi.nicovideo.jp/v1/playlist/mylist/26",
               input.toString(),
+              "https://nvapi.nicovideo.jp/v1/playlist/mylist/26",
             );
 
             return Promise.resolve(Response.json(res));
@@ -163,8 +163,8 @@ await describe("nvapi v1", async () => {
         );
 
         assert.equal(
-          404,
           (await nvapi.playlist.mylist.get("26", {params: {}})).meta.status,
+          404,
         );
       });
     });
@@ -172,8 +172,8 @@ await describe("nvapi v1", async () => {
     await describe("watch later", async () => {
       await it("endpoint url", () => {
         assert.equal(
-          "https://nvapi.nicovideo.jp/v1/playlist/watch-later",
           nvapi.playlist.watchLater.endpoint.toString(),
+          "https://nvapi.nicovideo.jp/v1/playlist/watch-later",
         );
       });
 
@@ -193,24 +193,24 @@ await describe("nvapi v1", async () => {
             }
 
             assert.equal(
-              "https://nvapi.nicovideo.jp/v1/playlist/watch-later",
               input.toString(),
+              "https://nvapi.nicovideo.jp/v1/playlist/watch-later",
             );
 
             const headers = new Headers(init?.headers);
 
-            assert.equal("6", headers.get("X-Frontend-Id"));
-            assert.equal("0", headers.get("X-Frontend-Version"));
-            assert.equal("ja-jp", headers.get("X-Niconico-Language"));
+            assert.equal(headers.get("X-Frontend-Id"), "6");
+            assert.equal(headers.get("X-Frontend-Version"), "0");
+            assert.equal(headers.get("X-Niconico-Language"), "ja-jp");
 
             return Promise.resolve(Response.json(res));
           },
         );
 
         assert.equal(
-          404,
           (await nvapi.playlist.watchLater.get({params: {}, language: "ja-jp"}))
             .meta.status,
+          404,
         );
       });
     });
@@ -223,8 +223,8 @@ await describe("nvapi v1", async () => {
       await describe("hls", async () => {
         await it("endpoint url", () => {
           assert.equal(
-            "https://nvapi.nicovideo.jp/v1/watch/sm9/access-rights/hls",
             accessRights.hls.endpoint.toString(),
+            "https://nvapi.nicovideo.jp/v1/watch/sm9/access-rights/hls",
           );
         });
       });
@@ -245,15 +245,15 @@ await describe("nvapi v1", async () => {
             }
 
             assert.equal(
-              "https://nvapi.nicovideo.jp/v1/watch/sm9/access-rights/hls?actionTrackId=0_0",
               input.toString(),
+              "https://nvapi.nicovideo.jp/v1/watch/sm9/access-rights/hls?actionTrackId=0_0",
             );
 
             const headers = new Headers(init?.headers);
 
-            assert.equal("6", headers.get("X-Frontend-Id"));
-            assert.equal("0", headers.get("X-Frontend-Version"));
-            assert.equal("accessRightKey", headers.get("X-Access-Right-Key"));
+            assert.equal(headers.get("X-Frontend-Id"), "6");
+            assert.equal(headers.get("X-Frontend-Version"), "0");
+            assert.equal(headers.get("X-Access-Right-Key"), "accessRightKey");
 
             assert.equal(
               JSON.stringify({outputs: [["1080p", "192kbps"]]}),
@@ -265,7 +265,6 @@ await describe("nvapi v1", async () => {
         );
 
         assert.equal(
-          404,
           (
             await accessRights.hls.post({
               params: {actionTrackId: "0_0"},
@@ -274,6 +273,7 @@ await describe("nvapi v1", async () => {
               audios: ["192kbps"],
             })
           ).meta.status,
+          404,
         );
       });
     });
