@@ -12,8 +12,8 @@ await describe("nv-comment v1", async () => {
 
     await it("endpoint url", () => {
       assert.equal(
-        "https://nv-comment.nicovideo.jp/v1/threads",
         threads.endpoint.toString(),
+        "https://nv-comment.nicovideo.jp/v1/threads",
       );
     });
 
@@ -33,12 +33,12 @@ await describe("nv-comment v1", async () => {
           }
 
           assert.equal(
+            init?.body,
             JSON.stringify({
               additionals: {},
               params: {language: "", targets: []},
               threadKey: "",
             }),
-            init?.body,
           );
 
           return Promise.resolve(Response.json(res));
@@ -46,7 +46,6 @@ await describe("nv-comment v1", async () => {
       );
 
       assert.equal(
-        404,
         (
           await threads.post({
             body: {
@@ -56,6 +55,7 @@ await describe("nv-comment v1", async () => {
             },
           })
         ).meta.status,
+        404,
       );
     });
   });

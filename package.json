@@ -69,6 +69,18 @@
     "packages/build-util"
   ],
   "engines": {
-    "node": ">=20.11"
+    "node": ">=22.0.0"
+  },
+  "devEngines": {
+    "runtime": {
+      "name": "node",
+      "version": ">=22.0.0",
+      "onFail": "error"
+    },
+    "packageManager": {
+      "name": "npm",
+      "version": ">=10.9.0",
+      "onFail": "error"
+    }
   }
 }
