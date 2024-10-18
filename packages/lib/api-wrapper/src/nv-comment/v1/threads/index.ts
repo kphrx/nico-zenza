@@ -1,6 +1,7 @@
 import type {
   ApiEndpoints,
   ApiResponseWithStatus,
+  FetchFunc,
   NVComment,
   NVCommentThreads,
 } from "../../../types";
@@ -8,10 +9,12 @@ import {HEADER} from "../../../nvapi/types";
 import {mergeHeaders} from "../../../utils";
 
 export class Threads implements ApiEndpoints {
+  fetch: FetchFunc;
   endpoint: URL;
   defaultInit: RequestInit;
 
-  constructor(baseURL: URL | string) {
+  constructor(baseURL: URL | string, customFetch?: FetchFunc) {
+    this.fetch = customFetch ?? fetch;
     this.endpoint = new URL("threads", baseURL);
 
     this.defaultInit = {
@@ -40,7 +43,7 @@ export class Threads implements ApiEndpoints {
       throw new Error("not expected default header undefined");
     }
 
-    const res = await fetch(this.endpoint, {
+    const res = await this.fetch(this.endpoint, {
       ...defaultInit,
       ...init,
       body: JSON.stringify(options.body),

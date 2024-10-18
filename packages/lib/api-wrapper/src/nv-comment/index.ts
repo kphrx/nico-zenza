@@ -1,14 +1,16 @@
-import type {ApiEndpoints} from "../types";
+import type {ApiEndpoints, FetchFunc} from "../types";
 import {V1} from "./v1";
 
 export class NvComment implements ApiEndpoints {
+  fetch: FetchFunc;
   endpoint: URL;
 
   v1: V1;
 
-  constructor(baseURL: string) {
+  constructor(baseURL: string, customFetch?: FetchFunc) {
+    this.fetch = customFetch ?? fetch;
     this.endpoint = new URL(baseURL);
 
-    this.v1 = new V1(this.endpoint);
+    this.v1 = new V1(this.endpoint, this.fetch);
   }
 }

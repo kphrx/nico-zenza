@@ -5,7 +5,9 @@ import {WwwApi} from "./";
 import type {ErrorResponse} from "../types";
 
 await describe("watch api", async () => {
-  const watch = new WwwApi().watch;
+  const watch = new WwwApi((...args) => {
+    return fetch(...args);
+  }).watch;
 
   await describe("v3", async () => {
     const v3 = watch.v3("sm9");
