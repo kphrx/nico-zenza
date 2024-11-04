@@ -22,14 +22,16 @@ export const durationMsToTimestamp = (() => {
   });
 
   return (durationMs: number, isThumbnail = false) => {
-    const p = dateTimeFormat.formatToParts(new Date(durationMs)).reduce<
-      Partial<{
-        [key in Intl.DateTimeFormatPartTypes]: Intl.DateTimeFormatPart["value"];
-      }>
-    >((acc, cur) => {
-      acc[cur.type] = cur.value;
-      return acc;
-    }, {});
+    const p = dateTimeFormat
+      .formatToParts(new Date(durationMs))
+      .reduce<
+        Partial<
+          Record<Intl.DateTimeFormatPartTypes, Intl.DateTimeFormatPart["value"]>
+        >
+      >((acc, cur) => {
+        acc[cur.type] = cur.value;
+        return acc;
+      }, {});
     p.day ??= "01";
     p.hour ??= "00";
     p.minute ??= "00";
@@ -66,14 +68,16 @@ export const dateFormatter = (() => {
   });
 
   return (date: Date) => {
-    const p = dateTimeFormat.formatToParts(date).reduce<
-      Partial<{
-        [key in Intl.DateTimeFormatPartTypes]: Intl.DateTimeFormatPart["value"];
-      }>
-    >((acc, cur) => {
-      acc[cur.type] = cur.value;
-      return acc;
-    }, {});
+    const p = dateTimeFormat
+      .formatToParts(date)
+      .reduce<
+        Partial<
+          Record<Intl.DateTimeFormatPartTypes, Intl.DateTimeFormatPart["value"]>
+        >
+      >((acc, cur) => {
+        acc[cur.type] = cur.value;
+        return acc;
+      }, {});
     p.year ??= "0";
     p.month ??= "01";
     p.day ??= "01";

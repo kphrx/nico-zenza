@@ -56,7 +56,7 @@ const compares = Object.fromEntries(
     toOrder(orderType),
     sortComments(orderType[2], orderType[1]),
   ]),
-) as {readonly [key in CommentsOrderTypes]: Compare};
+) as Readonly<Record<CommentsOrderTypes, Compare>>;
 
 const TAG_NAME = "zenza-watch-player-info-panel-comments-list";
 
