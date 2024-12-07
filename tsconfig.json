@@ -2,6 +2,7 @@
   "files": [],
   "references": [
     {"path": "packages/lib/api-wrapper"},
+    {"path": "packages/lib/cross-domain-gate"},
     {"path": "packages/script/zenza-watch"},
     {"path": "packages/script/mylist-pocket"},
     {"path": "packages/script/advanced-settings"},
