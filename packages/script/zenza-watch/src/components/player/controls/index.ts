@@ -136,25 +136,25 @@ export class PlayerControls extends LitElement {
   accessor watchData: WatchDataContext;
 
   @state()
-  accessor seeking: boolean = false;
+  accessor seeking = false;
 
   @state()
-  accessor totalDuration: number = 0;
+  accessor totalDuration = 0;
 
   @state()
-  accessor currentPosition: number = 0;
+  accessor currentPosition = 0;
 
   @state()
   accessor seekPosition: number | undefined;
 
   @state()
-  accessor bufferedStart: number = 0;
+  accessor bufferedStart = 0;
 
   @state()
-  accessor bufferedEnd: number = 0;
+  accessor bufferedEnd = 0;
 
   @state()
-  accessor paused: boolean = false;
+  accessor paused = false;
 
   @state()
   accessor playbackRate: PlaybackRate = "1";
@@ -163,7 +163,7 @@ export class PlayerControls extends LitElement {
   accessor openedRateOptions = false;
 
   @state()
-  accessor muted: boolean = false;
+  accessor muted = false;
 
   @state()
   accessor changingVolume = false;
