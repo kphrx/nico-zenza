@@ -30,7 +30,7 @@ export class PlayerMessage extends LitElement {
   #counter = 0;
 
   @state()
-  accessor messages: Map<number, Message> = new Map();
+  accessor messages = new Map<number, Message>();
 
   async #newMessage(msg: Message, showMs: number) {
     const id = this.#counter++;
