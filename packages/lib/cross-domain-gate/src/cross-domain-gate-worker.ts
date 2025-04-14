@@ -1,16 +1,18 @@
 import {initializeMessage, isInitialMessageEvent} from "./message-types";
 import type {GatePostEvent, LoaderPostMessage} from "./message-types";
 
-export function isGateLocation(url: string) {
-  return url === "https://www.nicovideo.jp/robots.txt";
+export function isGateLocation(url: URL) {
+  return (
+    url.origin === "https://www.nicovideo.jp" && url.pathname === "/robots.txt"
+  );
 }
 
-interface CrossDomainGateConstructor {
-  token: string;
-  origin: string;
+interface CrossDomainGateWorkerConstructor {
+  token: string | null;
+  origin: string | null;
 }
 
-export class CrossDomainLoader {
+export class CrossDomainGateWorker {
   #token: string;
   #origin: string;
 
@@ -20,19 +22,21 @@ export class CrossDomainLoader {
     return this.#channel.port1;
   }
 
-  constructor({token, origin}: CrossDomainGateConstructor) {
+  constructor({token, origin}: CrossDomainGateWorkerConstructor) {
+    if (token == null || origin == null) {
+      throw new Error("missing token/origin");
+    }
+
     this.#token = token;
     this.#origin = origin;
   }
 
-  async start(url: string) {
+  async start(url: URL) {
     console.time("startup cross domain loader");
 
     this.#channel = new MessageChannel();
-    switch (url) {
-      case "https://www.nicovideo.jp/robots.txt":
-        this.#startNicovideoGate();
-        break;
+    if (isGateLocation(url)) {
+      this.#startNicovideoGate();
     }
 
     await this.#initialMessage();

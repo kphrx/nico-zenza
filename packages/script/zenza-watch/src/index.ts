@@ -1,9 +1,9 @@
 import "./meta.js?userscript-metadata";
 import main from "./main";
-import loader from "./loader";
+import frame from "./frame";
 
 if (window.top === window) {
   main();
 } else {
-  loader();
+  frame();
 }
