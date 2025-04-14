@@ -20,5 +20,8 @@
   "type": "module",
   "keywords": [
     "lib"
-  ]
+  ],
+  "dependencies": {
+    "hls.js": "^1.6.2"
+  }
 }
