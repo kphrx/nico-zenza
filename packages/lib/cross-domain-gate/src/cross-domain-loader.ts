@@ -210,8 +210,13 @@ export class CrossDomainLoader implements Loader<LoaderContext> {
     return new Request(context.url, initParams);
   }
 
-  #isPromise<T>(p: Promise<T> | T): p is Promise<T> {
-    return p != null && "then" in p && typeof p.then === "function";
+  #isPromise<T>(p: unknown): p is Promise<T> {
+    return (
+      p != null &&
+      typeof p === "object" &&
+      "then" in p &&
+      typeof p.then === "function"
+    );
   }
 
   #getContentLength(headers: Headers): number | undefined {
