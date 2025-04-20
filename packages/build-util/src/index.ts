@@ -8,7 +8,7 @@ import strip from "@rollup/plugin-strip";
 import importCss from "rollup-plugin-import-css";
 import userscript from "rollup-plugin-userscript";
 
-import {getPackageMetadata} from "./utils/packageMetadata.js";
+import {packageMetadata} from "./utils/packageMetadata.js";
 import {getScriptMetadata} from "./utils/scriptMetadata.js";
 
 function addSuffix(filename: string, version: string, isDev = false) {
@@ -105,18 +105,14 @@ export function rollupConfig({
   const isDev = env.NODE_ENV !== "production";
   const downloadBaseURL = env.DOWNLOAD_BASE_URL;
 
-  const {
-    filename: baseFilename,
-    version: baseVersion,
-    description,
-    license,
-    author,
-    tracker,
-    homepage,
-    dependencies,
-  } = getPackageMetadata();
+  const {description, license, author, tracker, homepage, dependencies} =
+    packageMetadata;
   const extensions = [".ts", ".tsx", ".mjs", ".js", ".jsx"];
-  const {filename, version} = addSuffix(baseFilename, baseVersion, isDev);
+  const {filename, version} = addSuffix(
+    packageMetadata.filename,
+    packageMetadata.version,
+    isDev,
+  );
 
   const cjsModules = externals?.cjsModules ?? [];
   const esModules = externals?.esModules ?? [];
