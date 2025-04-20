@@ -8,12 +8,10 @@ import strip from "@rollup/plugin-strip";
 import importCss from "rollup-plugin-import-css";
 import userscript from "rollup-plugin-userscript";
 
-import {getPackageMetadata} from "./utils/packageMetadata.js";
+import {packageMetadata} from "./utils/packageMetadata.js";
 import {getScriptMetadata} from "./utils/scriptMetadata.js";
 
-const isDev = env.NODE_ENV !== "production";
-
-function addSuffix(filename: string, version: string) {
+function addSuffix(filename: string, version: string, isDev = false) {
   const now = new Date().getTime().toString();
 
   if (!isDev) {
@@ -104,18 +102,17 @@ export function rollupConfig({
     esModules: Dependency[];
   }>;
 }> = {}) {
-  const {
-    filename: baseFilename,
-    version: baseVersion,
-    description,
-    license,
-    author,
-    tracker,
-    homepage,
-    dependencies,
-  } = getPackageMetadata();
+  const isDev = env.NODE_ENV !== "production";
+  const downloadBaseURL = env.DOWNLOAD_BASE_URL;
+
+  const {description, license, author, tracker, homepage, dependencies} =
+    packageMetadata;
   const extensions = [".ts", ".tsx", ".mjs", ".js", ".jsx"];
-  const {filename, version} = addSuffix(baseFilename, baseVersion);
+  const {filename, version} = addSuffix(
+    packageMetadata.filename,
+    packageMetadata.version,
+    isDev,
+  );
 
   const cjsModules = externals?.cjsModules ?? [];
   const esModules = externals?.esModules ?? [];
@@ -193,10 +190,10 @@ export function rollupConfig({
               supportURL: tracker,
               homepageURL: homepage,
             },
-            env.DOWNLOAD_BASE_URL
+            downloadBaseURL
               ? {
-                  downloadURL: `${env.DOWNLOAD_BASE_URL}/${filename}.user.js`,
-                  updateURL: `${env.DOWNLOAD_BASE_URL}/${filename}.meta.js`,
+                  downloadURL: `${downloadBaseURL}/${filename}.user.js`,
+                  updateURL: `${downloadBaseURL}/${filename}.meta.js`,
                 }
               : {},
           ),

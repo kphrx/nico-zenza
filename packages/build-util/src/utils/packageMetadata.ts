@@ -1,6 +1,8 @@
 import {join} from "node:path";
 import {cwd} from "node:process";
-import {readFileSync} from "node:fs";
+import {readFile} from "node:fs/promises";
+import {exec} from "node:child_process";
+import {promisify} from "node:util";
 
 type IAuthor =
   | {
@@ -49,58 +51,58 @@ class Author {
 }
 
 interface PackageJSON {
-  name: string;
-  version: string;
-  description?: string;
-  license?: string;
-  author?: IAuthor;
-  bugs?:
-    | {
-        url?: string;
-        email?: string;
-      }
+  description: string;
+  license: string;
+  author: IAuthor;
+  bugs:
+    | Partial<{
+        url: string;
+        email: string;
+      }>
     | string;
   homepage?: string;
-  dependencies?: Record<string, string>;
 }
 
-interface PackageMetadata {
-  filename: string;
-  version: string;
-  description?: string;
-  license?: string;
-  author: Author;
-  tracker?: string;
-  homepage?: string;
-  dependencies?: Record<string, string>;
-}
+const [
+  [packageName, {version, dependencies: packageDependencies = {}}],
+  {description, license, author: authorModel, bugs, homepage},
+] = await Promise.all([
+  promisify(exec)(`npm ls --json`)
+    .then(
+      ({stdout}) =>
+        JSON.parse(stdout) as {
+          dependencies: Record<
+            string,
+            {
+              version: string;
+              dependencies?: Record<string, {version: string}>;
+            }
+          >;
+        },
+    )
+    .then(({dependencies}) => Object.entries(dependencies)[0]),
+  readFile(join(cwd(), "package.json"), "utf8").then(
+    (json) => JSON.parse(json) as Partial<PackageJSON>,
+  ),
+]);
 
-export function getPackageMetadata(): PackageMetadata {
-  const {
+const filename = packageName.split("/").toReversed()[0];
+const author = new Author(authorModel);
+const tracker = typeof bugs === "string" ? bugs : bugs?.url;
+const dependencies = Object.fromEntries(
+  Object.entries(packageDependencies).map(([name, {version}]) => [
     name,
     version,
-    description,
-    license,
-    author: authorModel,
-    bugs,
-    homepage,
-    dependencies,
-  } = JSON.parse(
-    readFileSync(join(cwd(), "package.json"), "utf8"),
-  ) as PackageJSON;
+  ]),
+);
 
-  const filename = name.split("/").toReversed()[0];
-  const author = new Author(authorModel);
-  const tracker = typeof bugs === "string" ? bugs : bugs?.url;
-
-  return {
-    filename,
-    version,
-    description,
-    license,
-    author,
-    tracker,
-    homepage,
-    dependencies,
-  };
-}
+export const packageMetadata = {
+  filename,
+  version,
+  description,
+  license,
+  author,
+  tracker,
+  homepage,
+  dependencies,
+};
