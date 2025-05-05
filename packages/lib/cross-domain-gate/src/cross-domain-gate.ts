@@ -14,30 +14,58 @@ import type {
 } from "./message-types";
 import {abortReasonError} from "./utils";
 
+interface CrossDomainGateInstances {
+  nicovideoGate: Promise<CrossDomainGate>;
+}
+
 interface CrossDomainGateConstructor {
   token: string;
   baseUrl: URL | string;
-  name?: string;
+  name: keyof CrossDomainGateInstances;
 }
 
 export class CrossDomainGate {
-  static #nicovideoGate?: CrossDomainGate;
-  static async nicovideoGate() {
-    if (CrossDomainGate.#nicovideoGate == null) {
-      CrossDomainGate.#nicovideoGate = new CrossDomainGate({
-        token: "ranbu",
-        baseUrl: "https://www.nicovideo.jp/robots.txt",
-        name: "nicovideoGate",
-      });
-      try {
-        await CrossDomainGate.#nicovideoGate.start();
-      } catch (e) {
-        CrossDomainGate.#nicovideoGate = undefined;
-        throw e;
-      }
+  static #instances: Record<
+    string,
+    Promise<CrossDomainGate> | undefined
+  > /* Partial<CrossDomainGateInstances> */ = {};
+
+  static async #initialize(
+    name: string /* keyof CrossDomainGateInstances */,
+    token = "ranbu",
+  ): Promise<CrossDomainGate> {
+    if (typeof CrossDomainGate.#instances[name] !== "undefined") {
+      return CrossDomainGate.#instances[name];
     }
 
-    return CrossDomainGate.#nicovideoGate;
+    const {promise, resolve, reject} = Promise.withResolvers<CrossDomainGate>();
+    CrossDomainGate.#instances[name] = promise;
+
+    let baseUrl: URL | string;
+    switch (name) {
+      case "nicovideoGate":
+        baseUrl = "https://www.nicovideo.jp/robots.txt";
+        break;
+      default:
+        throw new Error(`Unknown gate name: ${name}`);
+    }
+
+    const gate = new CrossDomainGate({baseUrl, token, name});
+
+    try {
+      await gate.start();
+      resolve(gate);
+    } catch (e) {
+      reject(e);
+      CrossDomainGate.#instances[name] = undefined;
+    }
+
+    return promise;
+  }
+
+  static async nicovideoFetch(...args: Parameters<CrossDomainGate["fetch"]>) {
+    const gate = await CrossDomainGate.#initialize("nicovideoGate");
+    return gate.fetch(...args);
   }
 
   baseUrl: URL | string;
@@ -51,7 +79,7 @@ export class CrossDomainGate {
 
   constructor({token, baseUrl, name}: CrossDomainGateConstructor) {
     this.baseUrl = baseUrl;
-    this.name = name ?? "cross-domain-gate";
+    this.name = name;
     this.#token = token;
   }
 

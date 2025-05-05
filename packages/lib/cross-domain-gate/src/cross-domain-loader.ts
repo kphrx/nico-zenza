@@ -127,8 +127,7 @@ export class CrossDomainLoader implements Loader<LoaderContext> {
       callbacks.onTimeout(stats, context, this.#response);
     }, timeout);
 
-    const gate = await CrossDomainGate.nicovideoGate();
-    const res = (this.#response = await gate.fetch(
+    const res = (this.#response = await CrossDomainGate.nicovideoFetch(
       this.#isPromise(req) ? await req : req,
     ));
     const first = Math.max(performance.now(), stats.loading.start);
