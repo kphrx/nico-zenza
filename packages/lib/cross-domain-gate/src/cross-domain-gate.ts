@@ -49,8 +49,6 @@ export class CrossDomainGate {
 
   #sessions: (Session<"fetch"> | Session<"pong">)[] = [];
 
-  #wait?: Promise<void>;
-
   constructor({token, baseUrl, name}: CrossDomainGateConstructor) {
     this.baseUrl = baseUrl;
     this.name = name ?? "cross-domain-gate";
@@ -61,43 +59,13 @@ export class CrossDomainGate {
     const timeout = [5, 10, 20, 30, 60];
     let count = 0;
     while (this.#port == null && count < timeout.length) {
+      if (this.#gate != null) {
+        this.#gate.remove();
+        this.#gate = undefined;
+      }
+
       this.#gate = this.#createGate();
-      document.body.append(this.#gate);
-      this.#gate.contentWindow?.location.replace(
-        `${this.baseUrl}#token=${this.#token}&origin=${window.origin}`,
-      );
-
-      await new Promise((resolve) => {
-        setTimeout(resolve, timeout[count] * 1000);
-        this.#wait?.then(resolve).catch((r: unknown) => {
-          console.warn(r);
-        });
-      });
-      count++;
-    }
-
-    if (this.#port == null && count === timeout.length) {
-      throw Error(`timeout ${this.name}: ${this.baseUrl}`);
-    }
-  }
-
-  #createGate() {
-    this.#wait = undefined;
-    if (this.#gate != null) {
-      this.#gate.remove();
-      this.#gate = undefined;
-    }
-
-    const gate = document.createElement("iframe");
-    gate.referrerPolicy = "origin";
-    gate.sandbox.add("allow-scripts");
-    gate.sandbox.add("allow-same-origin");
-    gate.loading = "eager";
-    gate.style.cssText =
-      "position: fixed; left: -100vw; pointer-events: none;user-select: none; contain: strict;";
-    gate.name = this.name;
-
-    this.#wait = new Promise((resolve) => {
+      const {promise: wait, resolve} = Promise.withResolvers();
       const oninitialmessage = (ev: MessageEvent<unknown>) => {
         if (!isInitialMessageEvent(ev)) {
           return;
@@ -105,11 +73,40 @@ export class CrossDomainGate {
 
         this.#oninitialmessage(ev, () => {
           window.removeEventListener("message", oninitialmessage);
-          resolve();
+          resolve(void 0);
         });
       };
       window.addEventListener("message", oninitialmessage, {capture: true});
-    });
+
+      document.body.append(this.#gate);
+      this.#gate.contentWindow?.location.replace(
+        `${this.baseUrl}#token=${this.#token}&origin=${window.origin}`,
+      );
+
+      setTimeout(resolve, timeout[count] * 1000);
+      await wait;
+      count++;
+    }
+
+    if (this.#port == null && count === timeout.length) {
+      if (this.#gate != null) {
+        this.#gate.remove();
+        this.#gate = undefined;
+      }
+
+      throw Error(`timeout ${this.name}: ${this.baseUrl}`);
+    }
+  }
+
+  #createGate() {
+    const gate = document.createElement("iframe");
+    gate.referrerPolicy = "origin";
+    gate.sandbox.add("allow-scripts");
+    gate.sandbox.add("allow-same-origin");
+    gate.loading = "eager";
+    gate.style.cssText =
+      "position: fixed; left: -100vw; pointer-events: none; user-select: none; contain: strict;";
+    gate.name = this.name;
 
     return gate;
   }
