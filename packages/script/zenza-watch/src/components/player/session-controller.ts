@@ -37,9 +37,8 @@ export class SessionController implements ReactiveController {
           throw error;
         }
 
-        const crossDomainGate = await CrossDomainGate.nicovideoGate();
         const json = await new Nvapi(undefined, (...args) =>
-          crossDomainGate.fetch(...args),
+          CrossDomainGate.nicovideoFetch(...args),
         ).v1.watch
           .accessRights(watchData.client.watchId)
           .hls.post(

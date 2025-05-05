@@ -80,9 +80,8 @@ export class WatchDataController implements ReactiveController {
     actionTrackId?: string;
     signal: AbortSignal;
   }): Promise<ApiResponseWithStatus<WatchData>> => {
-    const crossDomainGate = await CrossDomainGate.nicovideoGate();
     const watchApiWrapper = new WwwApi((...args) =>
-      crossDomainGate.fetch(...args),
+      CrossDomainGate.nicovideoFetch(...args),
     ).watch;
     const client = this.#isLoggedIn
       ? watchApiWrapper.v3(videoId)
