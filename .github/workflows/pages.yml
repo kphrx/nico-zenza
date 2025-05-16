@@ -9,6 +9,81 @@ on:
       - master
 
 jobs:
+  metadata:
+    runs-on: ubuntu-latest
+
+    outputs:
+      scripts: ${{ steps.values.outputs.scripts }}
+
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: lts/*
+          check-latest: true
+          cache: npm
+      - run: npm ci
+      - run: npm run build:lib
+      - name: artifacts data
+        id: values
+        run: |
+          printf "libraries<<EOF\n%s\nEOF\n" "$(npm query '.workspace:attr([keywords=build]),.workspace:attr([keywords=lib])' | jq -r 'map(.location+"/dist/")[]')" >> $GITHUB_OUTPUT
+          echo "scripts=$(npm query '.workspace:attr([keywords=script])' | jq -c 'map({name,location,"script-name":.name|split("/";"")[1]})')" >> $GITHUB_OUTPUT
+      - uses: actions/upload-artifact@v4
+        with:
+          name: libraries
+          path: ${{ steps.values.outputs.libraries }}
+
+  build:
+    needs: metadata
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+      id-token: write
+    strategy:
+      fail-fast: false
+      matrix:
+        include: ${{ fromJSON(needs.metadata.outputs.scripts) }}
+
+    name: build (${{ matrix.name }})
+
+    steps:
+      - uses: actions/checkout@v4
+      - uses: oras-project/setup-oras@v1
+      - uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - uses: actions/setup-node@v4
+        with:
+          node-version: lts/*
+          check-latest: true
+          cache: npm
+      - id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ghcr.io/${{ github.repository }}/${{ matrix.script-name }}
+          tags: |
+            type=ref,event=pr
+            type=edge
+      - id: pages
+        uses: actions/configure-pages@v5
+      - run: npm ci
+      - uses: actions/download-artifact@v4
+        with:
+          name: libraries
+          path: packages/
+      - name: npm run build:script
+        run: npm run -w ${{ matrix.name }} build:script
+        env:
+          DOWNLOAD_BASE_URL: ${{ steps.pages.outputs.base_url }}/scripts/${{ steps.meta.outputs.version }}/
+      - run: |
+          oras push ${{ steps.meta.outputs.tags }} \
+            ./${{ matrix.location }}/dist/${{ matrix.script-name }}+dev.user.js:application/vnd.unknown.layer.v1+javascript \
+            ./${{ matrix.location }}/dist/${{ matrix.script-name }}+dev.meta.js:application/vnd.unknown.layer.v1+javascript
+
   pack:
     runs-on: ubuntu-latest
 
