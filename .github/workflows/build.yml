@@ -32,14 +32,15 @@ jobs:
         run: |
           printf "libraries<<EOF\n%s\nEOF\n" "$(npm query '.workspace:attr([keywords=build]),.workspace:attr([keywords=lib])' | jq -r 'map(.location+"/dist/")[]')" >> $GITHUB_OUTPUT
           echo "scripts=$(npm query '.workspace:attr([keywords=script])' | jq -c 'map({name,version,description,location,"script-name":.name|split("/";"")[1]})')" >> $GITHUB_OUTPUT
-      - name: script path
-        id: base-url
+      - name: script path env
         if: github.event_name != 'pull_request'
-        run: echo "value=${{ steps.pages.outputs.base_url }}/scripts/edge/" >> $GITHUB_OUTPUT
+        run: echo "SCRIPT_PATH=${{ steps.pages.outputs.base_url }}/scripts/edge/" >> $GITHUB_ENV
+      - name: script path env
+        if: github.event_name == 'pull_request'
+        run: echo "SCRIPT_PATH=${{ steps.pages.outputs.base_url }}/scripts/GH-${{ github.event.number }}/" >> $GITHUB_ENV
       - name: script path
         id: base-url
-        if: github.event_name == 'pull_request'
-        run: echo "value=${{ steps.pages.outputs.base_url }}/scripts/GH-${{ github.event.number }}/" >> $GITHUB_OUTPUT
+        run: echo "value=${{ env.SCRIPT_PATH }}" >> $GITHUB_OUTPUT
       - uses: actions/upload-artifact@v4
         with:
           name: libraries
