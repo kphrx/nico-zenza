@@ -1,0 +1,72 @@
+name: Deploy
+
+on:
+  workflow_run:
+    workflows: [Build, Release]
+    types: [completed]
+
+jobs:
+  pack:
+    runs-on: ubuntu-latest
+    if: github.event_name != 'pull_request'
+
+    steps:
+      - uses: actions/checkout@v4
+      - uses: oras-project/setup-oras@v1
+      - uses: actions/setup-node@v4
+        with:
+          node-version: lts/*
+          check-latest: true
+          cache: npm
+      - run: npm ci
+      - name: artifacts data
+        id: scripts
+        run: |
+          echo "value=$(npm query '.workspace:attr([keywords=script])' | jq -c 'map({name,version,description,location,"script-name":.name|split("/";"")[1]})')" >> $GITHUB_OUTPUT
+      - name: opened pull requests
+        uses: actions/github-script@v7
+        id: pull-requests
+        result-encoding: json
+        with:
+          script: |
+            const pulls = await github.paginate(github.rest.pulls.listForRepo, {
+              ...context.repo,
+              state: 'open',
+            });
+            return pulls.map(pull => pull.number);
+      - name: download artifacts
+        working-directory: ${{ runner.temp }}
+        env:
+          SCRIPT_PACKAGES: ${{ steps.scripts.outputs.value }}
+          PR_NUMBERS: ${{ steps.pull-requests.outputs.result }}
+        run: |
+          echo "$SCRIPT_PACKAGES" | jq -r 'map(.script-name)[]' | while read -r name; do
+            oras pull -o dist/scripts/latest/ ghcr.io/${{ github.repository }}/$name:latest | true
+            oras pull -o dist/scripts/edge/ ghcr.io/${{ github.repository }}/$name:edge | true
+
+            echo "$PR_NUMBERS" | jq -r '.[]' | while read -r number; do
+              oras pull -o dist/scripts/GH-$number/ ghcr.io/${{ github.repository }}/$name:pr-$number | true
+            done
+          done
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: ${{ runner.temp }}/dist/
+
+  deploy:
+    needs: pack
+    runs-on: ubuntu-latest
+    if: github.event_name != 'pull_request'
+    concurrency:
+      group: pages
+      cancel-in-progress: true
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+
+    steps:
+      - uses: actions/deploy-pages@v4
+        id: deployment
