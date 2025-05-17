@@ -101,3 +101,12 @@ jobs:
           oras push --annotation-file annotations.json ${{ steps.meta.outputs.tags }} \
             ${{ matrix.script-name }}+dev.user.js:application/vnd.unknown.layer.v1+javascript \
             ${{ matrix.script-name }}+dev.meta.js:application/vnd.unknown.layer.v1+javascript
+
+  build-conclusion:
+    needs: build
+    runs-on: ubuntu-latest
+    if: always()
+
+    steps:
+      - name: Result
+        run: ${{ needs.build.result == 'success' }}
