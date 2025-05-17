@@ -1,4 +1,4 @@
-name: Deploy Pages
+name: Build
 
 on:
   push:
@@ -14,6 +14,7 @@ jobs:
 
     outputs:
       scripts: ${{ steps.values.outputs.scripts }}
+      base-url: ${{ steps.base-url.outputs.value }}
 
     steps:
       - uses: actions/checkout@v4
@@ -22,6 +23,8 @@ jobs:
           node-version: lts/*
           check-latest: true
           cache: npm
+      - id: pages
+        uses: actions/configure-pages@v5
       - run: npm ci
       - run: npm run build:lib
       - name: artifacts data
@@ -29,6 +32,14 @@ jobs:
         run: |
           printf "libraries<<EOF\n%s\nEOF\n" "$(npm query '.workspace:attr([keywords=build]),.workspace:attr([keywords=lib])' | jq -r 'map(.location+"/dist/")[]')" >> $GITHUB_OUTPUT
           echo "scripts=$(npm query '.workspace:attr([keywords=script])' | jq -c 'map({name,version,description,location,"script-name":.name|split("/";"")[1]})')" >> $GITHUB_OUTPUT
+      - name: script path
+        id: base-url
+        if: github.event_name != 'pull_request'
+        run: echo "value=${{ steps.pages.outputs.base_url }}/scripts/edge/" >> $GITHUB_OUTPUT
+      - name: script path
+        id: base-url
+        if: github.event_name == 'pull_request'
+        run: echo "value=${{ steps.pages.outputs.base_url }}/scripts/GH-${{ github.event.number }}/" >> $GITHUB_OUTPUT
       - uses: actions/upload-artifact@v4
         with:
           name: libraries
@@ -72,8 +83,6 @@ jobs:
             org.opencontainers.image.title=${{ matrix.name }}
             org.opencontainers.image.description=${{ matrix.description }}
             version=${{ matrix.version }}
-      - id: pages
-        uses: actions/configure-pages@v5
       - run: npm ci
       - uses: actions/download-artifact@v4
         with:
@@ -82,7 +91,7 @@ jobs:
       - name: npm run build:script
         run: npm run -w ${{ matrix.name }} build:script
         env:
-          DOWNLOAD_BASE_URL: ${{ steps.pages.outputs.base_url }}/scripts/${{ steps.meta.outputs.version }}/
+          DOWNLOAD_BASE_URL: ${{ needs.metadata.outputs.base-url }}
       - name: oras push ${{ steps.meta.outputs.tags }}
         working-directory: ./${{ matrix.location }}/dist/
         run: |
@@ -92,66 +101,3 @@ jobs:
           oras push --annotation-file annotations.json ${{ steps.meta.outputs.tags }} \
             ${{ matrix.script-name }}+dev.user.js:application/vnd.unknown.layer.v1+javascript \
             ${{ matrix.script-name }}+dev.meta.js:application/vnd.unknown.layer.v1+javascript
-
-  pack:
-    runs-on: ubuntu-latest
-
-    steps:
-      - uses: actions/checkout@v4
-      - name: Setup Pages
-        id: pages
-        uses: actions/configure-pages@v5
-      - uses: actions/setup-node@v4
-        with:
-          node-version: lts/*
-          check-latest: true
-          cache: npm
-      - run: npm ci
-      - name: Build
-        env:
-          DOWNLOAD_BASE_URL: ${{ steps.pages.outputs.base_url }}/scripts
-        run: npm run build:dev
-      - uses: actions/upload-artifact@v4
-        with:
-          name: scripts
-          path: dist/
-
-  pages:
-    needs: pack
-    runs-on: ubuntu-latest
-
-    steps:
-      - uses: actions/download-artifact@v4
-        with:
-          name: scripts
-          path: ${{ runner.temp }}/scripts/
-      - name: Move scripts directory
-        working-directory: ${{ runner.temp }}
-        run: |
-          mkdir ./dist
-          mv ./scripts/ ./dist
-          chmod -c -R +rX ./dist/ | while read -r line; do
-              echo "::warning title=Invalid file permissions automatically fixed::$line"
-          done
-      - uses: actions/upload-pages-artifact@v3
-        with:
-          path: ${{ runner.temp }}/dist/
-
-  deploy:
-    needs: pages
-    runs-on: ubuntu-latest
-    if: github.event_name != 'pull_request'
-    concurrency:
-      group: pages
-      cancel-in-progress: true
-    permissions:
-      contents: read
-      pages: write
-      id-token: write
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
-
-    steps:
-      - uses: actions/deploy-pages@v4
-        id: deployment
