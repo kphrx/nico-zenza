@@ -40,14 +40,16 @@ jobs:
           SCRIPT_PACKAGES: ${{ steps.scripts.outputs.value }}
           PR_NUMBERS: ${{ steps.pull-requests.outputs.result }}
         run: |
+          mkdir -p dist
           echo "$SCRIPT_PACKAGES" | jq -r 'map(."script-name")[]' | while read -r name; do
-            oras pull -o dist/scripts/latest/ "ghcr.io/${{ github.repository }}/${name}:latest" | true
-            oras pull -o dist/scripts/edge/ "ghcr.io/${{ github.repository }}/${name}:edge" | true
+            oras pull -o dist/scripts/latest/ "ghcr.io/${{ github.repository }}/${name}:latest" || true
+            oras pull -o dist/scripts/edge/ "ghcr.io/${{ github.repository }}/${name}:edge" || true
 
             echo "$PR_NUMBERS" | jq -r '.[]' | while read -r number; do
-              oras pull -o "dist/scripts/GH-$number/" "ghcr.io/${{ github.repository }}/${name}:pr-${number}" | true
+              oras pull -o "dist/scripts/GH-$number/" "ghcr.io/${{ github.repository }}/${name}:pr-${number}" || true
             done
           done
+          ls dist/scripts
       - uses: actions/upload-pages-artifact@v3
         with:
           path: ${{ runner.temp }}/dist/
