@@ -40,7 +40,7 @@ jobs:
           SCRIPT_PACKAGES: ${{ steps.scripts.outputs.value }}
           PR_NUMBERS: ${{ steps.pull-requests.outputs.result }}
         run: |
-          echo "$SCRIPT_PACKAGES" | jq -r 'map(.script-name)[]' | while read -r name; do
+          echo "$SCRIPT_PACKAGES" | jq -r 'map(."script-name")[]' | while read -r name; do
             oras pull -o dist/scripts/latest/ ghcr.io/${{ github.repository }}/$name:latest | true
             oras pull -o dist/scripts/edge/ ghcr.io/${{ github.repository }}/$name:edge | true
 
