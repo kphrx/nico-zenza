@@ -29,7 +29,7 @@ jobs:
         with:
           result-encoding: json
           script: |
-            const pulls = await github.paginate(github.rest.pulls.listForRepo, {
+            const pulls = await github.paginate(github.rest.pulls.list, {
               ...context.repo,
               state: 'open',
             });
