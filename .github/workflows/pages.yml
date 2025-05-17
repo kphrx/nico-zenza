@@ -28,7 +28,7 @@ jobs:
         id: values
         run: |
           printf "libraries<<EOF\n%s\nEOF\n" "$(npm query '.workspace:attr([keywords=build]),.workspace:attr([keywords=lib])' | jq -r 'map(.location+"/dist/")[]')" >> $GITHUB_OUTPUT
-          echo "scripts=$(npm query '.workspace:attr([keywords=script])' | jq -c 'map({name,location,"script-name":.name|split("/";"")[1]})')" >> $GITHUB_OUTPUT
+          echo "scripts=$(npm query '.workspace:attr([keywords=script])' | jq -c 'map({name,version,description,location,"script-name":.name|split("/";"")[1]})')" >> $GITHUB_OUTPUT
       - uses: actions/upload-artifact@v4
         with:
           name: libraries
@@ -68,6 +68,10 @@ jobs:
           tags: |
             type=ref,event=pr
             type=edge
+          labels: |
+            org.opencontainers.image.title=${{ matrix.name }}
+            org.opencontainers.image.description=${{ matrix.description }}
+            version=${{ matrix.version }}
       - id: pages
         uses: actions/configure-pages@v5
       - run: npm ci
@@ -82,7 +86,10 @@ jobs:
       - name: oras push ${{ steps.meta.outputs.tags }}
         working-directory: ./${{ matrix.location }}/dist/
         run: |
-          oras push ${{ steps.meta.outputs.tags }} \
+          jq '{"$manifest": .labels}' <<EOF | tee annotations.json
+          ${{ steps.meta.outputs.json }}
+          EOF
+          oras push --annotation-file annotations.json ${{ steps.meta.outputs.tags }} \
             ${{ matrix.script-name }}+dev.user.js:application/vnd.unknown.layer.v1+javascript \
             ${{ matrix.script-name }}+dev.meta.js:application/vnd.unknown.layer.v1+javascript
 
