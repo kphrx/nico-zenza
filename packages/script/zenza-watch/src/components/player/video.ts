@@ -3,6 +3,8 @@ import {customElement, property} from "lit/decorators.js";
 import {consume} from "@lit/context";
 import {default as Hls, Events, ErrorTypes} from "hls.js";
 
+import {CrossDomainLoader} from "@nico-zenza/cross-domain-gate";
+
 import {watchDataContext} from "@/contexts/watch-data-context";
 import type {WatchDataContext} from "@/contexts/watch-data-context";
 import {playerMessageContext} from "@/contexts/player-message-context";
@@ -98,12 +100,15 @@ export class PlayerVideo extends LitElement {
     console.info(`initialize hls.js@${Hls.version}`);
 
     this.hls = new Hls({
-      xhrSetup: (xhr, url) => {
-        if (new URL(url).hostname.endsWith("dmc.nico")) {
-          return;
-        }
-
+      loader: CrossDomainLoader,
+      xhrSetup: (xhr) => {
         xhr.withCredentials = true;
+      },
+      fetchSetup: (context, initParams: RequestInit) => {
+        return new Request(context.url, {
+          ...initParams,
+          credentials: "include",
+        });
       },
     });
 
