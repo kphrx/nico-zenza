@@ -120,7 +120,7 @@ jobs:
           DOWNLOAD_BASE_URL: ${{ needs.metadata.outputs.base-url }}
       - name: script version
         id: version
-        run: echo "value=$(grep '// @version' ./${{ matrix.location }}/dist/${{ matrix.script-name }}+dev.meta.js | awk '{print $3}')" >> "$GITHUB_OUTPUT"
+        run: echo "value=$(grep '// @version' ./${{ matrix.location }}/dist/${{ matrix.script-name }}.meta.js | awk '{print $3}')" >> "$GITHUB_OUTPUT"
       - id: meta
         uses: docker/metadata-action@v5
         with:
@@ -140,8 +140,8 @@ jobs:
           ${{ steps.meta.outputs.json }}
           EOF
           oras push --annotation-file annotations.json ${{ steps.meta.outputs.tags }} \
-            ${{ matrix.script-name }}+dev.user.js:application/vnd.unknown.layer.v1+javascript \
-            ${{ matrix.script-name }}+dev.meta.js:application/vnd.unknown.layer.v1+javascript
+            ${{ matrix.script-name }}.user.js:application/vnd.unknown.layer.v1+javascript \
+            ${{ matrix.script-name }}.meta.js:application/vnd.unknown.layer.v1+javascript
 
   build-conclusion:
     needs: build
