@@ -9,22 +9,33 @@
 const META_START = "// ==UserScript==";
 const META_END = "// ==/UserScript==";
 
-const compareEntryKey = ([a]: [string, string], [b]: [string, string]) => {
-  if (a.toLowerCase() > b.toLowerCase()) {
-    return 1;
+const compareEntryKey = (
+  [aKey]: [string, string],
+  [bKey]: [string, string],
+) => {
+  const a = aKey.toLowerCase();
+  const b = bKey.toLowerCase();
+  if (a === b) {
+    return 0;
   }
-  if (a.toLowerCase() < b.toLowerCase()) {
+  if (a === "und") {
     return -1;
   }
-  return 0;
+  if (b === "und" || a > b) {
+    return 1;
+  }
+  return -1;
 };
 
 export function getScriptMetadata(
   meta: string,
   variant: string | undefined,
+  fallbackMetadata: Partial<{
+    name: string;
+    description: string;
+  }>,
   overrideMetadata: Partial<{
     version: string;
-    description: string;
     license: string;
     author: string;
     supportURL: string;
@@ -34,9 +45,9 @@ export function getScriptMetadata(
   }>,
   additionalRequireList = new Set<string>(),
 ) {
+  const {name = "New Script", description} = fallbackMetadata;
   const {
     version,
-    description,
     license,
     author,
     supportURL,
@@ -50,8 +61,9 @@ export function getScriptMetadata(
 
   let scriptNS: string | undefined;
   const overrideMap = new Map<string, string>();
-  const nameMap = new Map<string, string>();
+  const nameMap = new Map<string, string>([["und", name]]);
   const descMap = new Map<string, string>();
+  if (description != null) descMap.set("und", description);
   const requireSet = new Set<string>();
   const entries: [string, string][] = lines
     .slice(start + 1, end)
@@ -143,31 +155,21 @@ export function getScriptMetadata(
   for (const [lang, value] of Array.from(nameMap.entries()).toSorted(
     compareEntryKey,
   )) {
-    if (lang === "und") {
-      continue;
-    }
-    nameEntries.unshift([`@name:${lang}`, value]);
+    const key = lang === "und" ? "@name" : `@name:${lang}`;
+    nameEntries.push([key, `${value}${variant ? ` (${variant})` : ""}`]);
   }
 
-  if (description != null) descMap.set("und", description);
   const descEntries: [string, string][] = [];
   for (const [lang, value] of Array.from(descMap.entries()).toSorted(
     compareEntryKey,
   )) {
-    if (lang === "und") {
-      descEntries.unshift(["@description", value]);
-      continue;
-    }
-    descEntries.push([`@description:${lang}`, value]);
+    const key = lang === "und" ? "@description" : `@description:${lang}`;
+    descEntries.push([key, value]);
   }
 
   entries.unshift(
-    ["@name", nameMap.get("und") ?? "New Script"],
     ...nameEntries,
-    [
-      "@namespace",
-      `${scriptNS ?? "https://kpherox.dev/nico-zenza"}${variant ? `/${variant}` : ""}`,
-    ],
+    ["@namespace", scriptNS ?? "https://kpherox.dev/nico-zenza"],
     ["@version", version ?? overrideMap.get("@version") ?? "0.1.0"],
     ...descEntries,
     ...overrideEntries,

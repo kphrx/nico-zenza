@@ -221,11 +221,11 @@ export function rollupConfig({
           metaBlock = getScriptMetadata(
             meta,
             variant,
+            {description},
             Object.assign(
               {},
               {
                 version,
-                description,
                 license,
                 author: author.toString(),
                 supportURL: tracker,
