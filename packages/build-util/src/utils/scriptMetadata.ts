@@ -21,6 +21,7 @@ const compareEntryKey = ([a]: [string, string], [b]: [string, string]) => {
 
 export function getScriptMetadata(
   meta: string,
+  variant: string | undefined,
   overrideMetadata: Partial<{
     version: string;
     description: string;
@@ -163,7 +164,10 @@ export function getScriptMetadata(
   entries.unshift(
     ["@name", nameMap.get("und") ?? "New Script"],
     ...nameEntries,
-    ["@namespace", scriptNS ?? "http://example.com"],
+    [
+      "@namespace",
+      `${scriptNS ?? "https://kpherox.dev/nico-zenza"}${variant ? `/${variant}` : ""}`,
+    ],
     ["@version", version ?? overrideMap.get("@version") ?? "0.1.0"],
     ...descEntries,
     ...overrideEntries,

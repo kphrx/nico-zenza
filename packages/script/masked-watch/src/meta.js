@@ -1,6 +1,5 @@
 // ==UserScript==
 // @name          Masked Watch
-// @namespace     https://kpherox.dev/
 // @match         *://www.nicovideo.jp/*
 // @match         *://live.nicovideo.jp/*
 // @match         *://anime.nicovideo.jp/*

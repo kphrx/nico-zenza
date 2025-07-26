@@ -100,6 +100,17 @@ const [${esModules.map(getVariableName).join(", ")}] = await Promise.all([
 
 type RequiredKey<T, K extends keyof T> = T & Required<Pick<T, K>>;
 
+function getStringCliArg(
+  value: Record<string, unknown>,
+  name: string,
+): string | undefined {
+  if (typeof value[name] !== "string") {
+    return;
+  }
+
+  return value[name];
+}
+
 export function rollupConfig({
   useDecorator = false,
   externals,
@@ -171,11 +182,11 @@ export function rollupConfig({
   return (commandLineArgs) => {
     const isProd = !!commandLineArgs.production;
     delete commandLineArgs.production;
-    let metadata;
-    if (typeof commandLineArgs.versionMetadata === "string") {
-      metadata = commandLineArgs.versionMetadata;
-    }
+    const metadata = getStringCliArg(commandLineArgs, "versionMetadata");
     delete commandLineArgs.versionMetadata;
+    const variant = getStringCliArg(commandLineArgs, "buildVariant");
+    delete commandLineArgs.buildVariant;
+
     const version = addSuffix({
       version: packageMetadata.version,
       metadata,
@@ -209,6 +220,7 @@ export function rollupConfig({
         userscript((meta) => {
           metaBlock = getScriptMetadata(
             meta,
+            variant,
             Object.assign(
               {},
               {
