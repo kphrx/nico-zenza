@@ -4,6 +4,8 @@ on:
   push:
     branches:
       - master
+    tags:
+      - "([a-z0-9]|.|-)+/v(0|[1-9][0-9]*).(0|[1-9][0-9]*).(0|[1-9][0-9]*)(-([a-z0-9]|.|-)+)?"
   pull_request:
     branches:
       - master
@@ -13,8 +15,9 @@ jobs:
     runs-on: ubuntu-latest
 
     outputs:
-      scripts: ${{ steps.values.outputs.scripts }}
-      base-url: ${{ steps.base-url.outputs.value }}
+      scripts: ${{ steps.scripts.outputs.result }}
+      base-url: ${{ format('{0}/scripts/{1}', steps.pages.outputs.base_url, steps.build-kind.outputs.result) }}
+      build-args: ${{ steps.build-kind.outputs.result == 'latest' && '--production' || format('--buildVariant {0} --versionMetadata sha-{1}', steps.build-kind.outputs.result, startsWith(steps.build-kind.outputs.result, 'GH-') && github.event.pull_request.head.sha || github.sha) }}
 
     steps:
       - uses: actions/checkout@v4
@@ -27,24 +30,54 @@ jobs:
         uses: actions/configure-pages@v5
       - run: npm ci
       - run: npm run build:lib
-      - name: artifacts data
-        id: values
+      - name: require libraries
+        id: libraries
         run: |
-          printf "libraries<<EOF\n%s\nEOF\n" "$(npm query '.workspace:attr([keywords=build]),.workspace:attr([keywords=lib])' | jq -r 'map(.location+"/dist/")[]')" >> "$GITHUB_OUTPUT"
-          echo "scripts=$(npm query '.workspace:attr([keywords=script])' | jq -c 'map({name,version,description,location,"script-name":.name|split("/";"")[1]})')" >> "$GITHUB_OUTPUT"
-      - name: script path env
-        if: github.event_name != 'pull_request'
-        run: echo "SCRIPT_PATH=${{ steps.pages.outputs.base_url }}/scripts/edge/" >> "$GITHUB_ENV"
-      - name: script path env
-        if: github.event_name == 'pull_request'
-        run: echo "SCRIPT_PATH=${{ steps.pages.outputs.base_url }}/scripts/GH-${{ github.event.number }}/" >> "$GITHUB_ENV"
+          printf "value<<EOF\n%s\nEOF\n" "$(npm query '.workspace:attr([keywords=build]),.workspace:attr([keywords=lib])' | jq -r 'map(.location+"/dist/")[]')" >> "$GITHUB_OUTPUT"
       - name: script path
-        id: base-url
-        run: echo "value=${{ env.SCRIPT_PATH }}" >> "$GITHUB_OUTPUT"
+        uses: actions/github-script@v7
+        id: build-kind
+        with:
+          result-encoding: string
+          script: |
+            if (context.eventName === 'pull_request') {
+              return `GH-${context.issue.number}`;
+            }
+            if (context.ref.startsWith('refs/tags/')) {
+              return 'latest';
+            }
+            return 'edge';
+      - name: scripts
+        uses: actions/github-script@v7
+        id: scripts
+        with:
+          result-encoding: json
+          script: |
+            const {
+              exitCode,
+              stdout,
+              stderr
+            } = await exec.getExecOutput('npm', ['query', '.workspace:attr([keywords=script])']);
+            if (exitCode > 0) {
+              throw stderr;
+            }
+            let scripts = JSON.parse(stdout).map(({name, description, location}) => ({
+              name,
+              version: '',
+              description,
+              location,
+              "script-name": name.split("/")[1]
+            }));
+            if (context.eventName === 'push' && context.ref.startsWith('refs/tags/')) {
+              const [scriptName, version] = context.ref.substring(10).split('/');
+              scripts = scripts.filter(script => script['script-name'] === scriptName);
+              scripts[0].version = version;
+            }
+            return scripts;
       - uses: actions/upload-artifact@v4
         with:
           name: libraries
-          path: ${{ steps.values.outputs.libraries }}
+          path: ${{ steps.libraries.outputs.value }}
 
   build:
     needs: metadata
@@ -73,26 +106,30 @@ jobs:
           node-version: lts/*
           check-latest: true
           cache: npm
-      - id: meta
-        uses: docker/metadata-action@v5
-        with:
-          images: ghcr.io/${{ github.repository }}/${{ matrix.script-name }}
-          tags: |
-            type=ref,event=pr
-            type=edge
-          labels: |
-            org.opencontainers.image.title=${{ matrix.name }}
-            org.opencontainers.image.description=${{ matrix.description }}
-            version=${{ matrix.version }}
       - run: npm ci
       - uses: actions/download-artifact@v4
         with:
           name: libraries
           path: packages/
       - name: npm run build:script
-        run: npm run -w ${{ matrix.name }} build:script
+        run: npm run -w ${{ matrix.name }} build:script -- ${{ needs.metadata.outputs.build-args }}
         env:
           DOWNLOAD_BASE_URL: ${{ needs.metadata.outputs.base-url }}
+      - name: script version
+        id: version
+        run: echo "value=$(grep '// @version' ./${{ matrix.location }}/dist/${{ matrix.script-name }}.meta.js | awk '{print $3}')" >> "$GITHUB_OUTPUT"
+      - id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ghcr.io/${{ github.repository }}/${{ matrix.script-name }}
+          tags: |
+            type=ref,event=pr
+            type=semver,pattern={{version}},value=${{ matrix.version }}
+            type=edge
+          labels: |
+            org.opencontainers.image.title=${{ matrix.name }}
+            org.opencontainers.image.description=${{ matrix.description }}
+            version=${{ steps.version.outputs.value }}
       - name: oras push ${{ steps.meta.outputs.tags }}
         working-directory: ./${{ matrix.location }}/dist/
         run: |
@@ -100,8 +137,8 @@ jobs:
           ${{ steps.meta.outputs.json }}
           EOF
           oras push --annotation-file annotations.json ${{ steps.meta.outputs.tags }} \
-            ${{ matrix.script-name }}+dev.user.js:application/vnd.unknown.layer.v1+javascript \
-            ${{ matrix.script-name }}+dev.meta.js:application/vnd.unknown.layer.v1+javascript
+            ${{ matrix.script-name }}.user.js:application/vnd.unknown.layer.v1+javascript \
+            ${{ matrix.script-name }}.meta.js:application/vnd.unknown.layer.v1+javascript
 
   build-conclusion:
     needs: build

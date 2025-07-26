@@ -1,6 +1,5 @@
 // ==UserScript==
 // @name          ZenzaWatch
-// @namespace     https://kpherox.dev/
 // @match         *://*.nicovideo.jp/*
 ///@match         *://www.nicovideo.jp/*
 ///@match         *://ext.nicovideo.jp/

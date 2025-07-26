@@ -1,6 +1,5 @@
 // ==UserScript==
 // @name          HeatSync
-// @namespace     https://kpherox.dev/
 // @match         *://www.nicovideo.jp/*
 // @match         *://ext.nicovideo.jp/
 // @match         *://ext.nicovideo.jp/#*
