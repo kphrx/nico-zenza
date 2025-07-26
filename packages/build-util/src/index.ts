@@ -1,7 +1,7 @@
 /* eslint-env node */
 import {env} from "node:process";
 
-import {defineConfig} from "rollup";
+import type {RollupOptionsFunction} from "rollup";
 import babel from "@rollup/plugin-babel";
 import nodeResolve from "@rollup/plugin-node-resolve";
 import strip from "@rollup/plugin-strip";
@@ -11,18 +11,26 @@ import userscript from "rollup-plugin-userscript";
 import {packageMetadata} from "./utils/packageMetadata.js";
 import {getScriptMetadata} from "./utils/scriptMetadata.js";
 
-function addSuffix(filename: string, version: string, isDev = false) {
-  const now = new Date().getTime().toString();
-
-  if (!isDev) {
-    return {filename, version};
+function addSuffix({
+  version,
+  metadata,
+  isProd,
+}: {
+  version: string;
+  metadata?: string;
+  isProd: boolean;
+}) {
+  if (isProd) {
+    return version;
   }
 
+  const now = new Date().getTime().toString();
   const separator = version.includes("-") ? `.` : `-`;
-  return {
-    filename: `${filename}+dev`,
-    version: `${version}${separator}dev.${now}`,
-  };
+  const ver = `${version}${separator}dev.${now}`;
+  if (!metadata) {
+    return ver;
+  }
+  return `${ver}+${metadata}`;
 }
 
 interface Dependency {
@@ -101,18 +109,19 @@ export function rollupConfig({
     cjsModules: RequiredKey<Dependency, "variableName">[];
     esModules: Dependency[];
   }>;
-}> = {}) {
-  const isDev = env.NODE_ENV !== "production";
+}> = {}): RollupOptionsFunction {
   const downloadBaseURL = env.DOWNLOAD_BASE_URL;
 
-  const {description, license, author, tracker, homepage, dependencies} =
-    packageMetadata;
+  const {
+    filename,
+    description,
+    license,
+    author,
+    tracker,
+    homepage,
+    dependencies,
+  } = packageMetadata;
   const extensions = [".ts", ".tsx", ".mjs", ".js", ".jsx"];
-  const {filename, version} = addSuffix(
-    packageMetadata.filename,
-    packageMetadata.version,
-    isDev,
-  );
 
   const cjsModules = externals?.cjsModules ?? [];
   const esModules = externals?.esModules ?? [];
@@ -125,92 +134,113 @@ export function rollupConfig({
     deps.map((dep) => [dep.moduleName, getVariableName(dep)]),
   );
 
-  let metadata = "";
-
-  return defineConfig({
-    input: "src/index.ts",
-    output: {
-      file: `dist/${filename}.user.js`,
-      format: "iife",
-      banner,
-      footer,
-      indent: false,
-      sourcemap: false,
-      globals,
-    },
-    external: /node_modules/,
-    plugins: [
-      babel({
-        babelrc: false,
-        babelHelpers: "bundled",
-        presets: [
-          [
-            "@babel/env",
-            {
-              modules: false,
-              targets: "> 0.5%, Firefox ESR, not dead",
-              shippedProposals: true,
-            },
-          ],
-          ["@babel/typescript", {allowDeclareFields: true}],
+  const plugins = {
+    babel: babel({
+      babelrc: false,
+      babelHelpers: "bundled",
+      presets: [
+        [
+          "@babel/env",
+          {
+            modules: false,
+            targets: "> 0.5%, Firefox ESR, not dead",
+            shippedProposals: true,
+          },
         ],
-        plugins: [
-          useDecorator && ["@babel/proposal-decorators", {version: "2023-11"}],
-          [
-            "babel-plugin-tsconfig-paths",
-            {
-              relative: true,
-              extensions,
-              rootDir: ".",
-              tsconfig: "./tsconfig.json",
-            },
-          ],
-        ].filter((x) => x),
-        exclude: "node_modules/**",
-        extensions,
-      }),
-      nodeResolve({browser: false, extensions}),
-      importCss({modules: true, minify: false}),
-      strip({
-        include: "**/*.ts",
-        functions: isDev
-          ? []
-          : ["console.debug", "console.time", "console.timeEnd"],
-      }),
-      userscript((meta) => {
-        metadata = getScriptMetadata(
-          meta,
-          Object.assign(
-            {},
-            {
-              version,
-              description,
-              license,
-              author: author.toString(),
-              supportURL: tracker,
-              homepageURL: homepage,
-            },
-            downloadBaseURL
-              ? {
-                  downloadURL: `${downloadBaseURL}/${filename}.user.js`,
-                  updateURL: `${downloadBaseURL}/${filename}.meta.js`,
-                }
-              : {},
-          ),
-          requireSet,
-        );
-        return metadata;
-      }),
-      {
-        name: "generate meta.js",
-        generateBundle() {
-          this.emitFile({
-            type: "prebuilt-chunk",
-            fileName: `${filename}.meta.js`,
-            code: `${metadata}\n`,
-          });
-        },
+        ["@babel/typescript", {allowDeclareFields: true}],
+      ],
+      plugins: [
+        useDecorator && ["@babel/proposal-decorators", {version: "2023-11"}],
+        [
+          "babel-plugin-tsconfig-paths",
+          {
+            relative: true,
+            extensions,
+            rootDir: ".",
+            tsconfig: "./tsconfig.json",
+          },
+        ],
+      ].filter((x) => x),
+      exclude: "node_modules/**",
+      extensions,
+    }),
+    nodeResolve: nodeResolve({browser: false, extensions}),
+    importCss: importCss({modules: true, minify: false}),
+  };
+
+  return (commandLineArgs) => {
+    const isProd = !!commandLineArgs.production;
+    delete commandLineArgs.production;
+    let metadata;
+    if (typeof commandLineArgs.versionMetadata === "string") {
+      metadata = commandLineArgs.versionMetadata;
+    }
+    delete commandLineArgs.versionMetadata;
+    const version = addSuffix({
+      version: packageMetadata.version,
+      metadata,
+      isProd,
+    });
+
+    let metaBlock = "";
+
+    return {
+      input: "src/index.ts",
+      output: {
+        file: `dist/${filename}.user.js`,
+        format: "iife",
+        banner,
+        footer,
+        indent: false,
+        sourcemap: false,
+        globals,
       },
-    ],
-  });
+      external: /node_modules/,
+      plugins: [
+        plugins.babel,
+        plugins.nodeResolve,
+        plugins.importCss,
+        isProd
+          ? strip({
+              include: "**/*.ts",
+              functions: ["console.debug", "console.time", "console.timeEnd"],
+            })
+          : undefined,
+        userscript((meta) => {
+          metaBlock = getScriptMetadata(
+            meta,
+            Object.assign(
+              {},
+              {
+                version,
+                description,
+                license,
+                author: author.toString(),
+                supportURL: tracker,
+                homepageURL: homepage,
+              },
+              downloadBaseURL
+                ? {
+                    downloadURL: `${downloadBaseURL}/${filename}.user.js`,
+                    updateURL: `${downloadBaseURL}/${filename}.meta.js`,
+                  }
+                : {},
+            ),
+            requireSet,
+          );
+          return metaBlock;
+        }),
+        {
+          name: "generate meta.js",
+          generateBundle() {
+            this.emitFile({
+              type: "prebuilt-chunk",
+              fileName: `${filename}.meta.js`,
+              code: `${metaBlock}\n`,
+            });
+          },
+        },
+      ],
+    };
+  };
 }
