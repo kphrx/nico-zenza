@@ -103,9 +103,10 @@ type RequiredKey<T, K extends keyof T> = T & Required<Pick<T, K>>;
 function getStringCliArg(
   value: Record<string, unknown>,
   name: string,
+  fallback?: string,
 ): string | undefined {
   if (typeof value[name] !== "string") {
-    return;
+    return fallback;
   }
 
   return value[name];
@@ -184,7 +185,7 @@ export function rollupConfig({
     delete commandLineArgs.production;
     const metadata = getStringCliArg(commandLineArgs, "versionMetadata");
     delete commandLineArgs.versionMetadata;
-    const variant = getStringCliArg(commandLineArgs, "buildVariant");
+    const variant = getStringCliArg(commandLineArgs, "buildVariant", "dev");
     delete commandLineArgs.buildVariant;
 
     const version = addSuffix({
@@ -220,7 +221,7 @@ export function rollupConfig({
         userscript((meta) => {
           metaBlock = getScriptMetadata(
             meta,
-            variant,
+            isProd ? undefined : variant,
             {description},
             Object.assign(
               {},
