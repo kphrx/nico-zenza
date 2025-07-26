@@ -16,7 +16,8 @@ jobs:
 
     outputs:
       scripts: ${{ steps.scripts.outputs.result }}
-      base-url: ${{ steps.base-url.outputs.result }}
+      base-url: ${{ format('{0}/scripts/{1}', steps.pages.outputs.base_url, steps.build-kind.outputs.result) }}
+      build-args: ${{ format('--buildVariant {0} {1}', steps.build-kind.outputs.result, steps.build-kind.outputs.result == 'edge' && format('--versionMetadata "sha-{0}"', github.sha) || startsWith(steps.build-kind.outputs.result, 'GH-') && format('--versionMetadata "{0}--sha-{1}"', steps.build-kind.outputs.result, github.event.pull_request.head.sha) || '--production') }}
 
     steps:
       - uses: actions/checkout@v4
@@ -35,24 +36,20 @@ jobs:
           printf "value<<EOF\n%s\nEOF\n" "$(npm query '.workspace:attr([keywords=build]),.workspace:attr([keywords=lib])' | jq -r 'map(.location+"/dist/")[]')" >> "$GITHUB_OUTPUT"
       - name: script path
         uses: actions/github-script@v7
-        id: base-url
-        env:
-          BASE_URL: ${{ steps.pages.outputs.base_url }}
+        id: build-kind
         with:
           result-encoding: string
           script: |
             if (context.eventName === 'pull_request') {
-              return `${process.env.BASE_URL}/scripts/GH-${context.issue.number}`;
+              return `GH-${context.issue.number}`;
             }
             if (context.ref.startsWith('refs/tags/')) {
-              return `${process.env.BASE_URL}/scripts/latest`;
+              return 'latest';
             }
-            return `${process.env.BASE_URL}/scripts/edge`;
+            return 'edge';
       - name: scripts
         uses: actions/github-script@v7
         id: scripts
-        env:
-          BASE_URL: ${{ steps.pages.outputs.base_url }}
         with:
           result-encoding: json
           script: |
@@ -115,7 +112,7 @@ jobs:
           name: libraries
           path: packages/
       - name: npm run build:script
-        run: npm run -w ${{ matrix.name }} build:script
+        run: npm run -w ${{ matrix.name }} build:script -- ${{ needs.metadata.outputs.build-args }}
         env:
           DOWNLOAD_BASE_URL: ${{ needs.metadata.outputs.base-url }}
       - name: script version
