@@ -17,7 +17,7 @@ jobs:
     outputs:
       scripts: ${{ steps.scripts.outputs.result }}
       base-url: ${{ format('{0}/scripts/{1}', steps.pages.outputs.base_url, steps.build-kind.outputs.result) }}
-      build-args: ${{ format('--buildVariant {0} {1}', steps.build-kind.outputs.result, steps.build-kind.outputs.result == 'edge' && format('--versionMetadata "sha-{0}"', github.sha) || startsWith(steps.build-kind.outputs.result, 'GH-') && format('--versionMetadata "{0}--sha-{1}"', steps.build-kind.outputs.result, github.event.pull_request.head.sha) || '--production') }}
+      build-args: ${{ steps.build-kind.outputs.result == 'latest' && '--production' || format('--buildVariant {0} --versionMetadata sha-{1}', steps.build-kind.outputs.result, startsWith(steps.build-kind.outputs.result, 'GH-') && github.event.pull_request.head.sha || github.sha) }}
 
     steps:
       - uses: actions/checkout@v4
