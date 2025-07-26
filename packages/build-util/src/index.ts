@@ -170,7 +170,7 @@ export function rollupConfig({
         extensions,
       }),
       nodeResolve({browser: false, extensions}),
-      importCss({modules: true, minify: true}),
+      importCss({modules: true, minify: false}),
       strip({
         include: "**/*.ts",
         functions: isDev
