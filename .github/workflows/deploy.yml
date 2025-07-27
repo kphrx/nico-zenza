@@ -76,7 +76,7 @@ jobs:
               oras pull -o "tmp-release/" "ghcr.io/${{ github.repository }}/${name}:${version}" || continue
               rm -f tmp-release/*.meta.js
               mkdir -p dist/scripts/releases/
-              mv tmp-release/*.user.js "dist/scripts/releases/${name}-${version}.user.js"
+              mv tmp-release/*.user.js "dist/scripts/releases/${name}_v${version}.user.js"
             done
           done
           ls dist/scripts
