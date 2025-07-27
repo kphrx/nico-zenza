@@ -5,10 +5,13 @@ on:
     workflows: [Build, Release]
     types: [completed]
 
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: true
+
 jobs:
   pack:
     runs-on: ubuntu-latest
-    if: github.event_name != 'pull_request'
 
     steps:
       - uses: actions/checkout@v4
@@ -84,10 +87,6 @@ jobs:
   deploy:
     needs: pack
     runs-on: ubuntu-latest
-    if: github.event_name != 'pull_request'
-    concurrency:
-      group: pages
-      cancel-in-progress: true
     permissions:
       contents: read
       pages: write
