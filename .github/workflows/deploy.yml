@@ -72,7 +72,7 @@ jobs:
               oras pull -o "dist/scripts/GH-${number}/" "ghcr.io/${{ github.repository }}/${name}:pr-${number}" || true
             done
 
-            echo "$VERSIONS" | jq -r ".${name}[]" | while read -r version; do
+            echo "$VERSIONS" | jq -r ".\"${name}\"[]" | while read -r version; do
               oras pull -o "tmp-release/" "ghcr.io/${{ github.repository }}/${name}:${version}" || continue
               rm -f tmp-release/*.meta.js
               mkdir -p dist/scripts/releases/
