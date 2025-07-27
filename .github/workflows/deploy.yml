@@ -65,6 +65,7 @@ jobs:
         run: |
           mkdir -p dist
           echo "$SCRIPT_PACKAGES" | jq -r 'map(."script-name")[]' | while read -r name; do
+            echo "::group::assets for ${name}"
             oras pull -o dist/scripts/latest/ "ghcr.io/${{ github.repository }}/${name}:latest" || true
             oras pull -o dist/scripts/edge/ "ghcr.io/${{ github.repository }}/${name}:edge" || true
 
@@ -78,8 +79,11 @@ jobs:
               mkdir -p dist/scripts/releases/
               mv tmp-release/*.user.js "dist/scripts/releases/${name}_v${version}.user.js"
             done
+            echo "::endgroup::"
           done
+          echo "::group::channels"
           ls dist/scripts
+          echo "::endgroup::"
       - uses: actions/upload-pages-artifact@v3
         with:
           path: ${{ runner.temp }}/dist/
