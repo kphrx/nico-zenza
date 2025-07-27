@@ -5,10 +5,13 @@ on:
     workflows: [Build, Release]
     types: [completed]
 
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: true
+
 jobs:
   pack:
     runs-on: ubuntu-latest
-    if: github.event_name != 'pull_request'
 
     steps:
       - uses: actions/checkout@v4
@@ -34,11 +37,31 @@ jobs:
               state: 'open',
             });
             return pulls.map(pull => pull.number);
+      - name: versions
+        uses: actions/github-script@v7
+        id: versions
+        env:
+          SCRIPT_PACKAGES: ${{ steps.scripts.outputs.value }}
+        with:
+          result-encoding: json
+          script: |
+            const tags = await github.paginate(github.rest.repos.listTags, {
+              ...context.repo,
+            });
+            const versions = JSON.parse(process.env.SCRIPT_PACKAGES).reduce((acc, cur) => ({...acc, [cur["script-name"]]: []}), null);
+            return tags.reduce((acc, tag) => {
+              const [name, version] = tag.name.split('/');
+              if (name in acc) {
+                acc[name].push(version);
+              }
+              return acc;
+            }, versions);
       - name: download artifacts
         working-directory: ${{ runner.temp }}
         env:
           SCRIPT_PACKAGES: ${{ steps.scripts.outputs.value }}
           PR_NUMBERS: ${{ steps.pull-requests.outputs.result }}
+          VERSIONS: ${{ steps.versions.outputs.result }}
         run: |
           mkdir -p dist
           echo "$SCRIPT_PACKAGES" | jq -r 'map(."script-name")[]' | while read -r name; do
@@ -46,7 +69,14 @@ jobs:
             oras pull -o dist/scripts/edge/ "ghcr.io/${{ github.repository }}/${name}:edge" || true
 
             echo "$PR_NUMBERS" | jq -r '.[]' | while read -r number; do
-              oras pull -o "dist/scripts/GH-$number/" "ghcr.io/${{ github.repository }}/${name}:pr-${number}" || true
+              oras pull -o "dist/scripts/GH-${number}/" "ghcr.io/${{ github.repository }}/${name}:pr-${number}" || true
+            done
+
+            echo "$VERSIONS" | jq -r ".${name}[]" | while read -r version; do
+              oras pull -o "tmp-release/" "ghcr.io/${{ github.repository }}/${name}:${version}" || continue
+              rm -f tmp-release/*.meta.js
+              mkdir -p dist/scripts/releases/
+              mv tmp-release/*.user.js "dist/scripts/releases/${name}-${version}.user.js"
             done
           done
           ls dist/scripts
@@ -57,10 +87,6 @@ jobs:
   deploy:
     needs: pack
     runs-on: ubuntu-latest
-    if: github.event_name != 'pull_request'
-    concurrency:
-      group: pages
-      cancel-in-progress: true
     permissions:
       contents: read
       pages: write
