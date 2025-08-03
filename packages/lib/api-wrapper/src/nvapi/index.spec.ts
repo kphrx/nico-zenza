@@ -2,7 +2,7 @@ import assert from "node:assert/strict";
 import {describe, it, mock} from "node:test";
 
 import {Nvapi} from "./";
-import type {ErrorResponse} from "../types";
+import type {ErrorResponse, FetchFunc} from "../types";
 
 await describe("nvapi v1", async () => {
   const nvapi = new Nvapi().v1;
@@ -24,7 +24,7 @@ await describe("nvapi v1", async () => {
         mock.method(
           globalThis,
           "fetch",
-          (...args: Parameters<typeof fetch>): ReturnType<typeof fetch> => {
+          (...args: Parameters<FetchFunc>): ReturnType<FetchFunc> => {
             const [input] = args;
 
             if (input instanceof Request) {

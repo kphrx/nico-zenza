@@ -1,7 +1,7 @@
 {
-  "name": "@nico-zenza/api-wrapper",
+  "name": "@nico-zenza/cross-domain-gate",
   "version": "0.1.0",
-  "description": "nicovideo.jp の API ラッパー",
+  "description": "Bypass disallowed fetch via iframe with userscript running",
   "main": "dist/index.js",
   "scripts": {
     "test": "NODE_ENV=test node --import tsx/esm --test 'src/**/*.spec.ts'",
@@ -20,5 +20,8 @@
   "type": "module",
   "keywords": [
     "lib"
-  ]
+  ],
+  "dependencies": {
+    "hls.js": "^1.6.2"
+  }
 }

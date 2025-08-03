@@ -2,14 +2,13 @@ import type {ReactiveController} from "lit";
 import {initialState, Task} from "@lit/task";
 import type {StatusRenderer} from "@lit/task";
 
+import {CrossDomainGate} from "@nico-zenza/cross-domain-gate";
 import {isErrorResponse, Nvapi} from "@nico-zenza/api-wrapper";
 import type {WatchData, AccessRights} from "@nico-zenza/api-wrapper";
 
 import type {PlayerVideo} from "./video";
 
 type ReactiveControllerHost = PlayerVideo;
-
-const nvapi = new Nvapi();
 
 export class SessionController implements ReactiveController {
   #host: ReactiveControllerHost;
@@ -38,7 +37,9 @@ export class SessionController implements ReactiveController {
           throw error;
         }
 
-        const json = await nvapi.v1.watch
+        const json = await new Nvapi(undefined, (...args) =>
+          CrossDomainGate.nicovideoFetch(...args),
+        ).v1.watch
           .accessRights(watchData.client.watchId)
           .hls.post(
             {
