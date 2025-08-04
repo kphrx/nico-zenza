@@ -2,26 +2,30 @@ import type {ReactiveController} from "lit";
 
 import type {VideoId} from "@nico-zenza/api-wrapper";
 
-import type {PlayerDialog} from "./dialog";
+import type {PlayerDialog as ReactiveControllerHost} from "./dialog";
 
-type ReactiveControllerHost = PlayerDialog;
+type OnOpen = (isChanged: boolean) => void;
 
 export class OpenController implements ReactiveController {
   #host: ReactiveControllerHost;
-  #onOpen: () => void;
+  #onOpen: OnOpen;
 
   #onPlayerOpen = (
     ev: GlobalEventHandlersEventMap["zenzawatch:playeropen"],
   ) => {
     const {videoId} = ev.detail;
+    if (this.videoId === videoId) {
+      this.#onOpen(false);
+      return;
+    }
 
     this.videoId = videoId;
-    this.#onOpen();
+    this.#onOpen(true);
   };
 
   videoId?: VideoId | `${number}`;
 
-  constructor(host: ReactiveControllerHost, onOpen: () => void) {
+  constructor(host: ReactiveControllerHost, onOpen: OnOpen) {
     this.#host = host;
     this.#onOpen = onOpen;
 
