@@ -1,9 +1,13 @@
 import {LitElement, html} from "lit";
 import {customElement} from "lit/decorators.js";
+import {repeat} from "lit/directives/repeat.js";
 import {consume} from "@lit/context";
 
 import {commentContext} from "@/contexts/comment-context";
 import type {CommentContext} from "@/contexts/comment-context";
+
+import "./comment-item";
+import type {CommentCommands} from "./comment-item";
 
 import sheet from "./comments.css" with {type: "css"};
 
@@ -95,20 +99,6 @@ export class PlayerComments extends LitElement {
     return new Set(["184"]);
   }
 
-  get #defaultCommands(): {
-    size: "small" | "medium" | "big";
-    position: "ue" | "shita" | "naka";
-    duration: number;
-    color: string;
-  } {
-    return {
-      size: "medium",
-      position: "naka",
-      duration: 4000,
-      color: "#ffffff",
-    };
-  }
-
   #isNgCommand(cmd: string) {
     if (this.#ngCommands === "all") {
       return true;
@@ -120,13 +110,14 @@ export class PlayerComments extends LitElement {
     commands: string[],
     {isPremium, isOwner}: {isPremium: boolean; isOwner: boolean},
   ) {
-    let size, position, font, color, duration;
-    let isFull = false;
-    let isEnder = false;
-    let isPatissier = false;
-    let isCa = false;
-    let isInvisible = false;
-    let isLive = false;
+    const parsedCommands: CommentCommands = {
+      isFull: false,
+      isEnder: false,
+      isPatissier: false,
+      isCa: false,
+      isInvisible: false,
+      isLive: false,
+    };
 
     for (const cmd of commands) {
       if (this.#isNgCommand(cmd)) {
@@ -134,33 +125,29 @@ export class PlayerComments extends LitElement {
       }
 
       if (hasSetCommand(COMMANDS.SIZE, cmd)) {
-        size ??= cmd;
+        parsedCommands.size ??= cmd;
         continue;
       }
 
       if (hasSetCommand(COMMANDS.POSITION, cmd)) {
-        position ??= cmd;
-        if (cmd === "naka") {
-          duration ??= 4000;
-        } else {
-          duration ??= 2900;
-        }
+        parsedCommands.position ??= cmd;
+        parsedCommands.duration ??= cmd === "naka" ? 4000 : 2900;
         continue;
       }
 
       if (hasSetCommand(COMMANDS.FONT, cmd)) {
-        font ??= cmd;
+        parsedCommands.font ??= cmd;
         continue;
       }
 
       if (hasRecordCommand(COMMANDS.COLOR, cmd)) {
-        color ??= COMMANDS.COLOR[cmd];
+        parsedCommands.color ??= COMMANDS.COLOR[cmd];
         continue;
       }
 
       if (hasRecordCommand(COMMANDS.COLOR_PREMIUM, cmd)) {
         if (isPremium) {
-          color ??= COMMANDS.COLOR_PREMIUM[cmd];
+          parsedCommands.color ??= COMMANDS.COLOR_PREMIUM[cmd];
         }
         continue;
       }
@@ -168,112 +155,69 @@ export class PlayerComments extends LitElement {
       switch (cmd) {
         // style
         case "full":
-          isFull = true;
+          parsedCommands.isFull = true;
           continue;
         case "ender":
-          isEnder = true;
+          parsedCommands.isEnder = true;
           continue;
 
         // memory
         case "patissier":
-          isPatissier = true;
+          parsedCommands.isPatissier = true;
           continue;
         case "ca":
-          isCa = true;
+          parsedCommands.isCa = true;
           continue;
         case "invisible":
-          isInvisible = true;
+          parsedCommands.isInvisible = true;
           continue;
 
         // other
         case "_live":
-          isLive = true;
+          parsedCommands.isLive = true;
           continue;
       }
 
       const colorMatch = /(#[0-9a-f]+)/i.exec(cmd);
       if (colorMatch != null) {
         if (isPremium) {
-          color ??= colorMatch[1];
+          parsedCommands.color ??= colorMatch[1];
         }
         continue;
       }
 
       const durationMatch = /[@＠]([0-9]+)(?:\.(?<decimal>[0-9]+))?/.exec(cmd);
       if (durationMatch != null) {
-        if (!isOwner || duration != null) {
+        if (!isOwner || parsedCommands.duration != null) {
           continue;
         }
         const sec = durationMatch[1];
         const ms = durationMatch.groups?.decimal ?? "0";
-        duration = parseFloat(
+        parsedCommands.duration = parseFloat(
           `${sec}${ms.padEnd(3, "0").slice(0, 3)}.${ms.slice(3)}`,
         );
         continue;
       }
     }
 
-    return {
-      size,
-      position,
-      font,
-      color,
-      duration,
-      isFull,
-      isEnder,
-      isPatissier,
-      isCa,
-      isInvisible,
-      isLive,
-    };
-  }
-
-  get #commentItems() {
-    return this.comments
-      .toSorted((a, b) => {
-        return a.vposMs - b.vposMs;
-      })
-      .map((comment) => {
-        const {
-          size = this.#defaultCommands.size,
-          position = this.#defaultCommands.position,
-          color = this.#defaultCommands.color,
-          duration = this.#defaultCommands.duration,
-          font,
-          isFull,
-          isEnder,
-          isPatissier,
-          isCa,
-          isInvisible,
-          isLive,
-        } = this.#parseCommands(comment.commands, {
-          isPremium: comment.isPremium,
-          isOwner: comment.fork === "owner",
-        });
-
-        return {
-          text: comment.body,
-          size,
-          position,
-          font,
-          color,
-          duration,
-          isFull,
-          isEnder,
-          isPatissier,
-          isCa,
-          isInvisible,
-          isLive,
-        };
-      });
+    return parsedCommands;
   }
 
   render() {
-    return html`<div class="comment-layer">
-      ${this.#commentItems.map((item) => {
-        const {text, ...data} = item;
-        return html`<p class="item" ${data}>${text}</p>`;
-      })}
-    </div>`;
+    return repeat(
+      this.comments,
+      (item) => item.id,
+      ({body, id, vposMs, commands, isPremium, fork}) => {
+        return html`<zenza-comment-item
+          comment-id=${id}
+          .vpos=${vposMs}
+          .commands=${this.#parseCommands(commands, {
+            isPremium,
+            isOwner: fork === "owner",
+          })}
+          >${body}</zenza-comment-item
+        >`;
+      },
+    );
   }
 }

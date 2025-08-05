@@ -3,7 +3,3 @@
   inset: 0;
   opacity: var(--comments-opacity, 1);
 }
-
-p.item {
-  margin: 0;
-}
