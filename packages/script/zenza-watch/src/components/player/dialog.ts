@@ -16,6 +16,7 @@ import {WatchDataController} from "./watch-data-controller";
 import {PlayerHeader} from "./header";
 import {PlayerInfoPanel} from "./info-panel";
 import {PlayerControls} from "./controls";
+import {PlayerComments} from "./comments";
 import {PlayerVideo} from "./video";
 import {PlayerMessage} from "./message";
 
@@ -57,6 +58,8 @@ export class PlayerDialog extends LitElement {
   #infoPanel = new PlayerInfoPanel();
 
   #controls = new PlayerControls();
+
+  #comments = new PlayerComments();
 
   #video = new PlayerVideo();
 
@@ -146,6 +149,7 @@ export class PlayerDialog extends LitElement {
           this.#close,
           this.playerMessage,
           this.#video,
+          this.#comments,
           this.#controls,
           this.#header,
           this.#infoPanel,
