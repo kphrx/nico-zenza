@@ -102,10 +102,15 @@ export class PlayerCommentItem extends LitElement {
     }
   }
 
+  get #duration() {
+    return this.commands.duration ?? this.defaultCommands.duration;
+  }
+
   get #visible() {
-    const end =
-      this.vpos + (this.commands.duration ?? this.defaultCommands.duration);
-    return this.vpos <= this.currentTime && this.currentTime <= end;
+    return (
+      this.vpos <= this.currentTime &&
+      this.currentTime <= this.vpos + this.#duration
+    );
   }
 
   get #color() {
@@ -115,7 +120,7 @@ export class PlayerCommentItem extends LitElement {
   render() {
     return html`<p
       class=${classMap({...this.#fontClass, ...this.#sizeClass})}
-      ?hidden=${this.#visible}
+      ?hidden=${!this.#visible}
       style=${styleMap({color: this.#color})}>
       <slot></slot>
     </p>`;
