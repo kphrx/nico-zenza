@@ -1,85 +1,130 @@
-:host {
+@keyframes comment-flow {
+  from {
+    translate: 100vw;
+  }
+  to {
+    translate: -100%;
+  }
 }
 
-p {
-  margin: 0;
-  width: fit-content;
-
-  &.big.is-lineResized {
-    line-height: 48px;
+@keyframes comment-overlay-fixed {
+  0% {
+    opacity: 0;
   }
-  &.medium.is-lineResized {
-    line-height: calc((384 - 4) * 2 / 25 -0.4) px;
+  1% {
+    opacity: 1;
   }
-  &.small.is-lineResized {
-    line-height: calc((384 - 4) * 2 / 38) px;
+  99% {
+    opacity: 1;
   }
-
-  &.flash {
-    &.big:not(.is-lineResized) {
-      font-size: 39px;
-      line-height: 45px;
-    }
-    &.medium:not(.is-lineResized) {
-      font-size: 24px;
-      line-height: 29px;
-    }
-    &.small:not(.is-lineResized) {
-      font-size: 16px;
-      line-height: 18px;
-    }
-
-    &.gothic {
-      font-family:
-        "ＭＳ Ｐゴシック", "IPAMonaPGothic", sans-serif, Arial, "Menlo";
-    }
-    &.mincho {
-      font-family:
-        Simsun, "Osaka−等幅", "ＭＳ 明朝", "ＭＳ ゴシック",
-        "モトヤLシーダ3等幅", "Hiragino Mincho ProN";
-    }
-    &.gulim {
-      font-family:
-        Gulim, Osaka-mono, "Osaka−等幅", "ＭＳ ゴシック", "モトヤLシーダ3等幅";
-    }
-    &.mingLiu {
-      font-family:
-        PmingLiu, mingLiu, MingLiU, Osaka-mono, "Osaka−等幅", "ＭＳ 明朝",
-        "ＭＳ ゴシック", "モトヤLシーダ3等幅";
-    }
+  100% {
+    opacity: 0;
   }
+}
 
-  &.html5 {
-    &.big:not(.is-lineResized) {
-      font-size: 39px;
-      line-height: calc(46.5 - 1) px;
-    }
-    &.medium:not(.is-lineResized) {
-      font-size: 26px;
-      line-height: calc((384 - 4) / 13) px;
-    }
-    &.small:not(.is-lineResized) {
-      font-size: 17.4px;
-      line-height: calc((384 - 4) / 21) px;
+:host(:not(.playing)) > p {
+  animation-play-state: paused;
+}
+
+:host {
+  > p {
+    margin: 0;
+    width: fit-content;
+
+    visibility: hidden;
+    &.visible {
+      visibility: visible;
     }
 
-    &.gothic {
-      font-weight: 400;
-      font-family:
-        "游ゴシック", "Yu Gothic", "YuGothic", Simsun, "ＭＳ ゴシック",
-        "IPAMonaPGothic", sans-serif, Arial, Menlo;
+    animation-timing-function: linear;
+    animation-duration: var(--duration);
+    animation-delay: var(--delay);
+
+    &.naka {
+      animation-name: comment-flow;
     }
-    &.mincho {
-      font-weight: 400;
-      font-family:
-        "游明朝体", "Yu Mincho", "YuMincho", Simsun, "Osaka−等幅", "ＭＳ 明朝",
-        "ＭＳ ゴシック", "モトヤLシーダ3等幅", "Hiragino Mincho ProN", monospace;
+
+    &:where(.ue, .shita) {
+      animation-name: comment-overlay-fixed;
     }
-    &.defont {
-      font-family:
-        arial, "ＭＳ Ｐゴシック", "MS PGothic", "MSPGothic", "ヒラギノ角ゴ",
-        "ヒラギノ角ゴシック", "Hiragino Sans", "IPAMonaPGothic", sans-serif,
-        monospace, Menlo;
+
+    &.big.is-lineResized {
+      line-height: 48px;
+    }
+    &.medium.is-lineResized {
+      line-height: calc((384 - 4) * 2 / 25 -0.4) px;
+    }
+    &.small.is-lineResized {
+      line-height: calc((384 - 4) * 2 / 38) px;
+    }
+
+    &.flash {
+      &.big:not(.is-lineResized) {
+        font-size: 39px;
+        line-height: 45px;
+      }
+      &.medium:not(.is-lineResized) {
+        font-size: 24px;
+        line-height: 29px;
+      }
+      &.small:not(.is-lineResized) {
+        font-size: 16px;
+        line-height: 18px;
+      }
+
+      &.gothic {
+        font-family:
+          "ＭＳ Ｐゴシック", "IPAMonaPGothic", sans-serif, Arial, "Menlo";
+      }
+      &.mincho {
+        font-family:
+          Simsun, "Osaka−等幅", "ＭＳ 明朝", "ＭＳ ゴシック",
+          "モトヤLシーダ3等幅", "Hiragino Mincho ProN";
+      }
+      &.gulim {
+        font-family:
+          Gulim, Osaka-mono, "Osaka−等幅", "ＭＳ ゴシック", "モトヤLシーダ3等幅";
+      }
+      &.mingLiu {
+        font-family:
+          PmingLiu, mingLiu, MingLiU, Osaka-mono, "Osaka−等幅", "ＭＳ 明朝",
+          "ＭＳ ゴシック", "モトヤLシーダ3等幅";
+      }
+    }
+
+    &.html5 {
+      &.big:not(.is-lineResized) {
+        font-size: 39px;
+        line-height: calc(46.5 - 1) px;
+      }
+      &.medium:not(.is-lineResized) {
+        font-size: 26px;
+        line-height: calc((384 - 4) / 13) px;
+      }
+      &.small:not(.is-lineResized) {
+        font-size: 17.4px;
+        line-height: calc((384 - 4) / 21) px;
+      }
+
+      &.gothic {
+        font-weight: 400;
+        font-family:
+          "游ゴシック", "Yu Gothic", "YuGothic", Simsun, "ＭＳ ゴシック",
+          "IPAMonaPGothic", sans-serif, Arial, Menlo;
+      }
+      &.mincho {
+        font-weight: 400;
+        font-family:
+          "游明朝体", "Yu Mincho", "YuMincho", Simsun, "Osaka−等幅",
+          "ＭＳ 明朝", "ＭＳ ゴシック", "モトヤLシーダ3等幅",
+          "Hiragino Mincho ProN", monospace;
+      }
+      &.defont {
+        font-family:
+          arial, "ＭＳ Ｐゴシック", "MS PGothic", "MSPGothic", "ヒラギノ角ゴ",
+          "ヒラギノ角ゴシック", "Hiragino Sans", "IPAMonaPGothic", sans-serif,
+          monospace, Menlo;
+      }
     }
   }
 }

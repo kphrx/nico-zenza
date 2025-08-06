@@ -1,5 +1,5 @@
 :host {
   position: absolute;
   inset: 0;
-  opacity: var(--comments-opacity, 1);
+  opacity: var(--comments-opacity, 1) !important;
 }

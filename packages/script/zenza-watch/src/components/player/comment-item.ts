@@ -1,11 +1,17 @@
 import {LitElement, html} from "lit";
-import {customElement, property} from "lit/decorators.js";
+import {customElement, property, state} from "lit/decorators.js";
 import {styleMap} from "lit/directives/style-map.js";
 import {classMap} from "lit/directives/class-map.js";
 
 import sheet from "./comment-item.css" with {type: "css"};
 
-const TAG_NAME = "zenza-comment-item";
+const TAG_NAME = "zenza-watch-comment-item";
+
+const POSITION_CLASS = {
+  ue: false,
+  naka: false,
+  shita: false,
+};
 
 const FONT_CLASS = {
   mincho: false,
@@ -55,13 +61,17 @@ export type CommentCommands = Partial<BaseStyleCommands> &
 export class PlayerCommentItem extends LitElement {
   static styles = sheet;
 
-  currentTime = 0;
+  @state()
+  accessor currentTime = 0;
+
+  @state()
+  accessor startTime = 0;
 
   @property({type: Number, attribute: "comment-id"})
   accessor uniqueId!: number;
 
-  @property({type: Number})
-  accessor vpos!: number;
+  @property({type: Number, attribute: "vpos-ms"})
+  accessor vposMs!: number;
 
   @property({attribute: false})
   accessor commands!: CommentCommands;
@@ -74,8 +84,15 @@ export class PlayerCommentItem extends LitElement {
     color: "#ffffff",
   };
 
-  get position() {
-    return this.commands.position ?? this.defaultCommands.position;
+  get #positionClass() {
+    switch (this.commands.position ?? this.defaultCommands.position) {
+      case "ue":
+        return {...POSITION_CLASS, ue: true};
+      case "naka":
+        return {...POSITION_CLASS, naka: true};
+      case "shita":
+        return {...POSITION_CLASS, shita: true};
+    }
   }
 
   get #fontClass() {
@@ -107,22 +124,74 @@ export class PlayerCommentItem extends LitElement {
   }
 
   get #visible() {
-    return (
-      this.vpos <= this.currentTime &&
-      this.currentTime <= this.vpos + this.#duration
-    );
+    const currentTime = this.currentTime * 1000;
+    const start = this.vposMs + 1000;
+    const end = start + this.#duration;
+    return start <= currentTime && currentTime <= end;
   }
 
   get #color() {
     return this.commands.color ?? this.defaultCommands.color;
   }
 
+  #onPlaying = () => {
+    this.classList.toggle("playing", true);
+  };
+
+  #onPausing = () => {
+    this.classList.toggle("playing", false);
+  };
+
+  #onUpdateCurrentPosition = (
+    ev: GlobalEventHandlersEventMap["zenzawatch:updateCurrentPosition"],
+  ) => {
+    this.currentTime = ev.detail;
+  };
+
+  #onSeeking = (ev: GlobalEventHandlersEventMap["zenzawatch:seeking"]) => {
+    this.startTime = ev.detail;
+  };
+
+  connectedCallback() {
+    super.connectedCallback();
+    window.addEventListener("zenzawatch:playing", this.#onPlaying);
+    window.addEventListener("zenzawatch:pausing", this.#onPausing);
+    window.addEventListener(
+      "zenzawatch:updateCurrentPosition",
+      this.#onUpdateCurrentPosition,
+    );
+    window.addEventListener("zenzawatch:seeking", this.#onSeeking);
+  }
+
+  disconnectedCallback() {
+    super.disconnectedCallback();
+    window.removeEventListener("zenzawatch:playing", this.#onPlaying);
+    window.removeEventListener("zenzawatch:pausing", this.#onPausing);
+    window.removeEventListener(
+      "zenzawatch:updateCurrentPosition",
+      this.#onUpdateCurrentPosition,
+    );
+    window.removeEventListener("zenzawatch:seeking", this.#onSeeking);
+  }
+
   render() {
-    return html`<p
-      class=${classMap({...this.#fontClass, ...this.#sizeClass})}
-      ?hidden=${!this.#visible}
-      style=${styleMap({color: this.#color})}>
-      <slot></slot>
-    </p>`;
+    return html`
+      <style>
+        :host {
+          --duration: ${this.#duration}ms;
+          --delay: calc(${this.vposMs}ms - ${this.startTime}s);
+        }
+      </style>
+      <p
+        class=${classMap({
+          ...this.#fontClass,
+          ...this.#sizeClass,
+          ...this.#positionClass,
+          visible: this.#visible,
+        })}
+        style=${styleMap({color: this.#color})}>
+        <slot></slot>
+      </p>
+    `;
   }
 }

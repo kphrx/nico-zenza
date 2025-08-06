@@ -208,9 +208,9 @@ export class PlayerComments extends LitElement {
       this.comments,
       (item) => item.id,
       ({body, id, vposMs, commands, isPremium, fork}) => {
-        return html`<zenza-comment-item
+        return html`<zenza-watch-comment-item
           comment-id=${id}
-          .vpos=${vposMs}
+          vpos-ms=${vposMs}
           .commands=${this.#parseCommands(commands, {
             isPremium,
             isOwner: fork === "owner",
