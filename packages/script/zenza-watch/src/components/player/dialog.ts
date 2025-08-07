@@ -30,11 +30,11 @@ export class PlayerDialog extends LitElement {
 
   #watchData = new WatchDataController(this);
 
-  #open = new OpenController(this, () => {
-    if (this.open) {
-      this.requestUpdate();
-    } else {
+  #open = new OpenController(this, (isChanged) => {
+    if (!this.open) {
       this.open = true;
+    } else if (isChanged) {
+      this.requestUpdate();
     }
   });
 

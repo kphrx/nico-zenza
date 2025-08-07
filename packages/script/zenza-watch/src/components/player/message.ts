@@ -61,18 +61,18 @@ export class PlayerMessage extends LitElement {
     context?: string;
     showMs: number;
   }) {
-    const prefix = context != null ? `[${context}] ` : "";
+    const status = context != null ? `[${context}] ${message}` : message;
 
-    this.#newMessage(
-      {
-        type,
-        status: prefix + message,
-        hide: true,
-      },
-      showMs,
-    ).catch((e: unknown) => {
-      console.error(e);
-    });
+    switch (type) {
+      case "normal":
+      case "success":
+        console.info(status);
+        break;
+      case "failure":
+        console.warn(status);
+    }
+
+    this.#newMessage({type, status, hide: true}, showMs).catch(console.error);
   }
 
   info(message: string, context?: string, showMs = 3000) {
