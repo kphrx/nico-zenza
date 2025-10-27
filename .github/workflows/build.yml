@@ -36,7 +36,7 @@ jobs:
               });
             }
       - uses: actions/checkout@v5
-      - uses: actions/setup-node@v5
+      - uses: actions/setup-node@v6
         with:
           node-version: lts/*
           check-latest: true
@@ -89,7 +89,7 @@ jobs:
               scripts[0].version = version;
             }
             return scripts;
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v5
         with:
           name: libraries
           path: ${{ steps.libraries.outputs.value }}
@@ -116,13 +116,13 @@ jobs:
           registry: ghcr.io
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
-      - uses: actions/setup-node@v5
+      - uses: actions/setup-node@v6
         with:
           node-version: lts/*
           check-latest: true
           cache: npm
       - run: npm ci
-      - uses: actions/download-artifact@v5
+      - uses: actions/download-artifact@v6
         with:
           name: libraries
           path: packages/
