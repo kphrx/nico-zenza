@@ -15,7 +15,7 @@ jobs:
 
     steps:
       - uses: actions/checkout@v6
-      - uses: oras-project/setup-oras@v1
+      - uses: oras-project/setup-oras@v2
       - uses: actions/setup-node@v6
         with:
           node-version: lts/*
@@ -27,7 +27,7 @@ jobs:
         run: |
           echo "value=$(npm query '.workspace:attr([keywords=script])' | jq -c 'map({name,version,description,location,"script-name":.name|split("/";"")[1]})')" >> "$GITHUB_OUTPUT"
       - name: opened pull requests
-        uses: actions/github-script@v8
+        uses: actions/github-script@v9
         id: pull-requests
         with:
           result-encoding: json
@@ -38,7 +38,7 @@ jobs:
             });
             return pulls.map(pull => pull.number);
       - name: versions
-        uses: actions/github-script@v8
+        uses: actions/github-script@v9
         id: versions
         env:
           SCRIPT_PACKAGES: ${{ steps.scripts.outputs.value }}
@@ -80,7 +80,7 @@ jobs:
             done
           done
           ls dist/scripts
-      - uses: actions/upload-pages-artifact@v4
+      - uses: actions/upload-pages-artifact@v5
         with:
           path: ${{ runner.temp }}/dist/
 
