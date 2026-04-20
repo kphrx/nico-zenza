@@ -2,6 +2,7 @@ import type {ReactiveController} from "lit";
 import type {StatusRenderer} from "@lit/task";
 import {initialState, Task} from "@lit/task";
 
+import {CrossDomainGate} from "@nico-zenza/cross-domain-gate";
 import {isErrorResponse, WwwApi} from "@nico-zenza/api-wrapper";
 import type {
   ApiResponseWithStatus,
@@ -79,7 +80,9 @@ export class WatchDataController implements ReactiveController {
     actionTrackId?: string;
     signal: AbortSignal;
   }): Promise<ApiResponseWithStatus<WatchData>> => {
-    const watchApiWrapper = new WwwApi().watch;
+    const watchApiWrapper = new WwwApi((...args) =>
+      CrossDomainGate.nicovideoFetch(...args),
+    ).watch;
     const client = this.#isLoggedIn
       ? watchApiWrapper.v3(videoId)
       : watchApiWrapper.v3Guest(videoId);

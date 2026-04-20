@@ -1,17 +1,15 @@
-import type {ApiEndpoints} from "../../types";
+import type {FetchFunc} from "../../types";
 import {Playlist} from "./playlist";
 import {Watch} from "./watch";
 
-export class V1 implements ApiEndpoints {
-  endpoint: URL;
-
+export class V1 {
   playlist: Playlist;
   watch: Watch;
 
-  constructor(baseURL: URL | string) {
-    this.endpoint = new URL("v1/", baseURL);
+  constructor(baseURL: URL | string, customFetch: FetchFunc) {
+    const endpoint = new URL("v1/", baseURL);
 
-    this.playlist = new Playlist(this.endpoint);
-    this.watch = new Watch(this.endpoint);
+    this.playlist = new Playlist(endpoint, customFetch);
+    this.watch = new Watch(endpoint, customFetch);
   }
 }

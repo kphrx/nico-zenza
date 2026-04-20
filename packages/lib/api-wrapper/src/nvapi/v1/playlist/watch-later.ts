@@ -1,3 +1,4 @@
+import {FetchFunc} from "../../../types";
 import {mergeHeaders} from "../../../utils";
 import {NvapiEndpoint} from "../../types";
 import type {Playlist} from "./types";
@@ -13,8 +14,8 @@ interface WatchLaterOptions {
 }
 
 export class WatchLater extends NvapiEndpoint<Playlist, WatchLaterOptions> {
-  constructor(baseURL: URL | string) {
-    super("watch-later", baseURL);
+  constructor(baseURL: URL | string, customFetch: FetchFunc) {
+    super("watch-later", baseURL, customFetch);
   }
 
   async get(options: WatchLaterOptions, fetchInit?: RequestInit) {

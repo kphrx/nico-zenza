@@ -1,14 +1,12 @@
-import type {ApiEndpoints, VideoId} from "../../../../types";
+import type {FetchFunc, VideoId} from "../../../../types";
 import {Hls} from "./hls";
 
-export class AccessRights implements ApiEndpoints {
-  endpoint: URL;
-
+export class AccessRights {
   hls: Hls;
 
-  constructor(watchId: VideoId, baseURL: URL | string) {
-    this.endpoint = new URL(`${watchId}/access-rights/`, baseURL);
+  constructor(watchId: VideoId, baseURL: URL | string, customFetch: FetchFunc) {
+    const endpoint = new URL(`${watchId}/access-rights/`, baseURL);
 
-    this.hls = new Hls(this.endpoint);
+    this.hls = new Hls(endpoint, customFetch);
   }
 }

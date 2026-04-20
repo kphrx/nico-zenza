@@ -1,15 +1,16 @@
-import type {ApiEndpoints} from "../../../types";
-import type {VideoId} from "../../../types";
+import type {FetchFunc, VideoId} from "../../../types";
 import {AccessRights} from "./access-rights";
 
-export class Watch implements ApiEndpoints {
-  endpoint: URL;
+export class Watch {
+  #fetch: FetchFunc;
+  #endpoint: URL;
 
-  constructor(baseURL: URL | string) {
-    this.endpoint = new URL("watch/", baseURL);
+  constructor(baseURL: URL | string, customFetch: FetchFunc) {
+    this.#fetch = customFetch;
+    this.#endpoint = new URL("watch/", baseURL);
   }
 
   accessRights(watchId: VideoId): AccessRights {
-    return new AccessRights(watchId, this.endpoint);
+    return new AccessRights(watchId, this.#endpoint, this.#fetch);
   }
 }

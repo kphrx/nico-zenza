@@ -2,7 +2,7 @@ import assert from "node:assert/strict";
 import {describe, it, mock} from "node:test";
 
 import {WwwApi} from "./";
-import type {ErrorResponse} from "../types";
+import type {ErrorResponse, FetchFunc} from "../types";
 
 await describe("watch api", async () => {
   const watch = new WwwApi().watch;
@@ -34,7 +34,7 @@ await describe("watch api", async () => {
       mock.method(
         globalThis,
         "fetch",
-        (...args: Parameters<typeof fetch>): ReturnType<typeof fetch> => {
+        (...args: Parameters<FetchFunc>): ReturnType<FetchFunc> => {
           const [input] = args;
 
           if (input instanceof Request) {

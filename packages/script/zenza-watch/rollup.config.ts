@@ -3,8 +3,8 @@ import {rollupConfig} from "@nico-zenza/build-util";
 export default rollupConfig({
   useDecorator: true,
   externals: {
-    cjsModules: [{moduleName: "hls.js", variableName: "Hls"}],
     esModules: [
+      {moduleName: "hls.js"},
       {moduleName: "lit"},
       {moduleName: "lit/decorators.js"},
       {moduleName: "lit/directives/class-map.js"},
