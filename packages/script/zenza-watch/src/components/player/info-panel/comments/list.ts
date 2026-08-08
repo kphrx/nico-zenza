@@ -24,8 +24,6 @@ export const isOrderType = (tag: string): tag is CommentsOrderTypes => {
   return (ORDERS as readonly string[]).includes(tag);
 };
 
-export const EMPTY_ARRAY: FlattedComment[] = [] as const;
-
 type Compare = (a: FlattedComment, b: FlattedComment) => number;
 
 const sortComments = (
@@ -58,6 +56,7 @@ const compares = Object.fromEntries(
   ]),
 ) as Readonly<Record<CommentsOrderTypes, Compare>>;
 
+const EMPTY_ARRAY: FlattedComment[] = [];
 const TAG_NAME = "zenza-watch-player-info-panel-comments-list";
 
 declare global {
@@ -71,18 +70,21 @@ export class PlayerInfoPanelCommentsList extends LitElement {
   static styles = sheet;
 
   @consume({context: commentContext, subscribe: true})
-  accessor comments: CommentContext = EMPTY_ARRAY;
+  accessor comments!: CommentContext;
 
   @property({reflect: true})
   accessor order: CommentsOrderTypes = "vpos:asc";
 
   #currentScrolledId: string | undefined;
 
-  #task = new Task<[CommentContext, CommentsOrderTypes], FlattedComment[]>(
+  #task = new Task<
+    [CommentContext, CommentsOrderTypes],
+    FlattedComment[] | undefined
+  >(
     this,
     async ([comments, order], {signal}) => {
       if (comments.length === 0) {
-        return EMPTY_ARRAY;
+        return undefined;
       }
 
       signal.throwIfAborted();
@@ -129,6 +131,11 @@ export class PlayerInfoPanelCommentsList extends LitElement {
   }
 
   render() {
+    if (this.#sortedComments.length === 0) {
+      return html`<div class="empty">
+        <p class="status">コメントがありません</p>
+      </div>`;
+    }
     return this.#sortedComments.map((comment) => {
       return html`<div
         class="comment"

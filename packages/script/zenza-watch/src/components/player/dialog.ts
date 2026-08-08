@@ -4,13 +4,19 @@ import {provide} from "@lit/context";
 
 import {watchDataContext} from "@/contexts/watch-data-context";
 import type {WatchDataContext} from "@/contexts/watch-data-context";
-import {playerMessageContext} from "@/contexts/player-message-context";
+import {commentContext} from "@/contexts/comment-context";
+import type {CommentContext} from "@/contexts/comment-context";
+import {
+  PlayerMessageContext,
+  playerMessageContext,
+} from "@/contexts/player-message-context";
 
 import {OpenController} from "./open-controller";
 import {WatchDataController} from "./watch-data-controller";
 import {PlayerHeader} from "./header";
 import {PlayerInfoPanel} from "./info-panel";
 import {PlayerControls} from "./controls";
+import {PlayerComments} from "./comments";
 import {PlayerVideo} from "./video";
 import {PlayerMessage} from "./message";
 
@@ -42,7 +48,6 @@ export class PlayerDialog extends LitElement {
     class="close"
     @click=${() => {
       this.videoId = undefined;
-      this.watchData = undefined;
       this.open = false;
     }}>
     Close
@@ -54,21 +59,31 @@ export class PlayerDialog extends LitElement {
 
   #controls = new PlayerControls();
 
+  #comments = new PlayerComments();
+
   #video = new PlayerVideo();
 
   @provide({context: playerMessageContext})
-  accessor playerMessage!: PlayerMessage;
+  accessor playerMessage!: PlayerMessageContext;
+
+  @provide({context: watchDataContext})
+  accessor watchData: WatchDataContext;
+
+  @provide({context: commentContext})
+  accessor comments!: CommentContext;
 
   set videoId(value) {
+    if (this.#open.videoId === value) {
+      return;
+    }
+
     this.#open.videoId = value;
+    this.requestUpdate();
   }
 
   get videoId() {
     return this.#open.videoId;
   }
-
-  @provide({context: watchDataContext})
-  accessor watchData: WatchDataContext;
 
   @property({type: Boolean, reflect: true})
   accessor open = false;
@@ -116,16 +131,17 @@ export class PlayerDialog extends LitElement {
   render() {
     return this.#watchData.render({
       initial: () => {
-        return [this.#close];
+        this.watchData = undefined;
+        this.comments = [];
+
+        return [this.#close, this.playerMessage];
       },
-      pending: () => [
-        this.#close,
-        this.playerMessage,
-        this.#video,
-        this.#controls,
-        this.#header,
-        this.#infoPanel,
-      ],
+      pending: () => {
+        this.watchData = undefined;
+        this.comments = [];
+
+        return [this.#close, this.playerMessage];
+      },
       complete: (result) => {
         this.watchData = result;
 
@@ -133,19 +149,18 @@ export class PlayerDialog extends LitElement {
           this.#close,
           this.playerMessage,
           this.#video,
+          this.#comments,
           this.#controls,
           this.#header,
           this.#infoPanel,
         ];
       },
-      error: () => [
-        this.#close,
-        this.playerMessage,
-        this.#video,
-        this.#controls,
-        this.#header,
-        this.#infoPanel,
-      ],
+      error: () => {
+        this.watchData = undefined;
+        this.comments = [];
+
+        return [this.#close, this.playerMessage];
+      },
     });
   }
 }
