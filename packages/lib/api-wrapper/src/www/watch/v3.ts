@@ -1,9 +1,15 @@
 import {HEADER} from "../../nvapi/types";
-import type {ApiEndpoints, ApiResponseWithStatus, VideoId} from "../../types";
+import type {
+  ApiEndpoint,
+  ApiResponseWithStatus,
+  VideoId,
+  FetchFunc,
+} from "../../types";
 import type {WatchData} from "../../types/watch-data";
 import {mergeHeaders} from "../../utils";
 
-export class V3 implements ApiEndpoints {
+export class V3 implements ApiEndpoint {
+  fetch: FetchFunc;
   endpoint: URL;
   defaultInit: RequestInit;
 
@@ -11,12 +17,13 @@ export class V3 implements ApiEndpoints {
     isGuest: boolean,
     watchId: VideoId | `${number}`,
     baseURL: URL | string,
+    customFetch: FetchFunc,
   ) {
+    this.fetch = customFetch;
     this.endpoint = new URL(
       `${isGuest ? "v3_guest" : "v3"}/${watchId}`,
       baseURL,
     );
-
     this.defaultInit = {
       credentials: isGuest ? "omit" : "include",
       headers: {
@@ -41,7 +48,7 @@ export class V3 implements ApiEndpoints {
       throw new Error("not expected default header undefined");
     }
 
-    const res = await fetch(url, {
+    const res = await this.fetch(url, {
       ...defaultInit,
       ...init,
       headers: mergeHeaders(defaultHeaders, fetchHeaders),

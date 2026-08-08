@@ -1,4 +1,4 @@
-import {ApiEndpoints, ChannelId} from "../../../types";
+import {ApiEndpoint, ChannelId, FetchFunc} from "../../../types";
 import {NvapiEndpoint} from "../../types";
 import type {Playlist} from "./types";
 
@@ -14,10 +14,12 @@ interface ChannelUploadedOptions {
   };
 }
 
-export class ChannelUploaded implements ApiEndpoints {
+export class ChannelUploaded implements ApiEndpoint {
+  fetch: FetchFunc;
   endpoint: URL;
 
-  constructor(baseURL: URL | string) {
+  constructor(baseURL: URL | string, customFetch: FetchFunc) {
+    this.fetch = customFetch;
     this.endpoint = new URL("channel-uploaded/", baseURL);
   }
 
@@ -31,6 +33,7 @@ export class ChannelUploaded implements ApiEndpoints {
     const client = new NvapiEndpoint<Playlist, ChannelUploadedOptions>(
       channelId,
       this.endpoint,
+      this.fetch,
     );
 
     return await client.request(options, init);

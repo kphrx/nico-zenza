@@ -1,14 +1,12 @@
-import type {ApiEndpoints} from "../../types";
+import type {FetchFunc} from "../../types";
 import {Threads} from "./threads";
 
-export class V1 implements ApiEndpoints {
-  endpoint: URL;
-
+export class V1 {
   threads: Threads;
 
-  constructor(baseURL: URL | string) {
-    this.endpoint = new URL("v1/", baseURL);
+  constructor(baseURL: URL | string, customFetch: FetchFunc) {
+    const endpoint = new URL("v1/", baseURL);
 
-    this.threads = new Threads(this.endpoint);
+    this.threads = new Threads(endpoint, customFetch);
   }
 }

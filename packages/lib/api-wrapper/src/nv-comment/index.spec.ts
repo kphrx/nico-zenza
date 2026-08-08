@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import {describe, it, mock} from "node:test";
-import {ErrorResponse} from "../types";
+import type {ErrorResponse, FetchFunc} from "../types";
 
 import {NvComment} from "./";
 
@@ -25,7 +25,7 @@ await describe("nv-comment v1", async () => {
       mock.method(
         globalThis,
         "fetch",
-        (...args: Parameters<typeof fetch>): ReturnType<typeof fetch> => {
+        (...args: Parameters<FetchFunc>): ReturnType<FetchFunc> => {
           const [input, init] = args;
 
           if (input instanceof Request) {

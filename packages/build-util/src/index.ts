@@ -74,6 +74,59 @@ function getRequireSet(
   return requireSet;
 }
 
+declare global {
+  interface ObjectConstructor {
+    hasOwn<T extends object>(o: T, v: PropertyKey): v is keyof T;
+  }
+}
+
+const bypassDynamicImport = <
+  T extends {default?: unknown; [key: PropertyKey]: unknown},
+>({
+  default: defaultExport,
+  ...exports
+}: T): (T["default"] & T) | Omit<T, "default"> => {
+  const proxyHandler: ProxyHandler<object | ((...args: never) => unknown)> = {
+    get(target, prop) {
+      if (prop in exports) {
+        return exports[prop];
+      }
+      if (Object.hasOwn(target, prop)) {
+        return target[prop];
+      }
+    },
+    getOwnPropertyDescriptor(target, prop) {
+      return Reflect.getOwnPropertyDescriptor(
+        prop in exports ? exports : target,
+        prop,
+      );
+    },
+    ownKeys(target) {
+      return Array.from(
+        new Set([...Reflect.ownKeys(target), ...Reflect.ownKeys(exports)]),
+      );
+    },
+  };
+
+  switch (typeof defaultExport) {
+    case "bigint":
+    case "symbol":
+    case "string":
+    case "number":
+    case "boolean":
+      throw new TypeError(
+        `\`target\` argument of Proxy must be an object, got ${typeof defaultExport} ${defaultExport.toString()}`,
+      );
+    case "undefined":
+    case "function":
+    case "object":
+      if (defaultExport == null) {
+        return exports;
+      }
+      return new Proxy(defaultExport, proxyHandler) as T["default"] & T;
+  }
+};
+
 function getEsmImporter(
   esModules: Dependency[],
   deps: Record<string, string> = {},
@@ -82,13 +135,15 @@ function getEsmImporter(
 
   if (esModules.length > 0) {
     banner += `
+const moduleProxy = ${bypassDynamicImport.toString()};
+
 const [${esModules.map(getVariableName).join(", ")}] = await Promise.all([
   ${esModules
     .map((m) => {
       const pkgName = getPackageName(m);
-      return `import("https://esm.run/${pkgName}@${deps[pkgName]}${getExportPath(m)}")`;
+      return `import("https://esm.run/${pkgName}@${deps[pkgName]}${getExportPath(m)}").then(moduleProxy),`;
     })
-    .join(",\n  ")}
+    .join("\n  ")}
 ]);`;
   }
 

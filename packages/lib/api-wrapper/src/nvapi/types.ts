@@ -1,10 +1,11 @@
 import {mergeHeaders} from "../utils";
-import type {ApiEndpoints, ApiResponseWithStatus} from "../types";
+import type {ApiEndpoint, ApiResponseWithStatus, FetchFunc} from "../types";
 
 export interface INvapiEndpoint<
   T,
   O extends {params: Record<string, string | undefined>},
-> extends ApiEndpoints {
+> extends ApiEndpoint {
+  fetch: FetchFunc;
   defaultInit: RequestInit;
 
   request(
@@ -23,10 +24,17 @@ export class NvapiEndpoint<
   O extends {params: Record<string, string | undefined>},
 > implements INvapiEndpoint<T, O>
 {
+  fetch: FetchFunc;
   endpoint: URL;
   defaultInit: RequestInit;
 
-  constructor(path: string, baseURL: URL | string, fetchInit?: RequestInit) {
+  constructor(
+    path: string,
+    baseURL: URL | string,
+    customFetch: FetchFunc,
+    fetchInit?: RequestInit,
+  ) {
+    this.fetch = customFetch;
     this.endpoint = new URL(path, baseURL);
 
     if (fetchInit == null) {
@@ -65,7 +73,7 @@ export class NvapiEndpoint<
       throw new Error("not expected default header undefined");
     }
 
-    const res = await fetch(url, {
+    const res = await this.fetch(url, {
       ...defaultInit,
       ...init,
       headers: mergeHeaders(defaultHeaders, fetchHeaders),

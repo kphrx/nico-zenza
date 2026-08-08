@@ -66,7 +66,8 @@
     "packages/script/uquery",
     "packages/script/mylist-filter",
     "packages/lib/api-wrapper",
-    "packages/build-util"
+    "packages/build-util",
+    "packages/lib/cross-domain-gate"
   ],
   "engines": {
     "node": ">=22.0.0"

@@ -1,4 +1,9 @@
-export interface ApiEndpoints {
+export type FetchFunc = (
+  ...args: Parameters<typeof fetch>
+) => ReturnType<typeof fetch>;
+
+export interface ApiEndpoint {
+  fetch: FetchFunc;
   endpoint: URL;
 }
 

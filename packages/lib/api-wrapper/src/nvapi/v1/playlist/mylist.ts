@@ -1,4 +1,4 @@
-import type {ApiEndpoints} from "../../../types";
+import type {ApiEndpoint, FetchFunc} from "../../../types";
 import type {Playlist} from "./types";
 import {NvapiEndpoint} from "../../types";
 
@@ -12,10 +12,12 @@ interface MylistOptions {
   };
 }
 
-export class Mylist implements ApiEndpoints {
+export class Mylist implements ApiEndpoint {
+  fetch: FetchFunc;
   endpoint: URL;
 
-  constructor(baseURL: URL | string) {
+  constructor(baseURL: URL | string, customFetch: FetchFunc) {
+    this.fetch = customFetch;
     this.endpoint = new URL("mylist/", baseURL);
   }
 
@@ -29,6 +31,7 @@ export class Mylist implements ApiEndpoints {
     const client = new NvapiEndpoint<Playlist, MylistOptions>(
       mylistId,
       this.endpoint,
+      this.fetch,
     );
 
     return await client.request(options, init);

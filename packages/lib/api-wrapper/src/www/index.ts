@@ -1,14 +1,15 @@
-import type {ApiEndpoints} from "../types";
+import type {FetchFunc} from "../types";
 import {Watch} from "./watch";
 
-export class WwwApi implements ApiEndpoints {
-  endpoint: URL;
-
+export class WwwApi {
   watch: Watch;
 
-  constructor() {
-    this.endpoint = new URL("/api/", "https://www.nicovideo.jp");
+  constructor(customFetch?: FetchFunc) {
+    const endpoint = new URL("/api/", "https://www.nicovideo.jp");
 
-    this.watch = new Watch(this.endpoint);
+    this.watch = new Watch(
+      endpoint,
+      customFetch ?? ((...args) => fetch(...args)),
+    );
   }
 }
