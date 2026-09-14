@@ -131,9 +131,7 @@ export class PlayerInfoPanelVideoInfoTab extends LitElement {
       }
 
       const id = regex.exec(new URL(cur.href).pathname)?.[1] as
-        | VideoId
-        | `${number}`
-        | undefined;
+        VideoId | `${number}` | undefined;
       if (id == null) {
         return acc;
       }

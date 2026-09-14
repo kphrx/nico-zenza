@@ -79,9 +79,7 @@ export class MouseController implements ReactiveController {
         : /^\/watch\/((sm|so|nm)?([0-9]+))/;
 
     this.#host.videoId = reg.exec(link.pathname)?.[1] as
-      | VideoId
-      | `${number}`
-      | undefined;
+      VideoId | `${number}` | undefined;
   };
 
   constructor(host: ReactiveControllerHost) {

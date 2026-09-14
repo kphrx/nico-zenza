@@ -81,12 +81,14 @@ export class PlayerHeader extends LitElement {
         </li>
       </ul>
       <ul class="tags">
-        ${this.#tags?.items.map((tag) => {
-          return html`<li
-            class=${classMap({nicodic: tag.isNicodicArticleExists})}>
-            ${tag.name}
-          </li>`;
-        }) ?? []}
+        ${
+          this.#tags?.items.map((tag) => {
+            return html`<li
+              class=${classMap({nicodic: tag.isNicodicArticleExists})}>
+              ${tag.name}
+            </li>`;
+          }) ?? []
+        }
       </ul>
     `;
   }
