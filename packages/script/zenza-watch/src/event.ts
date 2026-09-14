@@ -43,9 +43,9 @@ export const timeRangesToIterable = (
 
 export const createCustomEvent = <
   K extends keyof GlobalEventHandlersEventMap,
-  T extends GlobalEventHandlersEventMap[K] extends CustomEvent<infer T>
+  T extends (GlobalEventHandlersEventMap[K] extends CustomEvent<infer T>
     ? T
-    : never,
+    : never),
 >(
   type: K,
   ...options: T extends undefined

@@ -21,8 +21,7 @@ export const HEADER = {
 export class NvapiEndpoint<
   T,
   O extends {params: Record<string, string | undefined>},
-> implements INvapiEndpoint<T, O>
-{
+> implements INvapiEndpoint<T, O> {
   endpoint: URL;
   defaultInit: RequestInit;
 
