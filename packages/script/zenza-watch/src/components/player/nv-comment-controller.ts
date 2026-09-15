@@ -1,25 +1,23 @@
 import type {ReactiveController} from "lit";
 import {initialState, Task} from "@lit/task";
-import type {StatusRenderer} from "@lit/task";
 
 import {isErrorResponse, NvComment} from "@nico-zenza/api-wrapper";
 import type {WatchData} from "@nico-zenza/api-wrapper";
 import type {FlattedComment} from "@/comment-list";
 
-import type {PlayerInfoPanelCommentsTab} from "./";
-
-type ReactiveControllerHost = PlayerInfoPanelCommentsTab;
+import type {PlayerDialog as ReactiveControllerHost} from "./dialog";
 
 export class NVCommentController implements ReactiveController {
   #host: ReactiveControllerHost;
-  #task: Task<[WatchData | undefined], FlattedComment[]>;
+  task: Task<[WatchData | undefined], FlattedComment[]>;
 
   constructor(host: ReactiveControllerHost) {
     this.#host = host;
 
-    this.#task = new Task<[WatchData | undefined], FlattedComment[]>(
-      this.#host,
-      async ([watchData], {signal}) => {
+    this.task = new Task(this.#host, {
+      autoRun: false,
+      initialValue: [],
+      task: async ([watchData], {signal}) => {
         if (watchData == null) {
           return initialState;
         }
@@ -83,15 +81,10 @@ export class NVCommentController implements ReactiveController {
 
         return data;
       },
-      () => [this.#host.watchData],
-    );
+    });
 
     this.#host.addController(this);
   }
 
   hostUpdate = undefined;
-
-  render(renderFunctions: StatusRenderer<FlattedComment[]>) {
-    return this.#task.render(renderFunctions);
-  }
 }

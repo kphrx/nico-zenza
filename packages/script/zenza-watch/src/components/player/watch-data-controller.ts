@@ -10,6 +10,7 @@ import type {
 } from "@nico-zenza/api-wrapper";
 
 import type {PlayerDialog} from "./dialog";
+import {NVCommentController} from "./nv-comment-controller";
 
 type ReactiveControllerHost = PlayerDialog;
 
@@ -30,11 +31,21 @@ export class WatchDataController implements ReactiveController {
   #host: ReactiveControllerHost;
   #task: Task<[VideoId | `${number}` | undefined], WatchData>;
 
+  #nvComment;
+
   constructor(host: ReactiveControllerHost) {
     this.#host = host;
-    this.#task = new Task<[VideoId | `${number}` | undefined], WatchData>(
-      host,
-      async ([videoId], {signal}) => {
+    this.#nvComment = new NVCommentController(host);
+    this.#task = new Task(host, {
+      args: () => [this.#host.videoId],
+      onComplete: async (value) => {
+        await this.#nvComment.task.run([value]);
+        this.#host.comments = await this.#nvComment.task.taskComplete;
+      },
+      onError: () => {
+        this.#nvComment.task.abort();
+      },
+      task: async ([videoId], {signal}) => {
         if (videoId == null) {
           return initialState;
         }
@@ -64,8 +75,7 @@ export class WatchDataController implements ReactiveController {
 
         return json.data;
       },
-      () => [this.#host.videoId],
-    );
+    });
 
     this.#host.addController(this);
   }
