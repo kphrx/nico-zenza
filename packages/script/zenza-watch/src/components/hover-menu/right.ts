@@ -1,5 +1,5 @@
 import {LitElement, html, css} from "lit";
-import {customElement, property} from "lit/decorators.js";
+import {customElement, property, queryAssignedElements} from "lit/decorators.js";
 import {styleMap} from "lit/directives/style-map.js";
 
 import type {VideoId} from "@nico-zenza/api-wrapper";
@@ -33,9 +33,8 @@ export class RightHoverMenu extends LitElement {
   @property({attribute: "data-video-id", reflect: true})
   accessor videoId: VideoId | `${number}` | undefined;
 
-  get #menuSlot(): HTMLSlotElement | null {
-    return this.shadowRoot?.querySelector('slot[name="menu"]') ?? null;
-  }
+  @queryAssignedElements({selector: "zenza-hover-menu-button", slot: "menu", flatten: true})
+  accessor menuButtons: HoverMenuButton[];
 
   constructor() {
     const already = document.querySelector(TAG_NAME_RIGHT);
@@ -57,7 +56,7 @@ export class RightHoverMenu extends LitElement {
       return;
     }
 
-    for (const button of this.buttons()) {
+    for (const button of this.menuButtons) {
       button.videoId = this.videoId;
     }
   }
@@ -73,16 +72,8 @@ export class RightHoverMenu extends LitElement {
   }
 
   #onSlotchange(ev: Event) {
-    for (const button of this.buttons(ev.target as HTMLSlotElement | null)) {
+    for (const button of this.menuButtons) {
       button.videoId = this.videoId;
     }
-  }
-
-  buttons(slot: HTMLSlotElement | null = this.#menuSlot): HoverMenuButton[] {
-    if (slot === null) {
-      return [];
-    }
-
-    return slot.assignedElements({flatten: true}) as HoverMenuButton[];
   }
 }
