@@ -54,7 +54,7 @@ export class MouseController implements ReactiveController {
       return;
     }
 
-    if (this.#host.buttons().filter((button) => el === button).length > 0) {
+    if (this.#host.menuButtons.filter((button) => el === button).length > 0) {
       return;
     }
 
